@@ -17,63 +17,69 @@
 \maketitle
 \setcounter{section}{0}
 \section{Model Definition}
-We simulate a basic economy of buyers and sellers by basing it on the
-Cournot competition model. 
+We simulate a basic economy of buyers and sellers by basing it on the Cournot
+competition model. 
 
-The `geography' of our model is one-dimensional with periodic boundaries, 
-i.e. a topological circle. We denote the length of that circle by $L$. We 
-measure physical distances with the metric $min(|x-y|, L-|y-x|)$ for 
-any two points ('agents') $x$,$y$ on $L$. Without loss of generality,
-we set $L=1$. 
+The `geography' of our model is one-dimensional with periodic boundaries, i.e. a
+topological circle. We denote the length of that circle by $L$. We measure
+physical distances with the metric $min(|x-y|, L-|y-x|)$ for any two points
+('agents') $x$,$y$ on $L$. Without loss of generality, we set $L=1$. 
 
 \subsection{Buyers}
-On that circle we place some $|B|$ buyers randomly distributed. The buyers
-all have an identical demand curve $P=a-Q$, and each buyer $b\in B$ buys a 
-quantity $\vec{b}$, where $b_i$ is the amount $b$ buys from the $i$th
-seller. Each buyer tries to buy as much total quantity as they can while
-staying under the curve, i.e. they try to maximize $sum(\vec{b})$. 
+On that circle we place some $|B|$ buyers randomly distributed. The buyers all
+have an identical demand curve $P + Q = a$, and each buyer $b\in B$ buys a quantity
+$\vec{b}$, where $b_i$ is the amount $b$ buys from the $i$th seller. Each buyer
+tries to buy as much total quantity as they can while keeping $P + Q < a$ i.e.
+they try to maximize $\sum_{i=0}^{|S|}b_i$. 
 
 \subsection{Sellers}
 On that circle we will also find some $|S|$ sellers, who all offer the same
 product, but at potentially different prices and in potentially different
-quantities. We denote the prices that are offered by a vector $\vec{p}$ and 
-the quantities by the vector $\vec{q}$, where the $i$th seller offers $q_i$
-amount of the product at a price $p_i$. Each seller chooses $q_i$ and $p_i$ 
+quantities. We denote the prices that are offered by a vector $\vec{p}$ and the
+quantities by the vector $\vec{q}$, where the $i$th seller offers $q_i$ amount
+of the product at a price $p_i$. Each seller chooses $q_i$ and $p_i$
 simultaneously in an attempt to maximize profit.  
 
 \subsection{Idiosyncratic tax}
-For any buyer $b$ and seller $s$, we define a product-distance $D = D(b,s)$ 
-such that the seller s that is physically closest to b has distance 
-$D(b,s)=1$, the next closest has distance $D=2$, and so on. 
+For any buyer $b$ and seller $s$, we define a product-distance $D = D(b,s)$ such
+that the seller s that is physically closest to b has distance $D(b,s)=1$, the
+next closest has distance $D=2$, and so on. 
 
 If buyer b buys from seller s, the total price, including transaction cost
-(tax), is given by $p(b,s) = p_s *  D(b,s)^\gamma$ where gamma is a 
-scaling coefficient. 
+(tax), is given by $p(b,s) = p_s *  D(b,s)^\gamma$ where gamma is a scaling
+coefficient. 
 
 \subsection{Profit Function}
-The profit function is as follows: $\Pi_i = p_i * q_i^s - c*q_i$, where $c$
-is the price to produce each unit of product, and $q_i^s$ is the quantity 
-the $i$th seller sells.  
+
+The profit function is as follows:
+\begin{equation}
+    $\Pi_i = p_iq_i^s - cq_i$
+\end{equation}
+where $c$ is the price to produce each unit of product, and $q_i^s$ is the
+quantity the $i$th seller sells.  
 
 
-\section{Setup}
+\section{Mathematical Representation}
 We construct a set of buyers $B$ and a set of sellers $S$, and transaction cost
 function $t: (B\times S)\rightarrow \R$, which has subfunctions $t_b:
 S\rightarrow \R$ s.t. for all $s\in S$, $t(b,s) = t_b(s)$.
 
 Also, we construct an demand curve for all $b\in B$, namely $P = a - Q$.
 
-\section{Function to put into nashpy}
+\section{Function to put into Gambit}
+
 We construct a function $\Pi : (\R\times\R)^{|S|} \rightarrow \R^{|S|}$ s.t.
 $\Pi(\vec{s}) = \vec{\pi}$, where the elements of $\vec{s}$ are the tuples
 $(q_i,p_i)$ listing the quantity produced and the price offered by the $i$th
-seller, and the elements of $\vec{\pi}$ are $\pi_i$, the profits of the $i$th seller.
+seller, and the elements of $\vec{\pi}$ are $\pi_i$, the profits of the $i$th
+seller.
 
 Given $\vec{s}$, $\vec{\pi}$ is calculated by first calculating $\vec{q}^s$, the
-vector of total quantity sold, then using it to calculate $\vec{\pi}$ using the formula $\pi_i = p_iq^s_i$.  
+vector of total quantity sold, then using it to calculate $\vec{\pi}$ using 
+equation (1).  
 
-$q^s_i = \sum _{b\in B} b_i$, where $b_i$ is the amount seller $b$ buys from
-the $i$th seller.  
+$q^s_i = \sum _{b\in B} b_i$, where $b_i$ is the amount seller $b$ buys from the
+$i$th seller.  
 
 Each buyer $b$ chooses a vector $\vec{b}$, where each element of the vector
 $b_i$ is the amount $b$ bought from the $i$th buyer.  
@@ -81,8 +87,9 @@ $b_i$ is the amount $b$ bought from the $i$th buyer.
 Set $\vec{q}^{unsold} = \vec{q}$
 
 For each $b_i \in \vec{b}$, have it maximize the total quantity bought by $b$
-while remaining under the individual demand curve $P=a-Q$.  The resulting
-vector that lists the amount $b$ buys from each seller is $\vec{b}$.  Subtract $\vec{b}$ from $\vec{q}^{unsold}$ to get a new $\vec{q}^{unsold}$.
+while remaining under the individual demand curve $P=a-Q$.  The resulting vector
+that lists the amount $b$ buys from each seller is $\vec{b}$.  Subtract
+$\vec{b}$ from $\vec{q}^{unsold}$ to get a new $\vec{q}^{unsold}$.
 
 \subsection{Algorithm to determining what a buyer purchases}
 To determine $\vec{b}$, do the following:
@@ -91,13 +98,14 @@ Calculate $b$'s perceived prices, $t_b(s_i) * p_i = \vec{p}^b$, then turn it
 into a $|S|$ by 2 matrix $M$ with the first column being the price, $\vec{p}$
 the second column being the remaining quantity, $\vec{q}^{unsold}$. 
 
-Sort $M$'s rows by the perceived price column, and re-index the rows\newline
-$0, 1, \cdots , j, \cdots , |S|$. 
+Sort $M$'s rows by the perceived price column, and re-index the rows\newline $0,
+1, \cdots , j, \cdots , |S|$. 
 
 Find the maximal index $j$ and quantity $q^{*}_j \le q^{unsold}_j$ such that
-$p_j + q^{*}_j + \sum_{k=0}^j q_k \le a$.  Now we have a vector of amount
-bought by $b$ as follows: $<q_0, q_1,\cdots q_{j-1}, q^{*}_j, 0, 0, \cdots, 0>.$
+$p_j + q^{*}_j + \sum_{k=0}^j q_k \le a$.  Now we have a vector of amount bought
+by $b$ as follows: $<q_0, q_1,\cdots q_{j-1}, q^{*}_j, 0, 0, \cdots, 0>.$
 
 Finally, re-index this new vector using the $i$-index instead of the $j$ index
 to get $\vec{b}$.
+
 \end{document}
