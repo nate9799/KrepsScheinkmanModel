@@ -1,0 +1,8 @@
+*.pyc
+*.gz
+*.spl
+*.log
+*.aux
+*.pkl
+*.csv
+*.xml
