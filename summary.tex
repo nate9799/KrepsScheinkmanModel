@@ -1,15 +1,25 @@
-\documentclass[14pt]{article}
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.8cm]{geometry}
 \usepackage{amsfonts}
+
 
 \usepackage{mathtools}
 \usepackage{cancel}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
-
 \usepackage{dsfont}
+\usepackage[dvipsnames,usenames]{color}
+\usepackage[colorlinks=true,linkcolor=NavyBlue,citecolor=NavyBlue,urlcolor=NavyBlue]{hyperref} % for hyperlinks 
+
+% makros 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\R}{\mathds {R}}
-\title{Cournot Competition with Idiosyncratic Tax}
+\newcommand{\red}[1]{\textcolor{red}{#1}} % for color for remarks
+
+
+\title{Cournot Competition with Idiosyncratic Taxation}
+
 \author{Nate Dwyer and Sandro Lera}
 
 \begin{document}
@@ -17,17 +27,19 @@
 \maketitle
 \setcounter{section}{0}
 \section{Model Definition}
-We simulate a basic economy of buyers and sellers by basing it on the Cournot
-competition model. 
+We simulate an economy of buyers and sellers as an extension of the Cournot competition model, 
+with additional buyer-seller specific (`idiosyncratic') transaction cost (`tax'). 
+The goal of this tax is to avoid market dominance by one single seller based on initially only small differences in quality. 
+Instead, the model is aimed at striking a `fair' balance between market competition and seller protection. 
 
-The `geography' of our model is one-dimensional with periodic boundaries, i.e. a
-topological circle. We denote the length of that circle by $L$. We measure
-physical distances with the metric $min(|x-y|, L-|y-x|)$ for any two points
-('agents') $x$,$y$ on $L$. Without loss of generality, we set $L=1$. 
+The `geography' of our model is one-dimensional with periodic boundaries, i.e. a topological circle, of length $L$. 
+Due to the periodic boundary conditions, we measure physical distances with the metric $\min(|x-y|, L-|y-x|)$ for any two points (`agents') $x$,$y$ on $L$. 
+Without loss of generality, we set $L=1$. 
+Our model does not rely on the implemented geography, and any other, potentially more realistic topology could be considered. 
 
 \subsection{Buyers}
 On that circle we place some $|B|$ buyers randomly distributed. The buyers all
-have an identical demand curve $P + Q = a$, and each buyer $b\in B$ buys a quantity
+have an identical demand curve $Q+P = a$, and each buyer $b\in B$ buys a quantity
 $\vec{b}$, where $b_i$ is the amount $b$ buys from the $i$th seller. Each buyer
 tries to buy as much total quantity as they can while keeping $P + Q < a$ i.e.
 they try to maximize $\sum_{i=0}^{|S|}b_i$. 
@@ -46,23 +58,30 @@ that the seller s that is physically closest to b has distance $D(b,s)=1$, the
 next closest has distance $D=2$, and so on. 
 
 If buyer b buys from seller s, the total price, including transaction cost
-(tax), is given by $p(b,s) = p_s *  D(b,s)^\gamma$ where gamma is a scaling
+(tax), is given by $p(b,s) = p_s  \cdot D(b,s)^\gamma$ where $\gamma$ is a scaling
 coefficient. 
 
 \subsection{Profit Function}
 
-The profit function is as follows:
+The profit function for seller $i$ reads
 \begin{equation}
-    $\Pi_i = p_iq_i^s - cq_i$
+    \Pi_i = p_iq_i^s - cq_i, 
+    \label{eq:profit_function}
 \end{equation}
-where $c$ is the price to produce each unit of product, and $q_i^s$ is the
-quantity the $i$th seller sells.  
+where $c$ is the price to produce each unit of product, and $q_i^s$ is the quantity the $i$th seller sells
+(which may be less but never more than the quantity $q_i$ that was produced). 
+Below, we then introduce the profit vector $\vec{\pi} = (\pi_1, \ldots, \pi_{|S|})$
+to find the Nash-equilibrium based on the profit functions of all sellers.
 
 
 \section{Mathematical Representation}
 We construct a set of buyers $B$ and a set of sellers $S$, and transaction cost
 function $t: (B\times S)\rightarrow \R$, which has subfunctions $t_b:
 S\rightarrow \R$ s.t. for all $s\in S$, $t(b,s) = t_b(s)$.
+\red{
+I don't see what are these sub-functions for. 
+The way I see it, a specific customer-seller tax is a mapping from $B \times S$ to $\R$.
+There is no subfunction.}
 
 Also, we construct an demand curve for all $b\in B$, namely $P = a - Q$.
 
@@ -72,16 +91,18 @@ We construct a function $\Pi : (\R\times\R)^{|S|} \rightarrow \R^{|S|}$ s.t.
 $\Pi(\vec{s}) = \vec{\pi}$, where the elements of $\vec{s}$ are the tuples
 $(q_i,p_i)$ listing the quantity produced and the price offered by the $i$th
 seller, and the elements of $\vec{\pi}$ are $\pi_i$, the profits of the $i$th
-seller.
+seller. \red{Write from seller $s$, here and everywhere else.}
 
 Given $\vec{s}$, $\vec{\pi}$ is calculated by first calculating $\vec{q}^s$, the
 vector of total quantity sold, then using it to calculate $\vec{\pi}$ using 
-equation (1).  
+equation \eqref{eq:profit_function}.  
 
+\red{(don't start a sentence like that)}
 $q^s_i = \sum _{b\in B} b_i$, where $b_i$ is the amount seller $b$ buys from the
 $i$th seller.  
+\red{Turn that thing into vectorial notation. You have two matrices, $Q$ and $Q^s$, and the same for prices. Then you have $Q_{sb}$ instead of $Q_{ji}$}
 
-Each buyer $b$ chooses a vector $\vec{b}$, where each element of the vector
+Each buyer $b$ chooses a vector $\vec{b}$, where each element
 $b_i$ is the amount $b$ bought from the $i$th buyer.  
 
 Set $\vec{q}^{unsold} = \vec{q}$
@@ -93,6 +114,12 @@ $\vec{b}$ from $\vec{q}^{unsold}$ to get a new $\vec{q}^{unsold}$.
 
 \subsection{Algorithm to determining what a buyer purchases}
 To determine $\vec{b}$, do the following:
+\red{Use a proper enumeration environment}
+
+\begin{enumerate}
+	\item bla 
+	\item bla 
+\end{enumerate}
 
 Calculate $b$'s perceived prices, $t_b(s_i) * p_i = \vec{p}^b$, then turn it
 into a $|S|$ by 2 matrix $M$ with the first column being the price, $\vec{p}$
@@ -107,5 +134,16 @@ by $b$ as follows: $<q_0, q_1,\cdots q_{j-1}, q^{*}_j, 0, 0, \cdots, 0>.$
 
 Finally, re-index this new vector using the $i$-index instead of the $j$ index
 to get $\vec{b}$.
+
+\section{Open Questions}
+
+\begin{itemize}
+
+	\item With this model, we want to demonstrate that initially small differences in quality do not lead to proportional feedback
+		mechanisms that lead to an unequal output distribution
+		So it might be questionable if the current Cournot model is the model of our interests, 
+		because it assumes all buyers set the same price. 
+
+\end{itemize}
 
 \end{document}
