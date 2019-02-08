@@ -38,13 +38,11 @@
 
 \vspace{-6em}
 \begin{center}
-\textbf{\textit{Keywords: decentralised exchange, fair competition, game theory, Cournot economy, bipartite network}} 
+\textbf{\textit{Keywords: decentralised exchange, game theory, Cournot economy, agent based model, monopoly}} 
 \newline
 \end{center}
 
 \section*{Extended Abstract}
-
-\red{Add ABM to keywords?}
 
 Until not too long ago, people used to live in more self-contained villages, with local markets where people buy different products. 
 Take clothing as an example. Most villages had one or several clothing merchants competing for customers. 
@@ -58,25 +56,24 @@ making it harder for new products and technologies to succeed.
 From the industrial to the technological revolution, more efficient distribution channels have emerged, enabling people to buy almost any product in online stores. 
 Independent of a customer's physical location, orders can be delivered to their door within a day. 
 More specialized products are now sold globally, and people living far away from hubs benefit from the availability of a wide range of products. 
-While such efficiency is beneficial for the economy as a whole, it comes at the
-cost of potential centralization \red{of what?} and monopolies. 
+While such efficiency is beneficial for the economy as a whole, it comes at the cost of potential monopolies. 
 Consider a merchant that manages to sell a product for a few cents cheaper than its competitors. 
 Given modern distribution channels, and ignoring potential differences in quality, every buyer is now incentivized to buy from that one seller at that cheaper price.
 One potential outcome is that the competitors follow along, increase their efficiency, and a new equilibrium is reached. 
-However, in a less optimal scenario, that one seller leverages the temporarily increased revenue to further outpace and potentially undercut its competitors. 
+However, in a suboptimal scenario, that one seller leverages the temporarily increased revenue to further outpace and potentially undercut its competitors. 
 In the short term, feedback mechanisms kick in, and an initially minor gap in competitive advantage, mixed with efficient distribution channels, manifests itself in a major monopoly situation. 
 
-We conclude that geographical constraints can lead to unfair and inefficient conditions for the customers, whereas removal of those constraints can lead to unfair conditions for the sellers \red{maybe swap this with a comment about monopolies}. 
+We conclude that geographical constraints can lead to unfair and inefficient conditions for the customers, whereas removal of those constraints can lead to monopolies. 
 In this work, we show that a good trade-off is based on the integration of two rather unusual concepts:
 \begin{enumerate}[(i),topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
 	
-	\item quenched localization of buyers and sellers, 
+	\item fixed localization of buyers and sellers, 
 	
-	\item and a buyer-seller specific trading cost.
+	\item and a idiosyncratic buyer-seller transaction cost.
 
 \end{enumerate}
 
-Specifically, we first select any topology \red{not all topologies, need a distance metric} on which some $|B|$ buyers and $|S|$ sellers are located. 
+Specifically, we first select any topology on which some $|B|$ buyers and $|S|$ sellers are located. 
 This topology may be either natural, as in the real physical world, or imposed, for instance on top of a digital market place.  
 Buyers and sellers are now distributed on that topology, either at random or at their choice, depending on the model set-up. 
 For the remainder of the simulation, their location is then held fixed, or at least assumed to change on a much slower time-scale than numerous transactions with clients (quenched order). 
@@ -86,20 +83,18 @@ For any buyer $b \in B$ on that topology, we can now measure the physical distan
 By sorting these physical distances, we create a \textit{taxation metric}, which assigns a distance $D_{bs}=1$ to the seller $s \in S$ that is physically closest to $b$, a distance $D_{b\tilde{s}}=2$ for seller $\tilde{s} \in S$ that is physically 2nd-closest to $b$, and so forth. 
 If buyer $b$ wants to buy from seller $\hat{s} \in S$ who is physically $n$-th closest to $b$, $D_{b \hat{s}}=n$, 
 we impose a transaction cost proportional to $n^\gamma$, where $\gamma \geqslant 0$ is a model parameter. 
-This taxation comes with the advantage that sellers which are physically further
-away from any seller pay the same transaction price as the ones that are
-physically closer \red{this sentence is awkward}. 
+Instead of physical distances dictating a high transaction cost, the cost of buying a good is now only dependent on the relative distance. 
 The special case $\gamma = 0$ recovers a non-localized economy where buyers can buy from all sellers for the same transaction cost. 
 The other extreme is $\gamma=\infty$, for which buyers can only buy from their physically closest seller. 
 A value of $\gamma \in (0, \infty)$ represents an interpolation between those two extremes, where closer buyers are preferred, but can be outpaced by other sellers with lower prices or better quality. 
-The remaining model specifications (supply, demand, quantities produces) are such that for $\gamma = 0$ the well-known Cournot competition model from basic game-theory is recovered. 
+The remaining model specifications (supply, demand, quantities produces) are such that for $\gamma = 0$ the well-known Cournot competition model from game-theory is recovered. 
 
 Through tuning of $\gamma$ and targeted redistribution of tax money from transaction costs, we show that this model is able to fuel a self-consistent economy, 
 with fair competition, where innovations can spread across the topology freely, but without the chance of monopolies emerging through disproportional feedback mechanisms. 
 
 \red{
-@Nate: I am thinking of replacing the `Decentralized' in the title by something like `balanced', to avoid false association with over-hyped blockchain technology.
-@Sandro: That's a good idea.
+@Sandy: We are thinking of replacing the `Decentralized' in the title by something like `balanced', to avoid false association with over-hyped blockchain technology.
+What are your thoughts?
 }
 
 
