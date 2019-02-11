@@ -23,7 +23,10 @@ ENDOWMENT = 2
 a_seller_loc = [.2, .7]
 a_buyer_loc = [.2, .2, .2, .2, .2, .7, .7, .7, .7, .7]
 SELLER_PRICE = 1
-SELLER_QUANTITY = 10
+SELLER_QUANTITY = 20.
+
+A_SELLER_PRICES = np.arange(1,2.1,.1)
+A_SELLER_QUANTITIES = np.arange(0,12,.5)
 
 #####################
 #####################
@@ -54,11 +57,11 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma=GAMMA):
 ###################
 
 def find_bundle(a_quantity_unsold, a_price_rel, endowment = ENDOWMENT):
-    a_quantity_order = np.argsort(a_quantity_unsold)
+    a_quantity_order = np.argsort(a_price_rel)
     tot_quantity = 0
     a_quantity_bought = [0.] * len(a_quantity_unsold)
     for ind in a_quantity_order:
-        tot_quanity = sum(a_quantity_bought)
+        tot_quantity = sum(a_quantity_bought)
         demand_remaining = endowment - tot_quantity - a_price_rel[ind]
         if demand_remaining <= 0:
             return a_quantity_bought
@@ -67,9 +70,7 @@ def find_bundle(a_quantity_unsold, a_price_rel, endowment = ENDOWMENT):
             return a_quantity_bought
         else:
             a_quantity_bought[ind] = a_quantity_unsold[ind]
-
-
-
+    return a_quantity_bought
 
 
 ##########################
@@ -112,7 +113,7 @@ def heatmap(a_price_range, a_quantity_range, seller0_price, seller0_quantity, m_
     heat = [[find_profit_2(seller0_price, seller0_quantity, price_tmp,
         quantity_tmp, m_tax, cost) for quantity_tmp in a_quantity_range]
         for price_tmp in reversed(a_price_range)]
-    return(sns.heatmap(heat))
+    return(sns.heatmap(heat, annot=True))
     
 
 ##################
@@ -125,8 +126,9 @@ print(np.arange(.1,2,.1))
 plt.figure(figsize=(20, 20))
 m_tax = get_m_tax(a_buyer_loc, a_seller_loc, GAMMA)
 
-ax_heat = heatmap(np.arange(.1,2,.1), np.arange(0,10, 1), SELLER_PRICE, SELLER_QUANTITY, m_tax, COST)
+ax_heat = heatmap(A_SELLER_PRICES, A_SELLER_QUANTITIES, SELLER_PRICE, SELLER_QUANTITY, m_tax, COST)
 
 ax_heat.set(ylabel = 'price', xlabel = 'quantity')
-ax_heat.set_yticklabels(reversed(np.arange(.1,2,.1)), rotation=0)
+ax_heat.set_yticklabels(reversed(A_SELLER_PRICES), rotation=0)
+ax_heat.set_xticklabels(A_SELLER_QUANTITIES)
 plt.show()
