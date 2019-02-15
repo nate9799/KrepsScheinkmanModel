@@ -3,11 +3,8 @@
 # improved pricing model in 1.2
 from matplotlib import pyplot as plt
 import numpy as np
-import pandas as pd
 import seaborn as sns
-from sklearn.externals import joblib as jl
-
-
+import gambit as gmb
 
 
 # CONSTANTS 
@@ -23,10 +20,10 @@ ENDOWMENT = 2
 a_seller_loc = [.2, .7]
 a_buyer_loc = [.2, .2, .2, .2, .2, .7, .7, .7, .7, .7]
 SELLER_PRICE = 1
-SELLER_QUANTITY = 20.
+SELLER_QUANTITY = 5.
 
 A_SELLER_PRICES = np.arange(1,2.1,.1)
-A_SELLER_QUANTITIES = np.arange(0,12,.5)
+A_SELLER_QUANTITIES = np.arange(0,8,.5)
 
 #####################
 #####################
@@ -103,18 +100,44 @@ def find_profit(a_quantity, a_price, m_tax, cost):
     a_profit = a_revenue - a_cost
     return a_profit
 
-def find_profit_2(seller0_price, seller0_quantity, seller1_price, seller1_quantity, m_tax, cost):
+def find_profit_2(seller0_price, seller0_quantity, seller1_price, seller1_quantity, m_tax):
     a_profit = find_profit(np.array([seller0_quantity, seller1_quantity]),
             np.array([seller0_price, seller1_price]), m_tax, cost)
     return a_profit[1]
-
 
 def heatmap(a_price_range, a_quantity_range, seller0_price, seller0_quantity, m_tax, cost):
     heat = [[find_profit_2(seller0_price, seller0_quantity, price_tmp,
         quantity_tmp, m_tax, cost) for quantity_tmp in a_quantity_range]
         for price_tmp in reversed(a_price_range)]
-    return(sns.heatmap(heat, annot=True))
-    
+    return(sns.heatmap(heat, annot=True, fmt = '.3g'))
+
+
+#########################
+### CREATE GAME TABLE ###
+#########################
+
+def arrayInd_to_array2Ind(a_ind, num_cols, num_rows):
+    a_ind_col = a_ind % num_cols
+    a_ind_row = a_ind // num_rows
+    return a_ind_col, a_ind_row
+
+def make_game_table_value(a_ind_game_table, a_strat_quantity, a_strat_price, m_tax, cost):
+    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(a_ind_game_table,
+            len(a_strat_quantity), len(a_strat_price))
+    a_quantity = [a_strat_quantity[ind] for ind in a_ind_quantity]
+    a_price = [a_strat_price[ind] for ind in a_ind_price]
+    ret = find_profit(a_quantity, a_price, m_tax, cost)
+    return ret
+
+def make_game_table(a_strat_quantity, a_strat_price, m_tax, cost, num_sellers):
+    a_num_strats = [len(a_strat_quantity) * len(a_strat_price)] * num_sellers
+    ret = gmb.Game.new_table(a_num_strats)
+    for profile in game.contigencies:
+        a_profit = make_game_table_value(profile, a_strat_quantity, a_strat_price, m_tax, cost)
+        for ind in range(num_sellers):
+            ret[profile][ind] = a_profit[ind]
+    return ret
+
 
 ##################
 ##################
@@ -122,7 +145,6 @@ def heatmap(a_price_range, a_quantity_range, seller0_price, seller0_quantity, m_
 ##################
 ##################
 
-print(np.arange(.1,2,.1))
 plt.figure(figsize=(20, 20))
 m_tax = get_m_tax(a_buyer_loc, a_seller_loc, GAMMA)
 
