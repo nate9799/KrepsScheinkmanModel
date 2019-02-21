@@ -1,29 +1,29 @@
-# Technical debt from pricing model. can speed up by factor of n
-# also, occasional errors in negative prices
-# improved pricing model in 1.2
 from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
 import gambit as gmb
 
 
-# CONSTANTS 
+# CONSTANTS
+## Global Constants
 NUM_BUYERS = 100
-NUM_SELLERS = 20
-#A_BUYER_LOC = np.random.rand(NUM_BUYERS)
-#A_SELLER_LOC = np.random.rand(NUM_SELLERS)
-COST = 1
+NUM_SELLERS = 2
+COST = 10
 GAMMA = 0
 SLOPE = 1
-ENDOWMENT = 2
+ENDOWMENT = 20
 
+## Setup Constants
 a_seller_loc = [.2, .7]
-a_buyer_loc = [.2, .2, .2, .2, .2, .7, .7, .7, .7, .7]
+a_buyer_loc = [2, 2, 2, 2, 2, 7, 7, 7, 7, 7]
 SELLER_PRICE = 1
-SELLER_QUANTITY = 5.
+SELLER_QUANTITY = 5
 
-A_SELLER_PRICES = np.arange(1,2.1,.1)
-A_SELLER_QUANTITIES = np.arange(0,8,.5)
+A_SELLER_PRICES = np.arange(10,21,1)
+A_SELLER_QUANTITIES = np.arange(0,80,5)
+#A_BUYER_LOC = np.random.rand(NUM_BUYERS)
+#A_SELLER_LOC = np.random.rand(NUM_SELLERS)
+
 
 #####################
 #####################
@@ -43,9 +43,9 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma=GAMMA):
     m_dist = [[circle_dist(buyer_loc, seller_loc)
         for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
     # Matrix with rel dist with list of prices. '+ 1' because min dist is 1.
-    m_rel_dist = np.argsort(m_dist, axis=0) + 1.0
+    m_rel_dist = np.argsort(m_dist, axis=0) + 1
     # Lot of potential speed up here, only need to do exponent once.
-    m_tax = np.array(m_rel_dist**gamma, dtype=float)
+    m_tax = np.array(m_rel_dist**gamma, dtype=int)
     return m_tax
 
 
@@ -100,7 +100,7 @@ def find_profit(a_quantity, a_price, m_tax, cost):
     a_profit = a_revenue - a_cost
     return a_profit
 
-def find_profit_2(seller0_price, seller0_quantity, seller1_price, seller1_quantity, m_tax):
+def find_profit_2(seller0_price, seller0_quantity, seller1_price, seller1_quantity, m_tax, cost):
     a_profit = find_profit(np.array([seller0_quantity, seller1_quantity]),
             np.array([seller0_price, seller1_price]), m_tax, cost)
     return a_profit[1]
@@ -118,24 +118,25 @@ def heatmap(a_price_range, a_quantity_range, seller0_price, seller0_quantity, m_
 
 def arrayInd_to_array2Ind(a_ind, num_cols, num_rows):
     a_ind_col = a_ind % num_cols
-    a_ind_row = a_ind // num_rows
+    a_ind_row = a_ind // num_cols
     return a_ind_col, a_ind_row
 
 def make_game_table_value(a_ind_game_table, a_strat_quantity, a_strat_price, m_tax, cost):
-    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(a_ind_game_table,
+    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(np.array(a_ind_game_table),
             len(a_strat_quantity), len(a_strat_price))
-    a_quantity = [a_strat_quantity[ind] for ind in a_ind_quantity]
-    a_price = [a_strat_price[ind] for ind in a_ind_price]
+    a_quantity = np.array([a_strat_quantity[ind] for ind in a_ind_quantity])
+    a_price = np.array([a_strat_price[ind] for ind in a_ind_price])
     ret = find_profit(a_quantity, a_price, m_tax, cost)
     return ret
 
 def make_game_table(a_strat_quantity, a_strat_price, m_tax, cost, num_sellers):
+    print(num_sellers)
     a_num_strats = [len(a_strat_quantity) * len(a_strat_price)] * num_sellers
     ret = gmb.Game.new_table(a_num_strats)
-    for profile in game.contigencies:
+    for profile in ret.contingencies:
         a_profit = make_game_table_value(profile, a_strat_quantity, a_strat_price, m_tax, cost)
         for ind in range(num_sellers):
-            ret[profile][ind] = a_profit[ind]
+            ret[profile][ind] = int(a_profit[ind])
     return ret
 
 
@@ -153,4 +154,7 @@ ax_heat = heatmap(A_SELLER_PRICES, A_SELLER_QUANTITIES, SELLER_PRICE, SELLER_QUA
 ax_heat.set(ylabel = 'price', xlabel = 'quantity')
 ax_heat.set_yticklabels(reversed(A_SELLER_PRICES), rotation=0)
 ax_heat.set_xticklabels(A_SELLER_QUANTITIES)
-plt.show()
+#plt.show()
+
+make_game_table(A_SELLER_QUANTITIES, A_SELLER_PRICES, m_tax, COST, 2)
+
