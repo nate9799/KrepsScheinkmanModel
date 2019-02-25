@@ -19,8 +19,8 @@ a_buyer_loc = [2, 2, 2, 2, 2, 7, 7, 7, 7, 7]
 SELLER_PRICE = 1
 SELLER_QUANTITY = 5
 
-A_SELLER_PRICES = np.arange(10,21,1)
-A_SELLER_QUANTITIES = np.arange(0,80,5)
+A_SELLER_PRICES = np.arange(13,16,1)
+A_SELLER_QUANTITIES = np.arange(30,60,10)
 #A_BUYER_LOC = np.random.rand(NUM_BUYERS)
 #A_SELLER_LOC = np.random.rand(NUM_SELLERS)
 
@@ -132,6 +132,7 @@ def make_game_table_value(a_ind_game_table, a_strat_quantity, a_strat_price, m_t
 def make_game_table(a_strat_quantity, a_strat_price, m_tax, cost, num_sellers):
     print(num_sellers)
     a_num_strats = [len(a_strat_quantity) * len(a_strat_price)] * num_sellers
+    print(a_num_strats)
     ret = gmb.Game.new_table(a_num_strats)
     for profile in ret.contingencies:
         a_profit = make_game_table_value(profile, a_strat_quantity, a_strat_price, m_tax, cost)
@@ -146,15 +147,18 @@ def make_game_table(a_strat_quantity, a_strat_price, m_tax, cost, num_sellers):
 ##################
 ##################
 
-plt.figure(figsize=(20, 20))
 m_tax = get_m_tax(a_buyer_loc, a_seller_loc, GAMMA)
 
-ax_heat = heatmap(A_SELLER_PRICES, A_SELLER_QUANTITIES, SELLER_PRICE, SELLER_QUANTITY, m_tax, COST)
-
-ax_heat.set(ylabel = 'price', xlabel = 'quantity')
-ax_heat.set_yticklabels(reversed(A_SELLER_PRICES), rotation=0)
-ax_heat.set_xticklabels(A_SELLER_QUANTITIES)
+#plt.figure(figsize=(20, 20))
+#ax_heat = heatmap(A_SELLER_PRICES, A_SELLER_QUANTITIES, SELLER_PRICE, SELLER_QUANTITY, m_tax, COST)
+#ax_heat.set(ylabel = 'price', xlabel = 'quantity')
+#ax_heat.set_yticklabels(reversed(A_SELLER_PRICES), rotation=0)
+#ax_heat.set_xticklabels(A_SELLER_QUANTITIES)
 #plt.show()
 
-make_game_table(A_SELLER_QUANTITIES, A_SELLER_PRICES, m_tax, COST, 2)
+game = make_game_table(A_SELLER_QUANTITIES, A_SELLER_PRICES, m_tax, COST, 2)
+print(game.write())
+solver = gmb.nash.ExternalEnumMixedSolver()
+solution = solver.solve(game)
+print(solution)
 
