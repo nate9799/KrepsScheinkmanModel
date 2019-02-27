@@ -78,7 +78,7 @@ def find_bundle(a_quantity_unsold, a_price_rel, a_dist, endowment = ENDOWMENT):
 
 def find_quantity_sold(a_quantity, m_price_rel, m_dist):
     num_buyers = np.size(m_price_rel, 1)
-    num_sellers = np.size(m_price_rel, 0)
+_sellers = np.size(m_price_rel, 0)
     ret = np.array([[0]*num_buyers] * num_sellers)
     a_quantity_unsold = a_quantity
     for a_price_rel, a_dist in zip(m_price_rel.T, m_dist.T):
