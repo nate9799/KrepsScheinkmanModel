@@ -23,8 +23,6 @@ SELLER_QUANTITY = 5
 A_SELLER_PRICES = np.array([15,14])
 A_SELLER_QUANTITIES = np.arange(40,60,10)
 FILE_OUT = '/home/nate/Desktop/here.pickle'
-#A_BUYER_LOC = np.random.rand(NUM_BUYERS)
-#A_SELLER_LOC = np.random.rand(NUM_SELLERS)
 
 
 #####################
@@ -194,15 +192,6 @@ def make_dic_of_pure_nash(a_strat_quantity, a_strat_price, a_buyer_loc,
 ##### SCRIPT #####
 ##################
 ##################
-
-
-#plt.figure(figsize=(20, 20))
-#ax_heat = heatmap(A_SELLER_PRICES, A_SELLER_QUANTITIES, SELLER_PRICE, SELLER_QUANTITY,
-#                  m_tax = m_tax, m_dist = m_dist, cost = COST)
-#ax_heat.set(ylabel = 'price', xlabel = 'quantity')
-#ax_heat.set_yticklabels(reversed(A_SELLER_PRICES), rotation=0)
-#ax_heat.set_xticklabels(A_SELLER_QUANTITIES)
-#plt.show()
 
 d_write = make_dic_of_pure_nash(A_SELLER_QUANTITIES, A_SELLER_PRICES,
         a_buyer_loc, a_seller_loc, COST, GAMMA)
