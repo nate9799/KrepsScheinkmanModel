@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from sklearn.externals import joblib as jl
 import numpy as np
 import seaborn as sns
 import gambit as gmb
@@ -19,8 +20,9 @@ a_buyer_loc = [.2, .2, .2, .2, .2, .7, .7, .7, .7, .7]
 SELLER_PRICE = 1
 SELLER_QUANTITY = 5
 
-A_SELLER_PRICES = np.arange(14,16,1)
+A_SELLER_PRICES = np.array([15,14])
 A_SELLER_QUANTITIES = np.arange(40,60,10)
+FILE_OUT = '/home/nate/Desktop/here.pickle'
 #A_BUYER_LOC = np.random.rand(NUM_BUYERS)
 #A_SELLER_LOC = np.random.rand(NUM_SELLERS)
 
@@ -99,7 +101,7 @@ def find_profit(a_quantity, a_price, m_tax, m_dist, cost):
     a_revenue = a_price * a_quantity_sold
     a_cost = cost * a_quantity
     a_profit = a_revenue - a_cost
-    return a_profit
+    return a_profit, a_quantity_sold
 
 def find_profit_2(seller0_price, seller0_quantity, seller1_price, seller1_quantity,
         **kwargs):
@@ -123,12 +125,13 @@ def arrayInd_to_array2Ind(a_ind, num_cols, num_rows):
     a_ind_row = a_ind // num_cols
     return a_ind_col, a_ind_row
 
-def make_game_table_value(a_ind_game_table, a_strat_quantity, a_strat_price, **kwargs):
+def find_profit_handler(a_ind_game_table, a_strat_quantity, a_strat_price,
+        **kwargs):
     a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(np.array(a_ind_game_table),
             len(a_strat_quantity), len(a_strat_price))
     a_quantity = np.array([a_strat_quantity[ind] for ind in a_ind_quantity])
     a_price = np.array([a_strat_price[ind] for ind in a_ind_price])
-    ret = find_profit(a_quantity, a_price, **kwargs)
+    ret, ignore = find_profit(a_quantity, a_price, **kwargs)
     return ret
 
 def make_game_table(a_strat_quantity, a_strat_price, num_sellers, **kwargs):
@@ -137,11 +140,54 @@ def make_game_table(a_strat_quantity, a_strat_price, num_sellers, **kwargs):
     print(a_num_strats)
     ret = gmb.Game.new_table(a_num_strats)
     for profile in ret.contingencies:
-        a_profit = make_game_table_value(profile, a_strat_quantity, a_strat_price, **kwargs)
+        a_profit = find_profit_handler(profile, a_strat_quantity,
+                a_strat_price, **kwargs)
         for ind in range(num_sellers):
             ret[profile][ind] = int(a_profit[ind])
     return ret
 
+
+#####################
+### CREATE PICLKE ###
+#####################
+
+def make_dic_of_pure_nash(a_strat_quantity, a_strat_price, a_buyer_loc,
+        a_seller_loc, cost, gamma):
+# Setup
+    m_tax, m_dist = get_m_tax_and_m_dist(a_buyer_loc, a_seller_loc, gamma)
+    num_sellers = len(a_seller_loc)
+    num_strategies = len(a_strat_quantity) * len(a_strat_price)
+    kwargs = {'m_tax' : m_tax, 'm_dist' : m_dist, 'cost' : cost}
+# Create and Solve Game.
+    game = make_game_table(a_strat_quantity, a_strat_price, num_sellers, **kwargs)
+    solver = gmb.nash.ExternalEnumPureSolver()
+    nash = solver.solve(game)
+    m_strat_nash = np.array(nash[0]).reshape((num_sellers, num_strategies))
+# Check that there is only one nash equilibrium, and it is pure.  
+    a_a_tmp = np.nonzero(m_strat_nash == 1)
+    if len(a_a_tmp[0]) != num_sellers:
+        raise Exception('Problem with  Nash Equilibrium : No pure Nash Equilibrium found or more than one found. Nash Data = {}'.format(nash))
+    if any(a_a_tmp[0] != range(num_sellers)):
+        raise Exception('Problem with Nash Equilibrium : No pure Nash Equilibrium found or more than one found. Nash Data = {}'.format(nash))
+# Find the strategies chosen.  
+    a_ind_strat_nash = a_a_tmp[1]
+# Find output values
+    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(np.array(a_ind_strat_nash),
+            len(a_strat_quantity), len(a_strat_price))
+    a_quantity = np.array([a_strat_quantity[ind] for ind in a_ind_quantity])
+    a_price = np.array([a_strat_price[ind] for ind in a_ind_price])
+    a_profit, a_quantity_sold = find_profit(a_quantity, a_price, **kwargs)
+# Create dic
+    ret = {'a_profit' : a_profit,
+           'gamma' : gamma,
+           'a_quantity_nash' : a_quantity,
+           'a_price_nash' : a_price,
+           'a_quantity_sold' : a_quantity_sold,
+           'a_buyer_loc' : a_buyer_loc,
+           'a_seller_loc' : a_seller_loc}
+    ret.update(kwargs)
+    print(ret)
+    return ret
 
 ##################
 ##################
@@ -149,7 +195,6 @@ def make_game_table(a_strat_quantity, a_strat_price, num_sellers, **kwargs):
 ##################
 ##################
 
-m_tax, m_dist = get_m_tax_and_m_dist(a_buyer_loc, a_seller_loc, GAMMA)
 
 #plt.figure(figsize=(20, 20))
 #ax_heat = heatmap(A_SELLER_PRICES, A_SELLER_QUANTITIES, SELLER_PRICE, SELLER_QUANTITY,
@@ -159,10 +204,8 @@ m_tax, m_dist = get_m_tax_and_m_dist(a_buyer_loc, a_seller_loc, GAMMA)
 #ax_heat.set_xticklabels(A_SELLER_QUANTITIES)
 #plt.show()
 
-game = make_game_table(A_SELLER_QUANTITIES, A_SELLER_PRICES, 2,
-        m_tax = m_tax, m_dist = m_dist, cost = COST)
-print(game.write())
-solver = gmb.nash.ExternalEnumMixedSolver()
-solution = solver.solve(game)
-print(solution)
+d_write = make_dic_of_pure_nash(A_SELLER_QUANTITIES, A_SELLER_PRICES,
+        a_buyer_loc, a_seller_loc, COST, GAMMA)
+
+jl.dump(d_write, FILE_OUT)
 
