@@ -11,17 +11,16 @@ NUM_BUYERS = 100
 NUM_SELLERS = 2
 COST = 10
 GAMMA = 0
-SLOPE = 1
 ENDOWMENT = 20
 
 ## Setup Constants
-a_seller_loc = [.2, .7]
-a_buyer_loc = [.2, .2, .2, .2, .2, .7, .7, .7, .7, .7]
+a_seller_loc = [.2, .7, .9]
+a_buyer_loc = [.2, .2, .2, .9, .7, .7, .7, .9, .9, ]
 SELLER_PRICE = 1
 SELLER_QUANTITY = 5
 
-A_SELLER_PRICES = np.array([15,14])
-A_SELLER_QUANTITIES = np.arange(40,60,10)
+A_SELLER_PRICES = np.array([12, 12.5, 13.1, 14.0])
+A_SELLER_QUANTITIES = np.array([40.1, 50, 60, 70])
 FILE_OUT = '/home/nate/Desktop/here.pickle'
 
 
@@ -114,6 +113,54 @@ def heatmap(a_price_range, a_quantity_range, seller0_price, seller0_quantity, **
     return(sns.heatmap(heat, annot=True, fmt = '.3g'))
 
 
+###############################
+### HANDLER FOR FIND PROFIT ###
+###############################
+
+def find_profit_handler_ind(a_ind_game_table, a_strat_quantity, a_strat_price,
+        **kwargs):
+    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(np.array(a_ind_game_table),
+            len(a_strat_quantity), len(a_strat_price))
+    a_quantity = np.array([a_strat_quantity[ind] for ind in a_ind_quantity])
+    a_price = np.array([a_strat_price[ind] for ind in a_ind_price])
+    a_profit, a_quantity_sold = find_profit(a_quantity, a_price, **kwargs)
+    ret = {'a_profit' : a_profit,
+           'a_quantity_nash' : a_quantity,
+           'a_price_nash' : a_price,
+           'a_quantity_sold' : a_quantity_sold}
+    return ret
+
+def find_profit_handler_nash(nash, a_strat_quantity, a_strat_price,
+        num_sellers, **kwargs):
+    print(nash)
+    if len(nash) == 0:
+        raise Exception('Problem with  Nash Equilibrium : No pure Nash Equilibrium found.  Nash Data = {}'.format(nash))
+    num_strategies = len(a_strat_quantity) * len(a_strat_price)
+    a_m_strat_nash = np.array(nash[0]).reshape((num_sellers, num_strategies))
+    if  len(nash) == 1:
+        a_a_tmp = np.nonzero(a_m_strat_nash == 1)
+        a_ind_strat_nash = a_a_tmp[1]
+        ret = find_profit_handler_ind(a_ind_strat_nash, a_strat_quantity,
+                a_strat_price, **kwargs)
+        return ret
+# Setup for loop
+    ret = {}
+    tot_profit = np.NINF
+    for m_strat_nash in a_m_strat_nash:
+# Find the strategies chosen.  
+        a_a_tmp = np.nonzero(m_strat_nash == 1)
+        a_ind_strat_nash = a_a_tmp[1]
+# Find output values
+        d_tmp = find_profit_handler_ind(a_ind_strat_nash, a_strat_quantity,
+                a_strat_price, **kwargs)
+        profit_tmp = sum(d_tmp['a_profit'])
+# Check if output is optimal
+        if profit_tmp > profit:
+            tot_profit = tot_profit_tmp
+            ret = d_tmp
+    return ret
+
+
 #########################
 ### CREATE GAME TABLE ###
 #########################
@@ -123,23 +170,15 @@ def arrayInd_to_array2Ind(a_ind, num_cols, num_rows):
     a_ind_row = a_ind // num_cols
     return a_ind_col, a_ind_row
 
-def find_profit_handler(a_ind_game_table, a_strat_quantity, a_strat_price,
-        **kwargs):
-    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(np.array(a_ind_game_table),
-            len(a_strat_quantity), len(a_strat_price))
-    a_quantity = np.array([a_strat_quantity[ind] for ind in a_ind_quantity])
-    a_price = np.array([a_strat_price[ind] for ind in a_ind_price])
-    ret, ignore = find_profit(a_quantity, a_price, **kwargs)
-    return ret
-
 def make_game_table(a_strat_quantity, a_strat_price, num_sellers, **kwargs):
     print(num_sellers)
     a_num_strats = [len(a_strat_quantity) * len(a_strat_price)] * num_sellers
     print(a_num_strats)
     ret = gmb.Game.new_table(a_num_strats)
     for profile in ret.contingencies:
-        a_profit = find_profit_handler(profile, a_strat_quantity,
+        d_tmp = find_profit_handler_ind(profile, a_strat_quantity,
                 a_strat_price, **kwargs)
+        a_profit = d_tmp['a_profit']
         for ind in range(num_sellers):
             ret[profile][ind] = int(a_profit[ind])
     return ret
@@ -154,36 +193,23 @@ def make_dic_of_pure_nash(a_strat_quantity, a_strat_price, a_buyer_loc,
 # Setup
     m_tax, m_dist = get_m_tax_and_m_dist(a_buyer_loc, a_seller_loc, gamma)
     num_sellers = len(a_seller_loc)
-    num_strategies = len(a_strat_quantity) * len(a_strat_price)
+    num_buyers = len(a_buyer_loc)
     kwargs = {'m_tax' : m_tax, 'm_dist' : m_dist, 'cost' : cost}
 # Create and Solve Game.
     game = make_game_table(a_strat_quantity, a_strat_price, num_sellers, **kwargs)
     solver = gmb.nash.ExternalEnumPureSolver()
     nash = solver.solve(game)
-    m_strat_nash = np.array(nash[0]).reshape((num_sellers, num_strategies))
-# Check that there is only one nash equilibrium, and it is pure.  
-    a_a_tmp = np.nonzero(m_strat_nash == 1)
-    if len(a_a_tmp[0]) != num_sellers:
-        raise Exception('Problem with  Nash Equilibrium : No pure Nash Equilibrium found or more than one found. Nash Data = {}'.format(nash))
-    if any(a_a_tmp[0] != range(num_sellers)):
-        raise Exception('Problem with Nash Equilibrium : No pure Nash Equilibrium found or more than one found. Nash Data = {}'.format(nash))
-# Find the strategies chosen.  
-    a_ind_strat_nash = a_a_tmp[1]
-# Find output values
-    a_ind_quantity, a_ind_price = arrayInd_to_array2Ind(np.array(a_ind_strat_nash),
-            len(a_strat_quantity), len(a_strat_price))
-    a_quantity = np.array([a_strat_quantity[ind] for ind in a_ind_quantity])
-    a_price = np.array([a_strat_price[ind] for ind in a_ind_price])
-    a_profit, a_quantity_sold = find_profit(a_quantity, a_price, **kwargs)
+    d_nash = find_profit_handler_nash(nash, a_strat_quantity, a_strat_price,
+            num_sellers, **kwargs)
 # Create dic
-    ret = {'a_profit' : a_profit,
-           'gamma' : gamma,
-           'a_quantity_nash' : a_quantity,
-           'a_price_nash' : a_price,
-           'a_quantity_sold' : a_quantity_sold,
+    ret = {'gamma' : gamma,
            'a_buyer_loc' : a_buyer_loc,
-           'a_seller_loc' : a_seller_loc}
+           'a_seller_loc' : a_seller_loc,
+           'num_buyers' : num_buyers,
+           'num_sellers' : num_sellers,
+           'endowment' : ENDOWMENT}
     ret.update(kwargs)
+    ret.update(d_nash)
     print(ret)
     return ret
 
