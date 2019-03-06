@@ -16,7 +16,7 @@ sb.set_style("darkgrid")
 
 # import data
 ########################################################################################################################
-file_path 		= "/home/nate/Desktop/"
+file_path 		= "./output/data/"
 file_name 		= file_path + "here.pickle"
 d_load 			= jl.load(file_name)
 
@@ -41,24 +41,23 @@ figsize 		= (width_scale*ncol,height_scale*nrow)
 
 # create the plot window
 ####################################################################################################################
-plt.clf()
-plt.rc('text', usetex=True)
 fig = plt.figure(figsize=figsize)
-fig.subplots_adjust(hspace=.12, wspace=0.4)
+fig.subplots_adjust(hspace=.2, wspace=0.2)
+plt.rc('text', usetex=True)
+
 
 # set all axes instances
 ####################################################################################################################
 circle_axis   	= plt.subplot2grid( (nrow,ncol), (0,0) )
-price_axis    	= plt.subplot2grid( (nrow,ncol), (1,0) )
-profit_axis		= plt.subplot2grid( (nrow,ncol), (2,0) )
-who_buys_axis	= plt.subplot2grid( (nrow,ncol), (3,0) )
+price_axis    	= plt.subplot2grid( (nrow,ncol), (0,1) )
+profit_axis		= plt.subplot2grid( (nrow,ncol), (1,0) )
+who_buys_axis	= plt.subplot2grid( (nrow,ncol), (1,1) )
 
 
 # create plot title 
 ########################################################################################################################
-fig = plt.figure(figsize=(14,5))
-
-title = 'Gamma=%s, Cost/unit=%s, endowment=%s, #Sellers=%s, #Buyers=%s'(gamma, cost, endowment, num_sellers, num_buyers)
+fn    = 'gamma=%s_cost=%s_endowment=%s_sellers=%s_buyers=%s'%(gamma, cost, endowment, num_sellers, num_buyers)
+title = fn.replace('_',', ')
 fig.suptitle(title, fontsize=14) 
 
 
@@ -83,7 +82,7 @@ for i, s in enumerate(seller_pos):
     xcoord = [ r * np.sin( 2*np.pi*s ) ]
     ycoord = [ r * np.cos( 2*np.pi*s ) ]
     
-    ax.scatter(xcoord, ycoord, marker='o', color=colors[i], s=400, zorder=3, label='buyer %s'%i)
+    ax.scatter(xcoord, ycoord, marker='o', color=colors[i], s=200, zorder=3, label='buyer %s'%i)
 
 
 buyer_pos     = [ 0.14, 0.21, 0.33, 0.54, 0.93 ] 			# positions where the buers are located
@@ -94,9 +93,14 @@ for b,s in zip( buyer_pos, seller_ind ):
     xcoord = [ r * np.sin( 2*np.pi*b ) ]
     ycoord = [ r * np.cos( 2*np.pi*b ) ]
     
-    ax.scatter(xcoord, ycoord, marker='s', color=colors[s], s=100, zorder=2)
+    ax.scatter(xcoord, ycoord, marker='s', color=colors[s], s=80, zorder=2)
     
-ax.legend(loc='best', ncol=6, frameon=False)
+
+ax.set_xlim(-1.2*r, 1.2*r)
+ax.set_ylim(-1.2*r, 1.5*r)
+ax.legend(loc='best', ncol=6, frameon=False, fontsize=8)
+ax.axes.get_xaxis().set_visible(False)
+ax.axes.get_yaxis().set_visible(False)
 
 
 # plot the price for each buyer 
@@ -112,6 +116,8 @@ w       = 0.2
 ax.bar( 	x-w, a_price,          width=w,  color=colors[0],  alpha=1.0,  align='center' )
 ax.bar( 	x-w, cost,             width=w,  color='black',    alpha=0.2,  align='center' )
 
+
+ax.set_xticks(x)
 ax.set_xlabel('sellers',                        fontsize=13)
 ax.set_ylabel('prices',      color = colors[0], fontsize=13)
 ax.autoscale(tight=True)
@@ -121,23 +127,34 @@ ax.autoscale(tight=True)
 ax = price_axis.twinx()
 ax.grid(False)
 
-ax.bar(	x+w, a_quantity,       width=w,  color=colors[2],  alpha=1.0,  align='center' )
+ax.bar(	x+w, a_quantity,       width=w,  color=colors[1],  alpha=1.0,  align='center' )
 ax.bar(	x+w, a_quantity_sold,  width=w,  color='black',    alpha=0.2,  align='center' )
 
-ax.set_ylabel('quantities', color = colors[2], fontsize=13)
+ax.set_xticks(x)
+ax.set_ylabel('quantities', color = colors[1], fontsize=13)
 
 
 # plot the profit for each seller
 ########################################################################################################################
 ax = profit_axis
-ax.grid(False)
 
 ax.bar(	x, 	 a_profit,         width=w,  color=colors[2],  alpha=1.0,  align='center' )
 
+ax.set_xticks(x)
 ax.set_xlabel('sellers',                        fontsize=13)
-ax3.set_ylabel('quantities', color = colors[2], fontsize=13)
+ax.set_ylabel('profit', 	color = colors[2], fontsize=13)
 ax.autoscale(tight=True)
 
-plt.show()
+# plot nr of sellers for each buyer 
+########################################################################################################################
+ax = who_buys_axis
+ax.set_visible(False)
+
+
+# write figure to the output 
+########################################################################################################################
+out_folder = './output/plots/'
+if not os.path.exists(out_folder): os.makedirs(folder)
+plt.savefig(out_folder + fn + '.pdf', bbox_inches='tight')
 
 
