@@ -154,7 +154,7 @@ ax.set_visible(False)
 # write figure to the output 
 ########################################################################################################################
 out_folder = './output/plots/'
-if not os.path.exists(out_folder): os.makedirs(folder)
+if not os.path.exists(out_folder): os.makedirs(out_folder)
 plt.savefig(out_folder + fn + '.pdf', bbox_inches='tight')
 
 
