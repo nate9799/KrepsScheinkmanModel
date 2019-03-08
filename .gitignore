@@ -6,10 +6,5 @@
 *.pkl
 *.csv
 *.xml
-*.swp
-*.swo
-*.swq
-*.swr
-*.sws
-*.swt
+*.sw?
 *.pdf
