@@ -1,0 +1,53 @@
+Dear Sandro,
+
+This year’s International Conference on Computational Social Science (IC2S2 2019) received a total of 551 submissions. 
+
+We are delighted to inform you that your submission 
+
+Fair, Stable Exchange Networks through Quenched Merchant Location and Idiosyncratic Trading Costs
+
+has been accepted for oral presentation at IC2S2 2019. This decision was based on blind reviews of the abstract that assessed the content and fit with the scope of the conference. Please find the reviews below.
+
+You will be scheduled for a 15-minute time slot for oral presentation (10 minutes presentation plus 5 minutes for discussion) in one of the parallel sessions during the main conference (July 18-20). We will get back to you with additional organizational details and recommendations for preparing your presentation. We will release the full program as soon as it becomes available.
+
+For every accepted presentation, at least one author has to register by June 15 – if you miss this deadline, we may not be able to include your talk in the conference program. Please register as soon as possible at https://2019.ic2s2.org/registration/, early-bird registration ends at April 30. Registration is now open.
+
+You will find information about travel, accommodation, and special hotel booking rates for participants on the conference website https://2019.ic2s2.org/. For questions about general logistics, you can get in touch with the local organizers at ic2s2@uva.nl.
+
+Thank you for submitting your work to IC2S2 2019. We are very much looking forward to meeting you at the conference! 
+
+Best wishes,
+
+Program Committee Chairs, IC2S2 2019
+Rense Corten, Kayla de la Haye, David Schoch, Vincent Traag, and Milena Tsvetkova
+
+P.S. Please note that this notification might be sent to corresponding authors only. Please make sure to forward it to your co-authors.
+
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 281
+TITLE:  Fair, Stable Exchange Networks through Quenched Merchant Location and Idiosyncratic Trading Costs
+AUTHORS: Sandro Lera, Nate Dwyer and Alex Pentland
+
+Fit with the conference: 1 (good)
+Technical and/or theoretical quality: 1 (high)
+Novelty and potential for impact: 1 (high)
+Overall evaluation: 1 (weak accept)
+
+----------- Overall evaluation -----------
+The paper presents an interesting theoretical model of a market with geographical constraints. While the simulation study of the model is mentioned, the details of the computational part of the project remain unaddressed in the abstract. Given the centrality of location for the proposed model, it would also benefit the paper if a brief discussion of how topology is defined was present.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 281
+TITLE:  Fair, Stable Exchange Networks through Quenched Merchant Location and Idiosyncratic Trading Costs
+AUTHORS: Sandro Lera, Nate Dwyer and Alex Pentland
+
+Fit with the conference: 1 (good)
+Technical and/or theoretical quality: 1 (high)
+Novelty and potential for impact: 1 (high)
+Overall evaluation: 2 (accept)
+
+----------- Overall evaluation -----------
+The authors present a model of a market in one product according the game-theoretic logic of Cournot competition, but with a variable geographical constraint imposed as a cost that is a function of distance between buyer and seller. They contend that this formulation reveals a tension between isolated markets on the one hand, and monopolistic tendencies on the other. Their main contribution is to show that - for the case of no geographic constraint - a taxation scheme based on relative distance can avoid the pitfalls of both. The novelty of this work is difficult for me to asses, as the Cournot competition model has been exhaustively studied but there are many variations. The abstract should contain a citation to the base model that the authors are building from, and the paper would benefit from consideration also of the case with some geographic constraint remaining. While the technical quality of this work is quite high, I would encourage the authors to consider more deepl!
+y the context in which they situate their model. Economic history, economic anthropology, and development economics would take serious issue with the authors' characterization of "self-contained villages" as these fields offer rich examples of long distance trade even in ancient times. Neither are that many markets actually global even today, where shipping costs can vary widely. A more appropriate comparison could be something like that between local consignment stores and online marketplaces. These are both "platforms" for sellers that operate on the same business model, but one seeks buyers locally and the other nationally.
