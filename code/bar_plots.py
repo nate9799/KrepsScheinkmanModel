@@ -50,7 +50,7 @@ plt.rc('text', usetex=True)
 ####################################################################################################################
 circle_axis   	= plt.subplot2grid( (nrow,ncol), (0,0) )
 price_axis    	= plt.subplot2grid( (nrow,ncol), (0,1) )
-profit_axis		= plt.subplot2grid( (nrow,ncol), (1,0) )
+profit_axis	= plt.subplot2grid( (nrow,ncol), (1,0) )
 who_buys_axis	= plt.subplot2grid( (nrow,ncol), (1,1) )
 
 
