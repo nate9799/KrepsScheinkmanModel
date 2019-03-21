@@ -425,8 +425,6 @@ def main():
     a_seller_loc = [.2, .4, .5]
     a_buyer_loc = [.2, .2, .2, .2, .2, .2, .2, .2, .2]
     assert len(a_buyer_loc) % len(a_seller_loc) == 0, "Number of sellers does not divide number of buyers"
-    SELLER_PRICE = 1
-    SELLER_QUANTITY = 5
     A_SELLER_QUANTITIES = np.sort(get_a_strat_quantity(200, 250, 11,
         is_randomized=IS_RANDOMIZED))
     A_SELLER_PRICES = find_prices_from_quantities(A_SELLER_QUANTITIES,
@@ -447,7 +445,8 @@ def main():
     # './' doesn't seem to work for some reason.
     out_folder2 = '/home/nate/Documents/abmcournotmodel/code/'
     out_folder = out_folder2 + 'output/data/'
-    file_name = 'here.pickle'
+    file_name = 'gamma%d_cost%d_endowment%d_NumBuyers%d' % (GAMMA, COST,
+            ENDOWMENT, len(a_seller_loc)
     # Need to install os
     #if not os.path.exists(out_folder): os.makedirs(out_folder)
     file_out = out_folder + file_name
