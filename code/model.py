@@ -17,16 +17,21 @@ ENDOWMENT = 20
 #####################
 #####################
 
-#######################
-### INNER FUNCTIONS ###
-#######################
+###############################
+### STACKEXCHANGE FUNCTIONS ###
+###############################
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
+
+#######################
+### SETUP FUNCTIONS ###
+#######################
+
 def get_a_strat_quantity(lower_bound, upper_bound, num_strats,
         is_randomized=False):
-    if is_randomized
+    if is_randomized:
         return get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05)
     return np.linspace(lower_bound, upper_bound, num_strats)
     
@@ -41,9 +46,17 @@ def get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05):
     a_strat_rand = a_strat_base + a_rand
     return(a_strat_rand)
 
-def find_prices_from_quantities(a_quantity, endowment, num_buyers, num_sellers):
-    a_tot_quant = np.unique([sum(combo) for combo in
-            combinations_with_replacement(a_quantity, num_sellers)])
+def find_prices_from_quantities(a_quantity, endowment, num_buyers, num_sellers,
+        discretization_factor=1):
+    if discretization_factor == 1:
+        a_tot_quant = np.unique([sum(combo) for combo in
+                combinations_with_replacement(a_quantity, num_sellers)])
+    else:
+# This assumes that a_quantity forms an arithmetic sequence.  
+        num_prices = (len(a_quantity) -1) * num_sellers * discretization_factor + 1
+        lower = min(a_quantity) * num_sellers
+        upper = max(a_quantity) * num_sellers
+        a_tot_quant = np.linspace(lower, upper, num_prices)
     ret = np.sort(endowment - a_tot_quant/num_buyers)
     return ret
 
@@ -132,6 +145,10 @@ def find_quantity_sold(a_quantity, m_price_rel, endowment):
 ###################
 
 def find_profit_cournot(a_quantity, cost, endowment, num_buyers=10, just_profit = True):
+    '''
+    Finds profit for each seller based on theoretical cournot model, given
+    quantities, cost, endowment, and number of buyers.
+    '''
     tot_quant = sum(a_quantity)
     price = endowment - (tot_quant/num_buyers)
     return a_quantity * (price - cost)
@@ -322,10 +339,9 @@ def find_a_profile_nash_strat_from_game(game, num_players):
     if len(a_nash) == 0:
         #raise Exception("No pure Nash found: {}".format(a_nash))
         return np.array([])
-    num_contingencies = len(game.contingencies)
     num_nash = len(a_nash)
-    num_strat = int(num_contingencies**(.5))
-    a_nash = np.array(a_nash).reshape((num_nash, num_players, num_strat))
+    a_nash = np.array(a_nash)
+    a_nash = a_nash.reshape((num_nash, num_players, a_nash.size/(num_nash * num_players)))
     ret = np.array([np.nonzero(nash)[1] for nash in a_nash])
     return ret
 
@@ -400,18 +416,19 @@ def make_dic_of_pure_nash(a_strat_quantity, a_strat_price, a_buyer_loc,
 def main():
 # CONSTANTS
 ## Global Constants
-    COST = 10
+    COST = 100
     GAMMA = 0
-    ENDOWMENT = 20
+    ENDOWMENT = 200
     IS_RANDOMIZED = False
 
 ## Setup Constants
-    a_seller_loc = [.2, .7]
-    a_buyer_loc = [.2, .2, .2, .2, .2, .2, .2, .2, .2, .2]
+    a_seller_loc = [.2, .4, .5]
+    a_buyer_loc = [.2, .2, .2, .2, .2, .2, .2, .2, .2]
     assert len(a_buyer_loc) % len(a_seller_loc) == 0, "Number of sellers does not divide number of buyers"
     SELLER_PRICE = 1
     SELLER_QUANTITY = 5
-    A_SELLER_QUANTITIES = get_a_strat_quantity(29, 40, 12, is_randomized=IS_RANDOMIZED)
+    A_SELLER_QUANTITIES = np.sort(get_a_strat_quantity(200, 250, 11,
+        is_randomized=IS_RANDOMIZED))
     A_SELLER_PRICES = find_prices_from_quantities(A_SELLER_QUANTITIES,
             ENDOWMENT, len(a_buyer_loc), len(a_seller_loc))
 ################## TEST ###################
