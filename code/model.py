@@ -341,8 +341,8 @@ def make_game_table( num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kw
                     **kwargs)
         else:
             a_quantity = a_strat_quantity[profile]
-            a_profit = find_profit_handler(a_quantity,
-                    num_sellers=num_sellers, just_profit=True, inner_game=True,
+            a_profit = find_profit_handler(num_sellers, num_buyers, a_quantity,
+                    just_profit=True, inner_game=True,
                     **kwargs)
         for ind in range(num_sellers):
             float(a_profit[ind])
@@ -473,8 +473,8 @@ def main( num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, random
 
 if __name__ == "__main__":
 
-    num_sellers     = 4
-    num_buyers      = 7
+    num_sellers     = 2
+    num_buyers      = 4
     cost            = 100
     gamma           = 0
     endowment       = 200
