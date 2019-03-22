@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 import gambit as gmb
 import pandas as pd
-from itertools import combinations_with_replacement
+from itertools import combinations_with_replacement, product
 import sys
 import os
 
@@ -299,7 +299,7 @@ def find_profit_handler( num_sellers, num_buyers, a_tmp_quant, just_profit=False
 
     a_strat_quant = a_tmp_quant
     a_quantity = a_strat_quant[profile]
-    ret =  find_profit_handler( a_quantity, num_sellers, just_profit=False, inner_game=True, **kwargs )
+    ret =  find_profit_handler( num_sellers, num_buyers, a_quantity, just_profit=False, inner_game=True, **kwargs )
 
     return ret
 
@@ -319,6 +319,7 @@ def make_a_strat_price( num_buyers, a_quantity, cost, endowment, m_tax ):
     a_strat_price      = np.linspace( price - dist, price + dist, n )
 
     return a_strat_price
+
 
 def make_game_table( num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwargs ):
     '''
@@ -471,14 +472,30 @@ def main( num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, random
     jl.dump(d_write, folder + fn )
 
 
-if __name__ == "__main__":
+def parameter_combination( i ):
+    """
+    Execute the i-th parameter combination.
+    """
 
-    num_sellers     = 2
-    num_buyers      = 4
-    cost            = 100
-    gamma           = 0
-    endowment       = 200
-    randomize       = False
+    num_sellers     = [ 2, 4  ]
+    num_buyers      = [ 4, 12 ]
+    cost            = [ 100 ]
+    gamma           = [ 0, 0.5 ]
+    endowment       = [ 200 ]
+    randomize       = [ True, False ]
+
+    combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
+    comb            = combs[i]
+
+    num_sellers, num_buyers, cost, gamma, endowment, randomize = comb
 
     main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+
+
+
+if __name__ == "__main__":
+
+    i = int(sys.argv[1]) - 1
+
+    parameter_combination( i )
 
