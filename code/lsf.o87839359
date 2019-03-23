@@ -1,0 +1,690 @@
+Sender: LSF System <lsfadmin@eu-a6-007-01>
+Subject: Job 87839359[1]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-007-01>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:06 2019
+Results reported at Sat Mar 23 17:19:06 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   10.70 sec.
+    Max Memory :                                 145 MB
+    Average Memory :                             125.00 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35855.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   35 sec.
+    Turnaround time :                            42 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=4, cost=100, gamma=0, endowment = 200, randomize=True
+Sender: LSF System <lsfadmin@eu-a6-003-09>
+Subject: Job 87839359[2]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-003-09>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:06 2019
+Results reported at Sat Mar 23 17:19:06 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   10.86 sec.
+    Max Memory :                                 144 MB
+    Average Memory :                             125.00 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35856.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                7
+    Run time :                                   24 sec.
+    Turnaround time :                            42 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=4, cost=100, gamma=0, endowment = 200, randomize=False
+Sender: LSF System <lsfadmin@eu-a6-011-11>
+Subject: Job 87839359[3]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-011-11>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:07 2019
+Results reported at Sat Mar 23 17:19:07 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   10.70 sec.
+    Max Memory :                                 145 MB
+    Average Memory :                             125.00 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35855.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   24 sec.
+    Turnaround time :                            43 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=4, cost=100, gamma=0.5, endowment = 200, randomize=True
+Sender: LSF System <lsfadmin@eu-a6-007-11>
+Subject: Job 87839359[4]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-007-11>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:07 2019
+Results reported at Sat Mar 23 17:19:07 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   11.17 sec.
+    Max Memory :                                 145 MB
+    Average Memory :                             125.00 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35855.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   39 sec.
+    Turnaround time :                            43 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=4, cost=100, gamma=0.5, endowment = 200, randomize=False
+Sender: LSF System <lsfadmin@eu-a6-008-06>
+Subject: Job 87839359[6]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-008-06>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:09 2019
+Results reported at Sat Mar 23 17:19:09 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   11.09 sec.
+    Max Memory :                                 211 MB
+    Average Memory :                             165.00 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35789.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   43 sec.
+    Turnaround time :                            45 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=12, cost=100, gamma=0, endowment = 200, randomize=False
+Sender: LSF System <lsfadmin@eu-a6-011-05>
+Subject: Job 87839359[8]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-011-05>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:10 2019
+Results reported at Sat Mar 23 17:19:10 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   11.98 sec.
+    Max Memory :                                 213 MB
+    Average Memory :                             161.00 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35787.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   35 sec.
+    Turnaround time :                            46 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=12, cost=100, gamma=0.5, endowment = 200, randomize=False
+Sender: LSF System <lsfadmin@eu-a6-011-05>
+Subject: Job 87839359[7]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-011-05>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:10 2019
+Results reported at Sat Mar 23 17:19:10 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   12.00 sec.
+    Max Memory :                                 227 MB
+    Average Memory :                             197.33 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35773.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   35 sec.
+    Turnaround time :                            46 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=12, cost=100, gamma=0.5, endowment = 200, randomize=True
+Sender: LSF System <lsfadmin@eu-a6-008-06>
+Subject: Job 87839359[5]: <Cournot[1-16]> in cluster <euler> Done
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-008-06>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 17:19:29 2019
+Results reported at Sat Mar 23 17:19:29 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   11.14 sec.
+    Max Memory :                                 207 MB
+    Average Memory :                             129.33 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               35793.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   43 sec.
+    Turnaround time :                            65 sec.
+
+The output (if any) follows:
+
+executing num_sell=2, num_buy=12, cost=100, gamma=0, endowment = 200, randomize=True
+Sender: LSF System <lsfadmin@eu-a6-003-04>
+Subject: Job 87839359[16]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-003-04>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 20:22:27 2019
+Results reported at Sat Mar 23 20:22:27 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   11639.94 sec.
+    Max Memory :                                 5629 MB
+    Average Memory :                             2855.59 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               30371.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                6
+    Run time :                                   11034 sec.
+    Turnaround time :                            11043 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=12, cost=100, gamma=0.5, endowment = 200, randomize=False
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+  File "model.py", line 493, in parameter_combination
+    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+  File "model.py", line 465, in main
+    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+  File "model.py", line 419, in make_dic_of_pure_nash
+    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 350, in make_game_table
+    ret[profile][ind] = int(a_profit[ind])
+  File "gambit/lib/outcome.pxi", line 100, in gambit.lib.libgambit.Outcome.__setitem__
+TypeError: numeric argument required for payoff
+Sender: LSF System <lsfadmin@eu-a6-003-24>
+Subject: Job 87839359[15]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-003-24>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 20:47:51 2019
+Results reported at Sat Mar 23 20:47:51 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   13244.77 sec.
+    Max Memory :                                 6515 MB
+    Average Memory :                             3232.22 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               29485.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                7
+    Run time :                                   12558 sec.
+    Turnaround time :                            12567 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=12, cost=100, gamma=0.5, endowment = 200, randomize=True
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+  File "model.py", line 493, in parameter_combination
+    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+  File "model.py", line 465, in main
+    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+  File "model.py", line 419, in make_dic_of_pure_nash
+    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 350, in make_game_table
+    ret[profile][ind] = int(a_profit[ind])
+  File "gambit/lib/outcome.pxi", line 100, in gambit.lib.libgambit.Outcome.__setitem__
+TypeError: numeric argument required for payoff
+Sender: LSF System <lsfadmin@eu-a6-002-23>
+Subject: Job 87839359[12]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-002-23>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 20:57:53 2019
+Results reported at Sat Mar 23 20:57:53 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   13918.09 sec.
+    Max Memory :                                 7994 MB
+    Average Memory :                             3943.29 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               28006.00 MB
+    Max Swap :                                   32248 MB
+    Max Processes :                              4
+    Max Threads :                                6
+    Run time :                                   13148 sec.
+    Turnaround time :                            13169 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=4, cost=100, gamma=0.5, endowment = 200, randomize=False
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+  File "model.py", line 493, in parameter_combination
+    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+  File "model.py", line 465, in main
+    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+  File "model.py", line 419, in make_dic_of_pure_nash
+    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 350, in make_game_table
+    ret[profile][ind] = int(a_profit[ind])
+  File "gambit/lib/outcome.pxi", line 100, in gambit.lib.libgambit.Outcome.__setitem__
+TypeError: numeric argument required for payoff
+Sender: LSF System <lsfadmin@eu-a6-005-14>
+Subject: Job 87839359[11]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-005-14>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 21:14:28 2019
+Results reported at Sat Mar 23 21:14:28 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   14966.95 sec.
+    Max Memory :                                 8209 MB
+    Average Memory :                             4003.40 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               27791.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                6
+    Run time :                                   14141 sec.
+    Turnaround time :                            14164 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=4, cost=100, gamma=0.5, endowment = 200, randomize=True
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+  File "model.py", line 493, in parameter_combination
+    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+  File "model.py", line 465, in main
+    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+  File "model.py", line 419, in make_dic_of_pure_nash
+    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 350, in make_game_table
+    ret[profile][ind] = int(a_profit[ind])
+  File "gambit/lib/outcome.pxi", line 100, in gambit.lib.libgambit.Outcome.__setitem__
+TypeError: numeric argument required for payoff
+Sender: LSF System <lsfadmin@eu-a6-002-15>
+Subject: Job 87839359[9]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-002-15>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 21:36:34 2019
+Results reported at Sat Mar 23 21:36:34 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   16336.27 sec.
+    Max Memory :                                 9347 MB
+    Average Memory :                             4490.68 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               26653.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                6
+    Run time :                                   15479 sec.
+    Turnaround time :                            15490 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=4, cost=100, gamma=0, endowment = 200, randomize=True
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+  File "model.py", line 493, in parameter_combination
+    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+  File "model.py", line 465, in main
+    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+  File "model.py", line 419, in make_dic_of_pure_nash
+    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 347, in make_game_table
+    **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 338, in make_game_table
+    for profile in ret.contingencies:
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 38, in __getitem__
+KeyboardInterrupt
+Sender: LSF System <lsfadmin@eu-a6-003-24>
+Subject: Job 87839359[14]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-003-24>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 21:36:35 2019
+Results reported at Sat Mar 23 21:36:35 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   16329.88 sec.
+    Max Memory :                                 8488 MB
+    Average Memory :                             4056.42 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               27512.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                7
+    Run time :                                   15481 sec.
+    Turnaround time :                            15491 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=12, cost=100, gamma=0, endowment = 200, randomize=False
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+  File "model.py", line 493, in parameter_combination
+    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+  File "model.py", line 465, in main
+    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+  File "model.py", line 419, in make_dic_of_pure_nash
+    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 347, in make_game_table
+    **kwargs)
+  File "model.py", line 284, in find_profit_handler
+    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+  File "model.py", line 338, in make_game_table
+    for profile in ret.contingencies:
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 57, in __iter__
+  File "build/bdist.linux-x86_64/egg/gambit/gameiter.py", line 39, in __getitem__
+KeyboardInterrupt
+Sender: LSF System <lsfadmin@eu-a6-002-15>
+Subject: Job 87839359[10]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-002-15>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 21:36:36 2019
+Results reported at Sat Mar 23 21:36:36 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   16373.93 sec.
+    Max Memory :                                 9727 MB
+    Average Memory :                             4694.85 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               26273.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                6
+    Run time :                                   15481 sec.
+    Turnaround time :                            15492 sec.
+
+The output (if any) follows:
+
+executing num_sell=4, num_buy=4, cost=100, gamma=0, endowment = 200, randomize=False
+Traceback (most recent call last):
+  File "model.py", line 501, in <module>
+    parameter_combination( i )
+
+Sender: LSF System <lsfadmin@eu-a6-002-23>
+Subject: Job 87839359[13]: <Cournot[1-16]> in cluster <euler> Exited
+
+Job <Cournot[1-16]> was submitted from host <eu-login-07-ng> by user <slera> in cluster <euler> at Sat Mar 23 17:18:24 2019
+Job was executed on host(s) <6*eu-a6-002-23>, in queue <normal.24h>, as user <slera> in cluster <euler> at Sat Mar 23 17:18:54 2019
+</cluster/home/slera> was used as the home directory.
+</cluster/home/slera/abmcournotmodel/code> was used as the working directory.
+Started at Sat Mar 23 17:18:54 2019
+Terminated at Sat Mar 23 21:36:43 2019
+Results reported at Sat Mar 23 21:36:43 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python -W ignore model.py $LSB_JOBINDEX 
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 143.
+
+Resource usage summary:
+
+    CPU time :                                   16353.00 sec.
+    Max Memory :                                 9384 MB
+    Average Memory :                             4459.35 MB
+    Total Requested Memory :                     36000.00 MB
+    Delta Memory :                               26616.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                7
+    Run time :                                   15479 sec.
+    Turnaround time :                            15499 sec.
+
+The output (if any) follows:
+
+Terminated

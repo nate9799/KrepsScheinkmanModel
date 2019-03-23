@@ -314,8 +314,8 @@ def make_a_strat_price( num_buyers, a_quantity, cost, endowment, m_tax ):
     """
 
     _, price           = find_profit_cournot(a_quantity, cost, endowment, num_buyers=num_buyers )
-    n                  = 10 # number of price-strategies
-    dist               = 20 # deviation from cournot that we search for
+    n                  = 10      # number of price-strategies
+    dist               = 5*n//2  # deviation from cournot that we search for
     a_strat_price      = np.linspace( price - dist, price + dist, n )
 
     return a_strat_price
@@ -485,9 +485,10 @@ def parameter_combination( i ):
     randomize       = [ True, False ]
 
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
-    comb            = combs[i]
+    comb            = list(combs)[i]
 
     num_sellers, num_buyers, cost, gamma, endowment, randomize = comb
+    print('executing num_sell=%s, num_buy=%s, cost=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
 
     main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
 
