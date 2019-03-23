@@ -83,13 +83,12 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma):
     return m_tax
 
 
-def theoretical_Cournot( S, B, cost, endowment ):
+def theoretical_Cournot(S, B, cost, endowment):
     """
-    @Nate, comment here what this function does.
+    Calculates theoretical Cournot for S sellers and B buyers at given price and endowment/buyer.
     """
-
-    Q = 0
-    P = 0
+    Q = float(B * (endowment - cost)/(S + 1))
+    P = float(endowment - (1/B) * Q)
 
     return Q, P
 
@@ -154,7 +153,7 @@ def find_quantity_sold(a_quantity, m_price_rel, endowment):
 ### FIND PROFIT ###
 ###################
 
-def find_profit_cournot(a_quantity, cost, endowment, num_buyers=10 ):
+def find_profit_cournot(a_quantity, cost, endowment, num_buyers=10):
     '''
     Finds profit for each seller based on theoretical cournot model, given
     quantities, cost, endowment, and number of buyers.
@@ -171,7 +170,7 @@ def find_profit(a_quantity, a_price, m_tax, cost, endowment, just_profit = True)
     '''
     a_quantity = np.array(a_quantity)
     a_price = np.array(a_price)
-    m_price_rel = m_tax * a_price[:, None]#FIXME:
+    m_price_rel = m_tax * a_price[:, None]
     a_quantity_sold, m_quantity_bought = find_quantity_sold(a_quantity,
             m_price_rel, endowment)
     a_revenue = a_price * a_quantity_sold
@@ -222,8 +221,8 @@ def heatmap_quantity(a_strat_quantity, a_strat_price, **kwargs):
         ENDOWMENT         = 200
         m_payoff2[x,y], _ = find_profit_cournot(a_quantity, COST, ENDOWMENT)[0]
     #plt = lib.figure()
-    #circle_axis = plt.subplot2grid( (1,2), (0,0) )
-    #price_axis = plt.subplot2grid( (1,2), (0,1) )
+    #circle_axis = plt.subplot2grid((1,2), (0,0))
+    #price_axis = plt.subplot2grid((1,2), (0,1))
     a_strat_quantity_rnd = np.round(a_strat_quantity, 3)
     pd_payoff0 = pd.DataFrame(data=m_payoff0, index=a_strat_quantity_rnd,
             columns=a_strat_quantity_rnd)
@@ -254,15 +253,15 @@ def heatmap_price(a_quantity, a_strat_price, **kwargs):
         m_payoff0[x,y] = a_profit[0]
         m_payoff1[x,y] = a_profit[1]
     #plt = lib.figure()
-    #circle_axis = plt.subplot2grid( (1,2), (0,0) )
-    #price_axis = plt.subplot2grid( (1,2), (0,1) )
+    #circle_axis = plt.subplot2grid((1,2), (0,0))
+    #price_axis = plt.subplot2grid((1,2), (0,1))
     a_strat_price_rnd = np.round(a_strat_price, 3)
     pd_payoff0 = pd.DataFrame(data=m_payoff0, index=a_strat_price_rnd,
             columns=a_strat_price_rnd)
     pd_payoff1 = pd.DataFrame(data=m_payoff1, index=a_strat_price_rnd,
             columns=a_strat_price_rnd)
-    ax0 = plt.subplot2grid((1,2), (0,0) )
-    ax1 = plt.subplot2grid((1,2), (0,1) )
+    ax0 = plt.subplot2grid((1,2), (0,0))
+    ax1 = plt.subplot2grid((1,2), (0,1))
     sns.heatmap(pd_payoff0, annot=True, fmt = '.3g', ax=ax0)
     sns.heatmap(pd_payoff1.T, annot=True, fmt = '.3g', ax=ax1)
     plt.show()
@@ -273,7 +272,7 @@ def heatmap_price(a_quantity, a_strat_price, **kwargs):
 ### HANDLER FOR FIND PROFIT ###
 ###############################
 
-def find_profit_handler( num_sellers, num_buyers, a_tmp_quant, just_profit=False, inner_game=True, **kwargs):
+def find_profit_handler(num_sellers, num_buyers, a_tmp_quant, just_profit=False, inner_game=True, **kwargs):
     '''
     Creates game with strategies from a_strat_quantity, then runs
     find_profit_handler_from_quantity repeatedly to find payoffs. Finally,
@@ -281,7 +280,7 @@ def find_profit_handler( num_sellers, num_buyers, a_tmp_quant, just_profit=False
     '''
 
 # Gambit stuff
-    game = make_game_table(  num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+    game = make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
     profile = find_profile_best_nash_from_game(game, num_sellers)
 
 # Handle no soutions
@@ -299,7 +298,7 @@ def find_profit_handler( num_sellers, num_buyers, a_tmp_quant, just_profit=False
 
     a_strat_quant = a_tmp_quant
     a_quantity = a_strat_quant[profile]
-    ret =  find_profit_handler( num_sellers, num_buyers, a_quantity, just_profit=False, inner_game=True, **kwargs )
+    ret = find_profit_handler(num_sellers, num_buyers, a_quantity, just_profit=False, inner_game=True, **kwargs)
 
     return ret
 
@@ -308,42 +307,41 @@ def find_profit_handler( num_sellers, num_buyers, a_tmp_quant, just_profit=False
 ### CREATE GAME TABLE ###
 #########################
 
-def make_a_strat_price( num_buyers, a_quantity, cost, endowment, m_tax ):
+def make_a_strat_price(num_buyers, a_quantity, cost, endowment, m_tax):
     """
-    bla bla bla
+    Makes array of possilbe price strategies.
     """
 
-    _, price           = find_profit_cournot(a_quantity, cost, endowment, num_buyers=num_buyers )
+    _, price           = find_profit_cournot(a_quantity, cost, endowment, num_buyers=num_buyers)
     n                  = 10      # number of price-strategies
     dist               = 5*n//2  # deviation from cournot that we search for
-    a_strat_price      = np.linspace( price - dist, price + dist, n )
+    a_strat_price      = np.linspace(price - dist, price + dist, n)
 
     return a_strat_price
 
 
-def make_game_table( num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwargs ):
+def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwargs):
     '''
-    Creates gambit game table for predetermined quantities and a list of prices for strategies.
-    @Nate, explain here for instance that a_tmp_quant can be a fixed nr or a list of quantities etc.
+    Creates gambit game table for predetermined quantities and a list of prices for strategies.  a_tmp_quant is either
+    the array of quantity strategies available, a_strat_quant, or the array of quantities.
     '''
 
     if inner_game:
         a_quantity         = a_tmp_quant
-        a_strat_price      = make_a_strat_price( num_buyers, a_quantity, **kwargs )
+        a_strat_price      = make_a_strat_price(num_buyers, a_quantity, **kwargs)
         a_num_strats       = [len(a_strat_price)] * num_sellers
     else:
         a_strat_quantity = a_tmp_quant
         a_num_strats = [len(a_strat_quantity)] * num_sellers
+
     ret = gmb.Game.new_table(a_num_strats)
     for profile in ret.contingencies:
         if inner_game:
             a_price = a_strat_price[profile]
-            a_profit = find_profit(a_quantity, a_price, just_profit=True,
-                    **kwargs)
+            a_profit = find_profit(a_quantity, a_price, just_profit=True, **kwargs)
         else:
             a_quantity = a_strat_quantity[profile]
-            a_profit = find_profit_handler(num_sellers, num_buyers, a_quantity,
-                    just_profit=True, inner_game=True,
+            a_profit = find_profit_handler(num_sellers, num_buyers, a_quantity, just_profit=True, inner_game=True,
                     **kwargs)
         for ind in range(num_sellers):
             float(a_profit[ind])
@@ -405,7 +403,7 @@ def get_a_payoff_from_profile(game, profile, num_players):
 ### CREATE PICLKE ###
 #####################
 
-def make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment ):
+def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
@@ -416,7 +414,7 @@ def make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_l
     kwargs = {'m_tax' : m_tax, 'cost' : cost, 'endowment' : endowment}
 
 # Create and Solve Game.
-    d_nash = find_profit_handler( num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
+    d_nash = find_profit_handler(num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False, **kwargs)
 
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
     ret = {'gamma' :        gamma,
@@ -436,7 +434,7 @@ def make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_l
 ##################
 ##################
 
-def main( num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomize=False ):
+def main(num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomize=False):
     """ Add documentation here """
 
 # check that input is correct
@@ -447,32 +445,32 @@ def main( num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, random
 # setup buyer and seller locations
     if randomize:
 
-        a_seller_loc = np.random.uniform( low=0, high=1, size=num_sellers )
-        a_buyer_loc  = np.random.uniform( low=0, high=1, size=num_buyers )
+        a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
+        a_buyer_loc  = np.random.uniform(low=0, high=1, size=num_buyers)
 
     else:
 
-        a_seller_loc = np.linspace( start=0, stop=1, num=num_sellers, endpoint=False )
-        a_buyer_loc  = np.linspace( start=0, stop=1, num=num_buyers,  endpoint=False )
+        a_seller_loc = np.linspace(start=0, stop=1, num=num_sellers, endpoint=False)
+        a_buyer_loc  = np.linspace(start=0, stop=1, num=num_buyers,  endpoint=False)
 
 
 # set the quantity discretization and calculate Nash
     n                   = 11 # number of quantity-strategies
     dist                = 20 # deviation from cournot that we search for
-    q, p                = theoretical_Cournot( num_sellers, num_buyers, cost, endowment )
-    a_strat_quantity    = np.linspace( q-dist, q+dist, n )
+    q, p                = theoretical_Cournot(num_sellers, num_buyers, cost, endowment)
+    a_strat_quantity    = np.linspace(q-dist, q+dist, n)
 
-    d_write = make_dic_of_pure_nash( num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment )
+    d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment)
 
 # write to the output
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
     fn      = 'S=%s_B=%s_gamma=%s_cost=%s_endow=%s=randomize=%s.pkl'%(num_sellers, num_buyers, gamma, cost, endowment, randomize)
-    jl.dump(d_write, folder + fn )
+    jl.dump(d_write, folder + fn)
 
 
-def parameter_combination( i ):
+def parameter_combination(i):
     """
     Execute the i-th parameter combination.
     """
@@ -490,7 +488,7 @@ def parameter_combination( i ):
     num_sellers, num_buyers, cost, gamma, endowment, randomize = comb
     print('executing num_sell=%s, num_buy=%s, cost=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
 
-    main( num_sellers, num_buyers, gamma, cost, endowment, randomize )
+    main(num_sellers, num_buyers, gamma, cost, endowment, randomize)
 
 
 
@@ -498,5 +496,5 @@ if __name__ == "__main__":
 
     i = int(sys.argv[1]) - 1
 
-    parameter_combination( i )
+    parameter_combination(i)
 
