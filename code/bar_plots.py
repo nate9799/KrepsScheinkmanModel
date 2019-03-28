@@ -16,8 +16,9 @@ sb.set_style("darkgrid")
 
 # import data
 ########################################################################################################################
-file_path 		= "./output/data/"
-file_name 		= file_path + "here.pickle"
+
+file_path 		= "/home/nate/Desktop/pickle/"
+file_name 		= file_path + "S=2_B=4_gamma=0.5_cost=100_endow=200=randomize=False.pkl"
 d_load 			= jl.load(file_name)
 
 cost       		= d_load['cost']
@@ -153,6 +154,7 @@ ax.set_visible(False)
 
 # write figure to the output 
 ########################################################################################################################
+plt.show()
 out_folder = './output/plots/'
 if not os.path.exists(out_folder): os.makedirs(out_folder)
 plt.savefig(out_folder + fn + '.pdf', bbox_inches='tight')
