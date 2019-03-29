@@ -45,15 +45,18 @@ def heatmap_quantity(num_sellers, num_buyers, a_strat_quantity,
         a_quantity = a_strat_quantity[[x,y]]
         m_payoff0[x,y] = game[x,y][0]
         m_payoff1[y,x] = game[x,y][1]
+        tmp, _ = model.find_profit_cournot(num_buyers, a_quantity, **kwargs)
+        m_payoff2[x,y] = tmp[0]
     a_strat_quantity_rnd = np.round(a_strat_quantity, 4)
     pd_payoff0 = pd.DataFrame(data=m_payoff0, index=a_strat_quantity_rnd,
             columns=a_strat_quantity_rnd)
-    pd_payoff1 = pd.DataFrame(data=m_payoff1, index=a_strat_quantity_rnd,
+    pd_payoff1 = pd.DataFrame(data=m_payoff2, index=a_strat_quantity_rnd,
             columns=a_strat_quantity_rnd)
     ax0 = plt.subplot2grid((1,2), (0,0))
     ax1 = plt.subplot2grid((1,2), (0,1))
     pd_payoff0[pd_payoff0 < -2e-10] = np.NAN
     pd_payoff1[pd_payoff1 < -2e-10] = np.NAN
+    print(pd_payoff0)
     sns.heatmap(pd_payoff0/100, annot=True, fmt = '.4g', ax=ax0)
     sns.heatmap(pd_payoff1/100, annot=True, fmt = '.4g', ax=ax1)
     plt.show()
@@ -72,18 +75,8 @@ def heatmap_price(num_sellers, num_buyers, a_quantity, **kwargs):
     m_payoff0 = np.ones(a_num_strats)
     m_payoff1 = np.ones(a_num_strats)
     for x, y in np.ndindex(m_payoff0.shape):
-        a_quantity = a_strat_quantity[[x,y]]
         m_payoff0[x,y] = game[x,y][0]
-        m_payoff1[x,y] = game[x,y][1]
-        tmp, _ = model.find_profit_cournot(num_buyers, a_quantity, **kwargs)
-        m_payoff2[x,y] = tmp[0]
-    m_payoff0 = np.ones(a_num_strats)
-    m_payoff1 = np.ones(a_num_strats)
-    for x, y in np.ndindex(m_payoff0.shape):
-        a_price = a_strat_price[[x,y]]
-        a_profit = model.find_profit(a_quantity, a_price, just_profit=True, **kwargs)
-        m_payoff0[x,y] = a_profit[0]/100
-        m_payoff1[x,y] = a_profit[1]/100
+        m_payoff1[y,x] = game[x,y][1]
     #plt = lib.figure()
     a_strat_price_rnd = np.round(a_strat_price, 3)
     pd_payoff0 = pd.DataFrame(data=m_payoff0, index=a_strat_price_rnd,
@@ -112,9 +105,9 @@ def make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buye
     kwargs = {'m_tax' : m_tax, 'cost' : cost, 'endowment' : endowment}
 # Create and Solve Game.
     a_quantity = a_strat_quantity[[3,0]]
+    ret2 = heatmap_price(num_sellers, num_buyers, a_quantity, **kwargs)
     ret1 = heatmap_quantity(num_sellers, num_buyers, a_strat_quantity,
             view_cournot=True, **kwargs)
-    ret2 = heatmap_price(num_sellers, num_buyers, a_quantity, **kwargs)
     return ret1, ret2
 
 

@@ -25,10 +25,14 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
 #######################
 
 def get_a_strat_quantity(lower_bound, upper_bound, num_strats,
-        is_randomized=False):
+        is_randomized=False, is_shifted = False):
     if is_randomized:
         return get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05)
-    return np.linspace(lower_bound, upper_bound, num_strats)
+    shift = 0.
+    if is_shifted:
+        jump = (upper_bound - lower_bound)/(num_strats - 1)
+        shift = float(jump)/3
+    return np.linspace(lower_bound, upper_bound, num_strats) + shift
     
 
 def get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05):
@@ -54,6 +58,15 @@ def find_prices_from_quantities(a_quantity, endowment, num_buyers, num_sellers,
         a_tot_quant = np.linspace(lower, upper, num_prices)
     ret = np.sort(endowment - a_tot_quant/num_buyers)
     return ret
+
+
+#####################
+### CALCULATE TAX ###
+#####################
+
+def effective_num_competitors(num_buyers, a_quantity, cost, endowment):
+    a_effective_competition = (endowment - cost) * num_buyers/float(a_quantity)
+    return a_effective_competition
 
 
 #####################
@@ -221,16 +234,23 @@ def find_profit_handler(num_sellers, num_buyers, a_tmp_quant, just_profit=False,
 ### CREATE GAME TABLE ###
 #########################
 
-def make_a_strat_price(num_buyers, a_quantity, n=9, is_random=True, **kwargs):
+def make_a_strat_price(num_buyers, a_quantity, num_strats=10-0,
+        is_randomized=False, is_shifted = True, **kwargs):
     """
-    Makes array of possilbe price strategies.
+    Makes array of possilbe price strategies.  Don't allow even num_strats.
     """
-    assert n/2. != n/2, "price discretization number n must be odd."
-    _, price           = find_profit_cournot(num_buyers, a_quantity, **kwargs)
-    dist               = 5*n//2  # deviation from cournot that we search for
-    a_strat_price      = np.linspace(price - dist, price + dist, n)
-    #assert all(a_strat_price > 0), 'negative prices offered.'
-    return a_strat_price
+    #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
+    _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
+    dist = 5*num_strats//2  # deviation from cournot that we search for
+    lower_bound = price - dist
+    upper_bound = price + dist
+    if is_randomized:
+        return get_rand_strats(lower_bound, upper_bound, num_strats, frac=.01)
+    shift = 0.
+    if is_shifted:
+        jump = (upper_bound - lower_bound)/(num_strats - 1)
+        shift = float(jump)/6
+    return np.linspace(lower_bound, upper_bound, num_strats) + shift
 
 
 def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwargs):
@@ -356,10 +376,10 @@ def main(num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomi
         a_seller_loc = np.linspace(start=0, stop=1, num=num_sellers, endpoint=False)
         a_buyer_loc  = np.linspace(start=0, stop=1, num=num_buyers,  endpoint=False)
 # set the quantity discretization and calculate Nash
-    n                   = 11 # number of quantity-strategies
+    num_strats          = 11 # number of quantity-strategies
     dist                = 20 # deviation from cournot that we search for
     q, _                = theoretical_Cournot(num_sellers, num_buyers, cost, endowment)
-    a_strat_quantity    = np.linspace(q-dist, q+dist, n)
+    a_strat_quantity    = np.linspace(q-dist, q+dist, num_strats)
     print(a_strat_quantity)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, cost, gamma, endowment)
@@ -380,7 +400,7 @@ def parameter_combination(i):
     num_sellers     = [2]
     num_buyers      = [12, 14]
     cost            = [100]
-    gamma           = [0, 0.5]
+    gamma           = [0.5]
     endowment       = [200]
     randomize       = [True, False]
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
