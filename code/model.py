@@ -34,6 +34,9 @@ def get_a_strat_quantity(lower_bound, upper_bound, num_strats,
         shift = float(jump)/3
     return np.linspace(lower_bound, upper_bound, num_strats) + shift
     
+def get_a_strat(n, center, jump, shift = 0):
+    dist = float(n * jump)/2
+    ret = np.linspace(center - dist, center + dist, n) + shift
 
 def get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05):
     '''
@@ -87,9 +90,9 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma):
     m_dist = [[circle_dist(buyer_loc, seller_loc)
         for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
     # Matrix with rel dist with list of prices. '+ 1' because min dist is 1.
-    m_rel_dist = np.argsort(m_dist, axis=0) + 1
+    m_rel_dist = np.argsort(m_dist, axis=0) + 1.
     # Lot of potential speed up here, only need to do exponent once.
-    m_tax = np.array(m_rel_dist**gamma, dtype=int)
+    m_tax = np.array(m_rel_dist**gamma)
     return m_tax
 
 
@@ -147,13 +150,11 @@ def find_quantity_sold(a_quantity, m_price_rel, endowment):
     num_sellers = np.size(m_price_rel, 0)
     a_quantity_unsold = a_quantity.copy()
     m_quantity_bought = []
-
 # Loop
     for a_price_rel in m_price_rel.T:
         a_quantity_bought = find_bundle(a_quantity_unsold, a_price_rel, endowment)
         a_quantity_unsold = a_quantity_unsold - a_quantity_bought
         m_quantity_bought.append(a_quantity_bought)
-
 # Return
     m_quantity_bought = np.array(m_quantity_bought).T
     a_quantity_sold = a_quantity - a_quantity_unsold
@@ -234,8 +235,8 @@ def find_profit_handler(num_sellers, num_buyers, a_tmp_quant, just_profit=False,
 ### CREATE GAME TABLE ###
 #########################
 
-def make_a_strat_price(num_buyers, a_quantity, num_strats=10-0,
-        is_randomized=False, is_shifted = True, **kwargs):
+def make_a_strat_price(num_buyers, a_quantity, num_strats=9,
+        is_randomized=False, is_shifted = False, **kwargs):
     """
     Makes array of possilbe price strategies.  Don't allow even num_strats.
     """
@@ -252,13 +253,11 @@ def make_a_strat_price(num_buyers, a_quantity, num_strats=10-0,
         shift = float(jump)/6
     return np.linspace(lower_bound, upper_bound, num_strats) + shift
 
-
 def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwargs):
     '''
     Creates gambit game table for predetermined quantities and a list of prices for strategies.  a_tmp_quant is either
     the array of quantity strategies available, a_strat_quant, or the array of quantities.
     '''
-
     if inner_game:
         a_quantity         = a_tmp_quant
         a_strat_price      = make_a_strat_price(num_buyers, a_quantity, **kwargs)
@@ -266,7 +265,6 @@ def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwa
     else:
         a_strat_quantity = a_tmp_quant
         a_num_strats = [len(a_strat_quantity)] * num_sellers
-
     ret = gmb.Game.new_table(a_num_strats)
     for profile in ret.contingencies:
         if inner_game:
@@ -347,7 +345,6 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity, a_seller_lo
 # Create and Solve Game.
     d_nash = find_profit_handler(num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False,
             **kwargs)
-    print(d_nash)
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
     ret = {'gamma' :        gamma,
            'a_buyer_loc' :  a_buyer_loc,
@@ -380,14 +377,14 @@ def main(num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomi
     dist                = 20 # deviation from cournot that we search for
     q, _                = theoretical_Cournot(num_sellers, num_buyers, cost, endowment)
     a_strat_quantity    = np.linspace(q-dist, q+dist, num_strats)
-    print(a_strat_quantity)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, cost, gamma, endowment)
+    print(d_write)
 # write to the output
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn      = 'S=%s_B=%s_gamma=%s_cost=%s_endow=%s=randomize=%s.pkl'%(num_sellers,
+    fn      = 'S=%s_B=%s_gamma=%s_cost=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
             num_buyers, gamma, cost, endowment, randomize)
     jl.dump(d_write, folder + fn)
 
@@ -398,11 +395,11 @@ def parameter_combination(i):
     """
 # Create combinations
     num_sellers     = [2]
-    num_buyers      = [12, 14]
-    cost            = [100]
-    gamma           = [0.5]
-    endowment       = [200]
-    randomize       = [True, False]
+    num_buyers      = [12]
+    cost            = [100.]
+    gamma           = [0.]
+    endowment       = [200.]
+    randomize       = [True]
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
     comb            = list(combs)[i]
     num_sellers, num_buyers, cost, gamma, endowment, randomize = comb
@@ -413,5 +410,5 @@ def parameter_combination(i):
 
 if __name__ == "__main__":
     #i = int(sys.argv[1]) - 1
-    parameter_combination(1)
+    parameter_combination(0)
 

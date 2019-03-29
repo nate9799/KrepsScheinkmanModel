@@ -105,9 +105,9 @@ def make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buye
     kwargs = {'m_tax' : m_tax, 'cost' : cost, 'endowment' : endowment}
 # Create and Solve Game.
     a_quantity = a_strat_quantity[[3,0]]
-    ret2 = heatmap_price(num_sellers, num_buyers, a_quantity, **kwargs)
     ret1 = heatmap_quantity(num_sellers, num_buyers, a_strat_quantity,
             view_cournot=True, **kwargs)
+    ret2 = heatmap_price(num_sellers, num_buyers, a_quantity, **kwargs)
     return ret1, ret2
 
 
@@ -141,16 +141,15 @@ def parameter_combination(i):
     """
     num_sellers     = [2]
     num_buyers      = [10, 12]
-    cost            = [100]
-    gamma           = [0]
-    endowment       = [200]
+    cost            = [100.]
+    gamma           = [1.]
+    endowment       = [200.]
     randomize       = [True, False]
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
     comb            = list(combs)[i]
     num_sellers, num_buyers, cost, gamma, endowment, randomize = comb
     print('executing num_sell=%s, num_buy=%s, cost=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
     main(num_sellers, num_buyers, gamma, cost, endowment, randomize)
-
 
 
 if __name__ == "__main__":
