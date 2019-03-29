@@ -397,7 +397,7 @@ def parameter_combination(i):
     num_sellers     = [2]
     num_buyers      = [12]
     cost            = [100.]
-    gamma           = [0.]
+    gamma           = [0.5]
     endowment       = [200.]
     randomize       = [True]
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)

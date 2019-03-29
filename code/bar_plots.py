@@ -23,7 +23,7 @@ def circle_dist(a, b):
 ############################################################
 num_sellers     = 2
 num_buyers      = 12
-gamma           = 0.
+gamma           = 0.5
 cost            = 100.
 endowment       = 200.
 randomize       = True
@@ -117,7 +117,7 @@ for i, s in enumerate(a_seller_pos):
     ax.scatter(xcoord, ycoord, marker='o', color=colors[i], s=200, zorder=3, label='buyer %s'%i)
 
 # for each buyer, index of his seller
-seller_ind    = np.argmin(m_quantity_bought, axis=0)
+seller_ind    = np.argmax(m_quantity_bought, axis=0)
 
 for b,s in zip( a_buyer_pos, seller_ind ):
     xcoord = [ r * np.sin( 2*np.pi*b ) ]
