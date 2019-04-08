@@ -321,9 +321,9 @@ def refine_game_by_domination(a_payoff_func, a_strat, game):
     # re-discretize
     # Find new game
     for i, row in enumerate(pd_payoff):
+        pass
         
 
-    # rerun
 
 
 ###############################
@@ -440,6 +440,6 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    i = int(sys.argv[1]) - 1
-    parameter_combination(i)
+    #i = int(sys.argv[1]) - 1
+    parameter_combination(1)
 
