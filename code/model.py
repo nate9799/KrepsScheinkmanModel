@@ -440,6 +440,6 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    #i = int(sys.argv[1]) - 1
-    parameter_combination(1)
+    i = int(sys.argv[1]) - 1
+    parameter_combination(i)
 
