@@ -95,7 +95,6 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma):
     m_tax = np.array(m_rel_dist**gamma)
     return m_tax
 
-
 def theoretical_Cournot(S, B, cost, endowment):
     """
     Calculates theoretical Cournot for S sellers and B buyers at given price and endowment/buyer.
@@ -105,7 +104,6 @@ def theoretical_Cournot(S, B, cost, endowment):
     Q = float(B * (endowment - cost)/(S + 1))
     P = float(endowment - (Q/B))
     return Q, P
-
 
 
 ###################
@@ -197,38 +195,54 @@ def find_profit(a_quantity, a_price, m_tax, cost, endowment, just_profit = True)
     return ret
 
 
-###############################
-### HANDLER FOR FIND PROFIT ###
-###############################
+###########################
+### GAME TABLE ANALYSIS ###
+###########################
 
-def find_profit_handler(num_sellers, num_buyers, a_tmp_quant, just_profit=False, inner_game=True, **kwargs):
+def find_a_profile_nash_strat_from_game(game, num_players):
     '''
-    Creates game with strategies from a_strat_quantity, then runs
-    find_profit_handler_from_quantity repeatedly to find payoffs. Finally,
-    calculates nash for quantity, then returns the payoff. 
+    Finds array of pure nash profiles from a game where all players have an
+    EQUAL NUMBER OF STRATEGIES.  A profile is a np.array where the ith element
+    is the index of the strategy chosen by the ith player.
     '''
-# Gambit stuff
-    game = make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
-    profile = find_profile_best_nash_from_game(game, num_sellers)
-# Handle no soutions
-    if len(profile) == 0 & just_profit:
-        if not inner_game:
-            raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
-        return np.ones(num_sellers) * -sys.maxint
-    if len(profile) == 0:
-        raise Exception("No pure Nash found: {}".format(profile))
-    if just_profit:
-        return get_a_payoff_from_profile(game, profile, num_sellers)
-    if inner_game:
-        a_quantity = a_tmp_quant
-        a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
-        a_price = a_strat_price[profile]
-        ret = find_profit(a_quantity, a_price, just_profit = False, **kwargs)
-        return ret
-    a_strat_quant = a_tmp_quant
-    a_quantity = a_strat_quant[profile]
-    ret = find_profit_handler(num_sellers, num_buyers, a_quantity, just_profit=False, inner_game=True, **kwargs)
+    solver = gmb.nash.ExternalEnumPureSolver()
+    a_nash = solver.solve(game)
+# Handle Exceptions
+    if len(a_nash) == 0:
+        #raise Exception("No pure Nash found: {}".format(a_nash))
+        return np.array([])
+    num_nash = len(a_nash)
+    a_nash = np.array(a_nash)
+    a_nash = a_nash.reshape((num_nash, num_players, a_nash.size/(num_nash * num_players)))
+    ret = np.array([np.nonzero(nash)[1] for nash in a_nash])
     return ret
+
+def find_profile_best_nash_from_game(game, num_players):
+    '''
+    Finds array of pure nash profiles from a game where all players have an
+    EQUAL NUMBER OF STRATEGIES.  A profile is a np.array where the ith element
+    is the index of the strategy chosen by the ith player.
+    '''
+    a_profile = find_a_profile_nash_strat_from_game(game, num_players)
+    num_nash = len(a_profile)
+    if num_nash == 0: 
+        #raise Exception("No pure Nash found: {}".format(a_profile))
+        return np.array([])
+    if num_nash == 1: return a_profile[0]
+    profit = -sys.maxint
+    for profile in a_profile:
+        profit_tmp = sum(get_a_payoff_from_profile(game, profile, num_players))
+        if profit_tmp > profit:
+            ret = profile
+            profit = profit_tmp
+    return ret
+
+def get_a_payoff_from_profile(game, profile, num_players):
+    '''
+    Finds array of payoffs for a given profile from a game.  Does NOT require
+    all players have same number of strategies.
+    '''
+    return [game[profile][player] for player in range(num_players)]
 
 
 #########################
@@ -280,54 +294,71 @@ def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwa
     return ret
 
 
-###########################
-### GAME TABLE ANALYSIS ###
-###########################
+############################
+### SEARCH ON GAME TABLE ###
+############################
 
-def find_a_profile_nash_strat_from_game(game, num_players):
+def refine_game_by_nash(a_payoff_func, a_strat, game):
     '''
-    Finds array of pure nash profiles from a game where all players have an
-    EQUAL NUMBER OF STRATEGIES.  A profile is a np.array where the ith element
-    is the index of the strategy chosen by the ith player.
+    a_strat is the same for every seller right now.
     '''
-    solver = gmb.nash.ExternalEnumPureSolver()
-    a_nash = solver.solve(game)
-# Handle Exceptions
-    if len(a_nash) == 0:
-        #raise Exception("No pure Nash found: {}".format(a_nash))
-        return np.array([])
-    num_nash = len(a_nash)
-    a_nash = np.array(a_nash)
-    a_nash = a_nash.reshape((num_nash, num_players, a_nash.size/(num_nash * num_players)))
-    ret = np.array([np.nonzero(nash)[1] for nash in a_nash])
+    game = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+            inner_game=inner_game, **kwargs);
+    # Convert game to pd.dt
+    # Take the game and find the nash.
+    # Look around the nash to find a better one. If still correct, return, else redo.
+
+
+def refine_game_by_domination(a_payoff_func, a_strat, game):
+    '''
+    a_strat is the same for every seller right now.
+    '''
+    game = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+            inner_game=inner_game, **kwargs);
+    # Convert game to pd.dt
+    # Find dominated strategies using pd.dt
+    # Remove dominated strategies
+    # re-discretize
+    # Find new game
+    for i, row in enumerate(pd_payoff):
+        
+
+    # rerun
+
+
+###############################
+### HANDLER FOR FIND PROFIT ###
+###############################
+
+def find_profit_handler(num_sellers, num_buyers, a_tmp_quant,
+        just_profit=False, inner_game=True, **kwargs):
+    '''
+    Creates game with strategies from a_strat_quantity, then runs
+    find_profit_handler_from_quantity repeatedly to find payoffs. Finally,
+    calculates nash for quantity, then returns the payoff. 
+    '''
+# Gambit stuff
+    game = make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+    profile = find_profile_best_nash_from_game(game, num_sellers)
+# Handle no soutions
+    if len(profile) == 0 & just_profit:
+        if not inner_game:
+            raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
+        return np.ones(num_sellers) * -sys.maxint
+    if len(profile) == 0:
+        raise Exception("No pure Nash found: {}".format(profile))
+    if just_profit:
+        return get_a_payoff_from_profile(game, profile, num_sellers)
+    if inner_game:
+        a_quantity = a_tmp_quant
+        a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
+        a_price = a_strat_price[profile]
+        ret = find_profit(a_quantity, a_price, just_profit = False, **kwargs)
+        return ret
+    a_strat_quant = a_tmp_quant
+    a_quantity = a_strat_quant[profile]
+    ret = find_profit_handler(num_sellers, num_buyers, a_quantity, just_profit=False, inner_game=True, **kwargs)
     return ret
-
-def find_profile_best_nash_from_game(game, num_players):
-    '''
-    Finds array of pure nash profiles from a game where all players have an
-    EQUAL NUMBER OF STRATEGIES.  A profile is a np.array where the ith element
-    is the index of the strategy chosen by the ith player.
-    '''
-    a_profile = find_a_profile_nash_strat_from_game(game, num_players)
-    num_nash = len(a_profile)
-    if num_nash == 0: 
-        #raise Exception("No pure Nash found: {}".format(a_profile))
-        return np.array([])
-    if num_nash == 1: return a_profile[0]
-    profit = -sys.maxint
-    for profile in a_profile:
-        profit_tmp = sum(get_a_payoff_from_profile(game, profile, num_players))
-        if profit_tmp > profit:
-            ret = profile
-            profit = profit_tmp
-    return ret
-
-def get_a_payoff_from_profile(game, profile, num_players):
-    '''
-    Finds array of payoffs for a given profile from a game.  Does NOT require
-    all players have same number of strategies.
-    '''
-    return [game[profile][player] for player in range(num_players)]
 
 
 #####################
@@ -394,10 +425,10 @@ def parameter_combination(i):
     Execute the i-th parameter combination.
     """
 # Create combinations
-    num_sellers     = [2]
-    num_buyers      = [12]
+    num_sellers     = [2,3]
+    num_buyers      = [12, 18]
     cost            = [100.]
-    gamma           = [0.5]
+    gamma           = [0, .25, 0.5, .75, 1.0]
     endowment       = [200.]
     randomize       = [True]
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
@@ -409,6 +440,6 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    #i = int(sys.argv[1]) - 1
-    parameter_combination(0)
+    i = int(sys.argv[1]) - 1
+    parameter_combination(i)
 
