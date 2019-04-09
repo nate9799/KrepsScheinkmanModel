@@ -4,6 +4,7 @@ import gambit as gmb
 from itertools import combinations_with_replacement, product
 import sys
 import os
+import warnings
 
 
 #####################
@@ -249,6 +250,9 @@ def get_a_payoff_from_profile(game, profile, num_players):
 ### CREATE GAME TABLE ###
 #########################
 
+def get_cost_from_kwargs(m_tax, cost, endowment):
+    return cost
+
 def make_a_strat_price(num_buyers, a_quantity, num_strats=9,
         is_randomized=False, is_shifted = False, **kwargs):
     """
@@ -256,6 +260,8 @@ def make_a_strat_price(num_buyers, a_quantity, num_strats=9,
     """
     #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
     _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
+    cost = get_cost_from_kwargs(**kwargs)
+    return np.linspace(cost, price, num_strats)
     dist = 5*num_strats//2  # deviation from cournot that we search for
     lower_bound = price - dist
     upper_bound = price + dist
@@ -291,7 +297,8 @@ def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwa
         for ind in range(num_sellers):
             float(a_profit[ind])
             ret[profile][ind] = int(a_profit[ind])
-    return ret
+    num_strats = a_num_strats[1]
+    return ret, num_strats
 
 
 ############################
@@ -302,7 +309,7 @@ def refine_game_by_nash(a_payoff_func, a_strat, game):
     '''
     a_strat is the same for every seller right now.
     '''
-    game = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+    game, num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
             inner_game=inner_game, **kwargs);
     # Convert game to pd.dt
     # Take the game and find the nash.
@@ -313,7 +320,7 @@ def refine_game_by_domination(a_payoff_func, a_strat, game):
     '''
     a_strat is the same for every seller right now.
     '''
-    game = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+    game, num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
             inner_game=inner_game, **kwargs);
     # Convert game to pd.dt
     # Find dominated strategies using pd.dt
@@ -323,8 +330,6 @@ def refine_game_by_domination(a_payoff_func, a_strat, game):
     for i, row in enumerate(pd_payoff):
         pass
         
-
-
 
 ###############################
 ### HANDLER FOR FIND PROFIT ###
@@ -338,8 +343,11 @@ def find_profit_handler(num_sellers, num_buyers, a_tmp_quant,
     calculates nash for quantity, then returns the payoff. 
     '''
 # Gambit stuff
-    game = make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=inner_game, **kwargs)
+    game, num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+            inner_game=inner_game, **kwargs)
     profile = find_profile_best_nash_from_game(game, num_sellers)
+    if any(profile == 0) or any (profile == num_strats):
+        warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
 # Handle no soutions
     if len(profile) == 0 & just_profit:
         if not inner_game:
@@ -402,12 +410,13 @@ def main(num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomi
         a_buyer_loc  = np.random.uniform(low=0, high=1, size=num_buyers)
     else:
         a_seller_loc = np.linspace(start=0, stop=1, num=num_sellers, endpoint=False)
-        a_buyer_loc  = np.linspace(start=0, stop=1, num=num_buyers,  endpoint=False)
+        a_buyer_loc  = np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False)
 # set the quantity discretization and calculate Nash
-    num_strats          = 11 # number of quantity-strategies
+    num_strats          = 16 # number of quantity-strategies
     dist                = 20 # deviation from cournot that we search for
     q, _                = theoretical_Cournot(num_sellers, num_buyers, cost, endowment)
-    a_strat_quantity    = np.linspace(q-dist, q+dist, num_strats)
+    q_mono, _           = theoretical_Cournot(1, num_buyers, cost, endowment)
+    a_strat_quantity    = np.linspace(q-2*dist, q+dist, num_strats)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, cost, gamma, endowment)
     print(d_write)
@@ -425,10 +434,10 @@ def parameter_combination(i):
     Execute the i-th parameter combination.
     """
 # Create combinations
-    num_sellers     = [2,3]
-    num_buyers      = [12, 18]
+    num_sellers     = [2]
+    num_buyers      = [12]
     cost            = [100.]
-    gamma           = [0, .25, 0.5, .75, 1.0]
+    gamma           = np.round(np.linspace(1., 2., 21), 3)
     endowment       = [200.]
     randomize       = [True]
     combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
@@ -440,6 +449,7 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    i = int(sys.argv[1]) - 1
-    parameter_combination(i)
+    #i = int(sys.argv[1]) - 1
+    for i in range(21):
+        parameter_combination(i) 
 
