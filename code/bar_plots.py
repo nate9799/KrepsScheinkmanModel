@@ -23,16 +23,15 @@ def circle_dist(a, b):
 ############################################################
 num_sellers     = 2
 num_buyers      = 12
-gamma           = 1.
+gamma           = 0.05
 cost            = 100.
 endowment       = 200.
-randomize       = True
+randomize       = False
 fn              = 'S=%s_B=%s_gamma=%s_cost=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
                 num_buyers, gamma, cost, endowment, randomize)
 # Run main function
 print('executing num_sell=%s, num_buy=%s, cost=%s, gamma=%s, endowment = %s, randomize=%s'%(num_sellers,
     num_buyers, gamma, cost, endowment, randomize))
-
 
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
@@ -59,6 +58,11 @@ a_buyer_pos             = d_load['a_buyer_loc']
 a_seller_pos            = d_load['a_seller_loc']
 m_tax                   = d_load['m_tax']
 m_quantity_bought       = d_load['m_quantity_bought']
+print(m_tax)
+print(m_quantity_bought)
+print(a_profit)
+print(a_price)
+print(a_quantity)
 
 # positions where the buers are located
 

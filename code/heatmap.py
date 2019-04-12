@@ -95,14 +95,14 @@ def heatmap_price(num_sellers, num_buyers, a_quantity, **kwargs):
 ### CALL HEATMAP ###
 ####################
 
-def make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment):
+def make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, a_cost, gamma, endowment):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
     '''
 # Setup
     m_tax = model.get_m_tax(a_buyer_loc, a_seller_loc, gamma)
-    kwargs = {'m_tax' : m_tax, 'cost' : cost, 'endowment' : endowment}
+    kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment}
 # Create and Solve Game.
     a_quantity = a_strat_quantity[[3,0]]
     ret1 = heatmap_quantity(num_sellers, num_buyers, a_strat_quantity,
@@ -115,10 +115,9 @@ def make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buye
 ### MAIN ###
 ############
 
-def main(num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomize=False):
+def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]), endowment=200, randomize=False):
     """ Add documentation here """
 # check that input is correct
-    if endowment is None: endowment = 2*cost
     assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
 # setup buyer and seller locations
     if randomize:
@@ -130,9 +129,13 @@ def main(num_sellers=2, num_buyers=6, gamma=0, cost=100, endowment=None, randomi
 # set the quantity discretization and calculate Nash
     n                   = 11 # number of quantity-strategies
     dist                = 20 # deviation from cournot that we search for
-    q, _                = model.theoretical_Cournot(num_sellers, num_buyers, cost, endowment)
-    a_strat_quantity    = np.linspace(q-dist, q+dist, n)
-    pd_quant, pd_price = make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, cost, gamma, endowment)
+    num_strats          = 20 # number of quantity-strategies
+    q_min, _ = model.theoretical_Cournot(1, num_buyers, min(a_cost),
+            endowment)
+    q_max, _ = model.theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
+            endowment)
+    a_strat_quantity = np.linspace(q_min-dist, q_max+dist, num_strats)
+    pd_quant, pd_price = make_heatmap(num_sellers, num_buyers, a_strat_quantity, a_seller_loc, a_buyer_loc, a_cost, gamma, endowment)
 
 
 def parameter_combination(i):
@@ -141,15 +144,15 @@ def parameter_combination(i):
     """
     num_sellers     = [2]
     num_buyers      = [10, 12]
-    cost            = [100.]
-    gamma           = [1.]
+    gamma           = [0.]
     endowment       = [200.]
     randomize       = [True, False]
-    combs           = product(num_sellers, num_buyers, cost, gamma, endowment, randomize)
+    combs           = product(num_sellers, num_buyers, gamma, endowment, randomize)
     comb            = list(combs)[i]
-    num_sellers, num_buyers, cost, gamma, endowment, randomize = comb
-    print('executing num_sell=%s, num_buy=%s, cost=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
-    main(num_sellers, num_buyers, gamma, cost, endowment, randomize)
+    num_sellers, num_buyers, gamma, endowment, randomize = comb
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
+    a_cost = np.array([100, 100])
+    main(num_sellers, num_buyers, gamma, a_cost, endowment, randomize)
 
 
 if __name__ == "__main__":
