@@ -18,6 +18,24 @@ import warnings
 ### SETUP FUNCTIONS ###
 #######################
 
+
+def get_a_cost_from_ratio(mean, ratio, num_sellers, is_arithmetic=True):
+    '''
+    Creates a sequence with a given mean using a ratio. Sequence can be
+    arithmetic or geometric.
+    '''
+    a_ratio = [ratio ** i for i in range(num_sellers)]
+    if is_arithmetic:
+        a_ratio = [ratio * (i+1) for i in range(num_sellers)]
+    return get_a_cost_from_a_ratio(mean, a_ratio)
+
+def get_a_cost_from_a_ratio(mean, a_ratio):
+    assert a_ratio[0] == 1, "a_ratio[0] should be 1, is {}".format(a_ration[0])
+    ret = np.array(a_ratio)
+    avg_ratio = sum(a_ratio)/float(len(a_ratio))
+    ret = ret * mean / avg_ratio
+    return ret
+
 def get_a_strat_quantity(lower_bound, upper_bound, num_strats,
         is_randomized=False, is_shifted = False):
     if is_randomized:
@@ -295,6 +313,64 @@ def make_game_table_from_m_strat(m_strat, func_payoff, **kwargs):
             ret[profile][ind] = int(a_payoff[ind])
     return ret, a_num_strats
 
+def refine_m_strat(m_strat, func_payoff_handler, scale_factor,
+        no_zoom_if_edge_nash=True, **kwargs):
+    '''
+    Given matrix of strategies find a new matrix of strategies. Use nash as new
+    center of m_strat, and zoom in by scale_factor. If nash is on edge, and
+    no_zoom_if_edge_nash=True, then don't zoom in if nash is on edge.
+    '''
+    assert scale_factor <= 1, 'scale_factor must be <= 1. Scale factor is {}'.format(scale_factor)
+# Find nash
+    game, a_num_strats = make_game_table_from_m_strat(m_strat,
+            find_profit_handler_tmp, **kwargs)
+    num_players = len(a_num_strats)
+    profile = find_profile_best_nash_from_game(game, num_players)
+    if len(profile) == 0:
+        raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
+# Find m_strat locations
+    a_strat_nash = np.array([a_strat[profile[i]] for i, a_strat in enumerate(m_strat)])
+    a_jump = abs(m_strat[:, 0] - m_strat[:,1])
+# Handle zooming
+    if no_zoom_if_edge_nash:
+        if any(profile == 0) or any(profile == a_num_strats):
+            scale_factor = 1
+            is_zoomed = False
+    a_jump = a_jump * scale_factor
+# Create m_strat around nash.
+    ret = np.array([get_a_strat_from_center(num_strats, strat_nash, jump) for
+            strat_nash, jump, num_strats in zip(a_strat_nash, a_jump,
+                a_num_strats)])
+    return ret
+
+def find_psuedocontinuous_nash(a_strat, num_sellers, func_payoff_handler,
+        scale_factor, **kwargs):
+    '''
+    Basically a handler for refine_m_strat.
+    '''
+    m_strat = np.array([a_strat] * num_sellers)
+    print(m_strat)
+    print('hi')
+    num_iter = 5
+    for i in range(num_iter):
+        m_strat = refine_m_strat(m_strat, func_payoff_handler, scale_factor, **kwargs)
+    return m_strat
+
+# This function is not used right now.  
+def refine_game_by_domination(a_payoff_func, a_strat, game):
+    '''
+    a_strat is the same for every seller right now.
+    '''
+    game, num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+            inner_game=inner_game, **kwargs);
+    # Convert game to pd.dt
+    # Find dominated strategies using pd.dt
+    # Remove dominated strategies
+    # re-discretize
+    # Find new game
+    for i, row in enumerate(pd_payoff):
+        pass
+
 ###############################
 ### HANDLER FOR FIND PROFIT ###
 ###############################
@@ -364,8 +440,7 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 ### MAIN ###
 ############
 
-def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]),
-        endowment=200, randomize=False):
+def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]), endowment=200, randomize=False):
     """ Add documentation here """
 # check that input is correct
     assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
@@ -377,14 +452,14 @@ def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]),
         a_seller_loc = np.linspace(start=0, stop=1, num=num_sellers, endpoint=False)
         a_buyer_loc  = np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False)
 # set the quantity discretization and calculate Nash
-    num_strats = 25 # number of quantity-strategies
-    dist = 10 # deviation from cournot that we search for
+    num_strats = 15 # number of quantity-strategies
+    dist = 40 # deviation from cournot that we search for
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
-    a_strat_quantity = np.linspace(q_min-dist, q_max+dist, num_strats)
+    a_strat_quantity = np.linspace(120, 680, num_strats)
     print(q_min)
     print(q_max)
     print(a_strat_quantity)
@@ -408,14 +483,16 @@ def parameter_combination(i):
     num_sellers     = [2]
     num_buyers      = [12]
     gamma           = np.round(np.linspace(0.0, .3, 11), 3)
+    mean_cost       = [100]
+    cost_ratio      = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
     endowment       = [200.]
     randomize       = [False]
-    combs           = product(num_sellers, num_buyers, gamma, endowment, randomize)
+    combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
     comb            = list(combs)[i]
-    num_sellers, num_buyers, gamma, endowment, randomize = comb
+    num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize = comb
 # Run main function
     print('executing num_sell=%s, num_buy=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
-    a_cost = np.array([100, 100])
+    a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
     main(num_sellers, num_buyers, gamma, a_cost, endowment, randomize)
 
 

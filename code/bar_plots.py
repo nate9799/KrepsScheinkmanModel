@@ -23,15 +23,16 @@ def circle_dist(a, b):
 ############################################################
 num_sellers     = 2
 num_buyers      = 12
-gamma           = 0.05
-cost            = 100.
+gamma           = 0.0
+a_cost          = np.array([80, 120])
 endowment       = 200.
 randomize       = False
-fn              = 'S=%s_B=%s_gamma=%s_cost=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
-                num_buyers, gamma, cost, endowment, randomize)
+fn              = 'S=%s_B=%s_gamma=%s_a_cost=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
+                num_buyers, gamma, a_cost, endowment, randomize)
+print(fn)
 # Run main function
-print('executing num_sell=%s, num_buy=%s, cost=%s, gamma=%s, endowment = %s, randomize=%s'%(num_sellers,
-    num_buyers, gamma, cost, endowment, randomize))
+print('executing num_sell=%s, num_buy=%s, a_cost=%s, gamma=%s, endowment = %s, randomize=%s'%(num_sellers,
+    num_buyers, gamma, a_cost, endowment, randomize))
 
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
@@ -45,7 +46,7 @@ d_load  = jl.load(folder + fn)
 # import data
 ############################################################
 
-cost       		= d_load['cost']
+a_cost       		= d_load['a_cost']
 gamma      		= d_load['gamma']
 endowment  		= d_load['endowment']
 num_sellers     	= d_load['num_sellers']
@@ -93,7 +94,7 @@ who_buys_axis	= plt.subplot2grid( (nrow,ncol), (1,1) )
 
 # create plot title 
 ############################################################
-fn    = 'gamma=%s_cost=%s_endowment=%s_sellers=%s_buyers=%s'%(gamma, cost,
+fn    = 'gamma=%s_a_cost=%s_endowment=%s_sellers=%s_buyers=%s'%(gamma, a_cost,
         endowment, num_sellers, num_buyers)
 title = fn.replace('_',', ')
 fig.suptitle(title, fontsize=14) 
@@ -149,7 +150,7 @@ w       = 0.2
 
 
 ax.bar( 	x-w, a_price,          width=w,  color=colors[0],  alpha=1.0,  align='center' )
-ax.bar( 	x-w, cost,             width=w,  color='black',    alpha=0.2,  align='center' )
+ax.bar( 	x-w, a_cost,           width=w,  color='black',    alpha=0.2,  align='center' )
 
 
 ax.set_xticks(x)
