@@ -26,11 +26,11 @@ def get_a_cost_from_ratio(mean, ratio, num_sellers, is_arithmetic=True):
     '''
     a_ratio = [ratio ** i for i in range(num_sellers)]
     if is_arithmetic:
-        a_ratio = [ratio * (i+1) for i in range(num_sellers)]
+        a_ratio = [(ratio-1) * i + 1 for i in range(num_sellers)]
     return get_a_cost_from_a_ratio(mean, a_ratio)
 
 def get_a_cost_from_a_ratio(mean, a_ratio):
-    assert a_ratio[0] == 1, "a_ratio[0] should be 1, is {}".format(a_ration[0])
+    assert a_ratio[0] == 1, "a_ratio[0] should be 1, is {}".format(a_ratio[0])
     ret = np.array(a_ratio)
     avg_ratio = sum(a_ratio)/float(len(a_ratio))
     ret = ret * mean / avg_ratio
@@ -271,42 +271,37 @@ def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwa
     if inner_game:
         a_quantity = a_tmp_quant
         a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
-        a_num_strats = [len(a_strat_price)] * num_sellers
+        a_a_strat = [a_strat_price] * num_sellers
+        func = helper_func_inner_game
+        kwargs_new = dict(a_quantity=a_quantity, **kwargs)
     else:
         a_strat_quantity = a_tmp_quant
-        a_num_strats = [len(a_strat_quantity)] * num_sellers
-    ret = gmb.Game.new_table(a_num_strats)
-    for profile in ret.contingencies:
-        if inner_game:
-            a_price = a_strat_price[profile]
-            a_profit = find_profit(a_quantity, a_price, just_profit=True, **kwargs)
-        else:
-            a_quantity = a_strat_quantity[profile]
-            a_profit = find_profit_handler(num_sellers, num_buyers, a_quantity,
-                    just_profit=True, inner_game=True, **kwargs)
-        for ind in range(num_sellers):
-            float(a_profit[ind])
-            ret[profile][ind] = int(a_profit[ind])
-    num_strats = a_num_strats[1]
-    return ret, num_strats
+        a_a_strat = [a_strat_quantity] * num_sellers
+        func = helper_func_outer_game
+        kwargs_new = dict(num_sellers=num_sellers, num_buyers=num_buyers, **kwargs)
+    return make_game_table_from_a_a_strat(a_a_strat, func, **kwargs_new)
 
 
 ############################
 ### SEARCH ON GAME TABLE ###
 ############################
 
-def find_profit_handler_tmp(a_price, a_quantity, m_tax, a_cost, endowment):
+def helper_func_inner_game(a_price, a_quantity, m_tax, a_cost, endowment):
     return find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = True)
 
-def make_game_table_from_m_strat(m_strat, func_payoff, **kwargs):
+def helper_func_outer_game(a_quantity, num_sellers, num_buyers, **kwargs):
+    return find_profit_handler(num_sellers, num_buyers, a_quantity,
+            just_profit=True, inner_game=True, **kwargs)
+
+def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
     '''
     Creates game table on given prices.
     '''
-    a_num_strats = [len(a_strat) for a_strat in m_strat]
+    a_num_strats = [len(a_strat) for a_strat in a_a_strat]
     num_players = len(a_num_strats)
     ret = gmb.Game.new_table(a_num_strats)
     for profile in ret.contingencies:
-        a_strat_nash = [a_strat[profile[i]] for i, a_strat in enumerate(m_strat)]
+        a_strat_nash = [a_strat[profile[i]] for i, a_strat in enumerate(a_a_strat)]
         a_payoff = func_payoff(a_strat_nash, **kwargs)
         for ind in range(num_players):
             float(a_payoff[ind])
@@ -371,6 +366,7 @@ def refine_game_by_domination(a_payoff_func, a_strat, game):
     for i, row in enumerate(pd_payoff):
         pass
 
+
 ###############################
 ### HANDLER FOR FIND PROFIT ###
 ###############################
@@ -383,10 +379,10 @@ def find_profit_handler(num_sellers, num_buyers, a_tmp_quant,
     calculates nash for quantity, then returns the payoff. 
     '''
 # Gambit stuff
-    game, num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
+    game, a_num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
             inner_game=inner_game, **kwargs)
     profile = find_profile_best_nash_from_game(game, num_sellers)
-    if any(profile == 0) or any (profile == num_strats):
+    if any(profile == 0) or any (profile == a_num_strats):
         warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
 # Handle no soutions
     if len(profile) == 0 & just_profit:
@@ -452,14 +448,14 @@ def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]), endo
         a_seller_loc = np.linspace(start=0, stop=1, num=num_sellers, endpoint=False)
         a_buyer_loc  = np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False)
 # set the quantity discretization and calculate Nash
-    num_strats = 15 # number of quantity-strategies
+    num_strats = 21 # number of quantity-strategies
     dist = 40 # deviation from cournot that we search for
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
-    a_strat_quantity = np.linspace(120, 680, num_strats)
+    a_strat_quantity = np.linspace(0, 800, num_strats)
     print(q_min)
     print(q_max)
     print(a_strat_quantity)
@@ -483,21 +479,22 @@ def parameter_combination(i):
     num_sellers     = [2]
     num_buyers      = [12]
     gamma           = np.round(np.linspace(0.0, .3, 11), 3)
-    mean_cost       = [100]
-    cost_ratio      = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+    mean_cost       = [100.]
+    cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [200.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
     comb            = list(combs)[i]
     num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, endowment = %s, randomize=%s'%comb)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s'%comb)
     a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
+    print(a_cost)
     main(num_sellers, num_buyers, gamma, a_cost, endowment, randomize)
 
 
 if __name__ == "__main__":
     #i = int(sys.argv[1]) - 1
-    for i in range(11):
+    for i in range(121):
         parameter_combination(i) 
 
