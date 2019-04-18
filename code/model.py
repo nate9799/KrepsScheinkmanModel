@@ -201,30 +201,33 @@ def find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = Tru
 ### GAME TABLE ANALYSIS ###
 ###########################
 
-def find_a_profile_nash_strat_from_game(game, num_players):
+def find_a_profile_nash_strat_from_game(game, num_players, a_num_strats):
     '''
-    Finds array of pure nash profiles from a game where all players have an
-    EQUAL NUMBER OF STRATEGIES.  A profile is a np.array where the ith element
-    is the index of the strategy chosen by the ith player.
+    Finds array of pure nash profiles from a game.  A profile is a np.array
+    where the ith element is the index of the strategy chosen by the ith
+    player.
     '''
     solver = gmb.nash.ExternalEnumPureSolver()
     a_nash = solver.solve(game)
 # Handle Exceptions
     if len(a_nash) == 0:
         return np.array([])
-    num_nash = len(a_nash)
-    a_nash = np.array(a_nash)
-    a_nash = a_nash.reshape((num_nash, num_players, a_nash.size/(num_nash * num_players)))
+# Parse a_nash into an actual array
+    a_split = np.cumsum(a_num_strats)
+    a_split = a_split[0:(len(a_split)-1)]
+    a_nash = [np.array(nash) for nash in a_nash]
+    a_nash = [np.split(nash, a_split) for nash in a_nash]
+# Find 1's
     ret = np.array([np.nonzero(nash)[1] for nash in a_nash])
     return ret
 
-def find_profile_best_nash_from_game(game, num_players):
+def find_profile_best_nash_from_game(game, num_players, a_num_strats):
     '''
-    Finds array of pure nash profiles from a game where all players have an
-    EQUAL NUMBER OF STRATEGIES.  A profile is a np.array where the ith element
-    is the index of the strategy chosen by the ith player.
+    Finds pure nash profile with highest total payoff from a game.  A profile
+    is a np.array where the ith element is the index of the strategy chosen by
+    the ith player.
     '''
-    a_profile = find_a_profile_nash_strat_from_game(game, num_players)
+    a_profile = find_a_profile_nash_strat_from_game(game, num_players, a_num_strats)
     num_nash = len(a_profile)
     if num_nash == 0: 
         return np.array([])
@@ -361,7 +364,7 @@ def find_nash_price(num_sellers, num_buyers, a_quantity, just_profit=False,
 # Gambit stuff
     game, a_num_strats = make_game_table_price(num_sellers, num_buyers,
             a_quantity, **kwargs)
-    profile = find_profile_best_nash_from_game(game, num_sellers)
+    profile = find_profile_best_nash_from_game(game, num_sellers, a_num_strats)
 # Handle no soutions
     if len(profile) == 0:
         if not just_profit:
@@ -390,7 +393,7 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 # Gambit stuff
     game, a_num_strats = make_game_table_quant(num_sellers, num_buyers,
             a_a_strat_quant, **kwargs)
-    profile = find_profile_best_nash_from_game(game, num_sellers)
+    profile = find_profile_best_nash_from_game(game, num_sellers, a_num_strats)
 # Handle no soutions
     if len(profile) == 0:
         raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
@@ -485,7 +488,7 @@ def parameter_combination(i):
     num_buyers      = [12]
     gamma           = np.round(np.linspace(0.0, .3, 11), 3)
     mean_cost       = [100.]
-    cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
+    cost_ratio      = np.round(np.linspace(1.8, 2.0, 3), 3)
     endowment       = [200.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
