@@ -245,68 +245,9 @@ def get_a_payoff_from_profile(game, profile, num_players):
     return [game[profile][player] for player in range(num_players)]
 
 
-#########################
-### CREATE GAME TABLE ###
-#########################
-
-def get_a_cost_from_kwargs(m_tax, a_cost, endowment):
-    return a_cost
-
-def make_a_strat_price(num_buyers, a_quantity, num_strats=21,
-        is_randomized=False, is_shifted = False, **kwargs):
-    """
-    Makes array of possilbe price strategies.  Don't allow even num_strats.
-    """
-    #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
-    _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
-    a_cost = get_a_cost_from_kwargs(**kwargs)
-    return np.linspace(min(a_cost), price, num_strats)
-
-def make_game_table(num_sellers, num_buyers, a_tmp_quant, inner_game=True, **kwargs):
-    '''
-    Creates gambit game table for predetermined quantities and a list of prices
-    for strategies.  a_tmp_quant is either the array of quantity strategies
-    available, a_strat_quant, or the array of quantities.
-    '''
-    if inner_game:
-        a_quantity = a_tmp_quant
-        a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
-        a_a_strat = [a_strat_price] * num_sellers
-        func = helper_func_inner_game
-        kwargs_new = dict(a_quantity=a_quantity, **kwargs)
-    else:
-        a_strat_quantity = a_tmp_quant
-        a_a_strat = [a_strat_quantity] * num_sellers
-        func = helper_func_outer_game
-        kwargs_new = dict(num_sellers=num_sellers, num_buyers=num_buyers, **kwargs)
-    return make_game_table_from_a_a_strat(a_a_strat, func, **kwargs_new)
-
-
 ############################
 ### SEARCH ON GAME TABLE ###
 ############################
-
-def helper_func_inner_game(a_price, a_quantity, m_tax, a_cost, endowment):
-    return find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = True)
-
-def helper_func_outer_game(a_quantity, num_sellers, num_buyers, **kwargs):
-    return find_profit_handler(num_sellers, num_buyers, a_quantity,
-            just_profit=True, inner_game=True, **kwargs)
-
-def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
-    '''
-    Creates game table on given prices.
-    '''
-    a_num_strats = [len(a_strat) for a_strat in a_a_strat]
-    num_players = len(a_num_strats)
-    ret = gmb.Game.new_table(a_num_strats)
-    for profile in ret.contingencies:
-        a_strat_nash = [a_strat[profile[i]] for i, a_strat in enumerate(a_a_strat)]
-        a_payoff = func_payoff(a_strat_nash, **kwargs)
-        for ind in range(num_players):
-            float(a_payoff[ind])
-            ret[profile][ind] = int(a_payoff[ind])
-    return ret, a_num_strats
 
 def refine_m_strat(m_strat, func_payoff_handler, scale_factor,
         no_zoom_if_edge_nash=True, **kwargs):
@@ -324,7 +265,8 @@ def refine_m_strat(m_strat, func_payoff_handler, scale_factor,
     if len(profile) == 0:
         raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
 # Find m_strat locations
-    a_strat_nash = np.array([a_strat[profile[i]] for i, a_strat in enumerate(m_strat)])
+    a_strat_nash = np.array([a_strat[profile[i]] for i, a_strat in
+        enumerate(m_strat)])
     a_jump = abs(m_strat[:, 0] - m_strat[:,1])
 # Handle zooming
     if no_zoom_if_edge_nash:
@@ -351,59 +293,121 @@ def find_psuedocontinuous_nash(a_strat, num_sellers, func_payoff_handler,
         m_strat = refine_m_strat(m_strat, func_payoff_handler, scale_factor, **kwargs)
     return m_strat
 
-# This function is not used right now.  
-def refine_game_by_domination(a_payoff_func, a_strat, game):
+
+#########################
+### CREATE GAME TABLE ###
+#########################
+
+def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
     '''
-    a_strat is the same for every seller right now.
+    Creates game table on given prices.
     '''
-    game, num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
-            inner_game=inner_game, **kwargs);
-    # Convert game to pd.dt
-    # Find dominated strategies using pd.dt
-    # Remove dominated strategies
-    # re-discretize
-    # Find new game
-    for i, row in enumerate(pd_payoff):
-        pass
+    a_num_strats = [len(a_strat) for a_strat in a_a_strat]
+    num_players = len(a_num_strats)
+    ret = gmb.Game.new_table(a_num_strats)
+    for profile in ret.contingencies:
+        a_strat_nash = np.array([a_strat[profile[i]] for i, a_strat in
+            enumerate(a_a_strat)])
+        a_payoff = func_payoff(a_strat_nash, **kwargs)
+        for ind in range(num_players):
+            float(a_payoff[ind])
+            ret[profile][ind] = int(a_payoff[ind])
+    return ret, a_num_strats
+
+def get_a_cost_from_kwargs(m_tax, a_cost, endowment):
+    return a_cost
+
+def make_a_strat_price(num_buyers, a_quantity, num_strats=21,
+        is_randomized=False, is_shifted = False, **kwargs):
+    """
+    Makes array of possilbe price strategies.  Don't allow even num_strats.
+    """
+    #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
+    _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
+    a_cost = get_a_cost_from_kwargs(**kwargs)
+    return np.linspace(min(a_cost), price, num_strats)
+
+def helper_func_price(a_price, a_quantity, m_tax, a_cost, endowment):
+    return find_profit(a_quantity, a_price, m_tax, a_cost, endowment,
+            just_profit = True)
+
+def helper_func_quant(a_quantity, num_sellers, num_buyers, **kwargs):
+    return find_nash_price(num_sellers, num_buyers, a_quantity,
+            just_profit=True, **kwargs)
+
+def make_game_table_price(num_sellers, num_buyers, a_quantity, **kwargs):
+    a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
+    a_a_strat_price = [a_strat_price] * num_sellers
+    kwargs_new = dict(a_quantity=a_quantity, **kwargs)
+    return make_game_table_from_a_a_strat(a_a_strat_price, helper_func_price,
+            **kwargs_new)
+
+def make_game_table_quant(num_sellers, num_buyers, a_a_strat_quant, **kwargs):
+    kwargs_new = dict(num_sellers=num_sellers, num_buyers=num_buyers, **kwargs)
+    return make_game_table_from_a_a_strat(a_a_strat_quant, helper_func_quant,
+            **kwargs_new)
 
 
-###############################
-### HANDLER FOR FIND PROFIT ###
-###############################
+#################
+### FIND NASH ###
+#################
 
-def find_profit_handler(num_sellers, num_buyers, a_tmp_quant,
-        just_profit=False, inner_game=True, **kwargs):
+def find_nash_price(num_sellers, num_buyers, a_quantity, just_profit=False,
+        **kwargs):
     '''
-    Creates game with strategies from a_strat_quantity, then runs
-    find_profit_handler_from_quantity repeatedly to find payoffs. Finally,
-    calculates nash for quantity, then returns the payoff. 
+    Finds nash price given quantity. Can also output other information as a
+    dictionary. Price options are automatically generated.
     '''
 # Gambit stuff
-    game, a_num_strats = make_game_table(num_sellers, num_buyers, a_tmp_quant,
-            inner_game=inner_game, **kwargs)
+    game, a_num_strats = make_game_table_price(num_sellers, num_buyers,
+            a_quantity, **kwargs)
     profile = find_profile_best_nash_from_game(game, num_sellers)
-    if any(profile == 0) or any (profile == a_num_strats):
-        warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
 # Handle no soutions
-    if len(profile) == 0 & just_profit:
-        if not inner_game:
-            raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
-        return np.ones(num_sellers) * -sys.maxint
     if len(profile) == 0:
-        raise Exception("No pure Nash found: {}".format(profile))
+        if not just_profit:
+            raise Exception("No pure Nash found: {}".format(profile))
+        warnings.warn('No pure Nash found in inner game'.format(profile))
+        return np.ones(num_sellers) * -sys.maxint
+# Boundary Warnings
+    if any(profile == 0) or any (profile == np.array(a_num_strats)-1):
+        warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
+# Output
     if just_profit:
         return get_a_payoff_from_profile(game, profile, num_sellers)
-    if inner_game:
-        a_quantity = a_tmp_quant
-        a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
-        a_price = a_strat_price[profile]
-        ret = find_profit(a_quantity, a_price, just_profit = False, **kwargs)
-        return ret
-    a_strat_quant = a_tmp_quant
-    a_quantity = a_strat_quant[profile]
-    ret = find_profit_handler(num_sellers, num_buyers, a_quantity, just_profit=False, inner_game=True, **kwargs)
+    a_strat_price = make_a_strat_price(num_buyers, a_quantity, **kwargs)
+    a_price = a_strat_price[profile]
+    ret = find_profit(a_quantity, a_price, just_profit = False, **kwargs)
     return ret
 
+def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
+        **kwargs):
+    '''
+    Finds nash quantity given range of quantities, then outputs all the
+    information as a dictionary. This is where the zooming in happens.
+    '''
+# filter negatives
+    a_a_strat_quant = [a_strat[a_strat >= 0.] for a_strat in a_a_strat_quant]
+# Gambit stuff
+    game, a_num_strats = make_game_table_quant(num_sellers, num_buyers,
+            a_a_strat_quant, **kwargs)
+    profile = find_profile_best_nash_from_game(game, num_sellers)
+# Handle no soutions
+    if len(profile) == 0:
+        raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
+# Boundary Warnings
+    if any(profile == 0) or any (profile == np.array(a_num_strats)-1):
+        warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
+# Output
+    a_quantity = np.array([a_strat[profile[i]] for i, a_strat in
+        enumerate(a_a_strat_quant)])
+    ret = find_nash_price(num_sellers, num_buyers, a_quantity,
+            just_profit=False, **kwargs)
+# Zoom in
+    if not is_zoomed:
+        a_a_strat_quant = [get_a_strat_from_center(17, quant, 5) for quant in a_quantity]
+        ret = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
+                is_zoomed=True, **kwargs)
+    return ret
 
 #####################
 ### CREATE PICLKE ###
@@ -418,8 +422,9 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 # Setup
     m_tax = get_m_tax(a_buyer_loc, a_seller_loc, gamma)
     kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment}
+    a_a_strat_quant = [a_strat_quantity] * num_sellers
 # Create and Solve Game.
-    d_nash = find_profit_handler(num_sellers, num_buyers, a_strat_quantity, just_profit=False, inner_game=False,
+    d_nash = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
             **kwargs)
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
     ret = {'gamma' :        gamma,
