@@ -215,10 +215,9 @@ def find_a_profile_nash_strat_from_game(game, num_players, a_num_strats):
 # Parse a_nash into an actual array
     a_split = np.cumsum(a_num_strats)
     a_split = a_split[0:(len(a_split)-1)]
-    a_nash = [np.array(nash) for nash in a_nash]
-    a_nash = [np.split(nash, a_split) for nash in a_nash]
-# Find 1's
-    ret = np.array([np.nonzero(nash)[1] for nash in a_nash])
+    a_split = np.insert(a_split, 0, 0)
+    a_nash = np.array([np.nonzero(nash)[0] for nash in a_nash])
+    ret = a_nash - a_split
     return ret
 
 def find_profile_best_nash_from_game(game, num_players, a_num_strats):
@@ -486,9 +485,9 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = np.round(np.linspace(0.0, .3, 11), 3)
+    gamma           = [0.1]#np.round(np.linspace(0.0, .3, 11), 3)
     mean_cost       = [100.]
-    cost_ratio      = np.round(np.linspace(1.8, 2.0, 3), 3)
+    cost_ratio      = [1.0]#np.round(np.linspace(1.9, 2.0, 2), 3)
     endowment       = [200.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
