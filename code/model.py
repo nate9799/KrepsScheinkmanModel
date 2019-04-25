@@ -487,7 +487,7 @@ def parameter_combination(i):
     num_buyers      = [12]
     gamma           = [0.1]#np.round(np.linspace(0.0, .3, 11), 3)
     mean_cost       = [100.]
-    cost_ratio      = [1.0]#np.round(np.linspace(1.9, 2.0, 2), 3)
+    cost_ratio      = np.round(np.linspace(1.9, 2.0, 2), 3)
     endowment       = [200.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
