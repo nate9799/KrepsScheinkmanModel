@@ -381,6 +381,18 @@ def find_nash_price(num_sellers, num_buyers, a_quantity, just_profit=False,
     ret = find_profit(a_quantity, a_price, just_profit = False, **kwargs)
     return ret
 
+def empty_ret(num_sellers, num_buyers):
+    a_NA = np.empty(num_sellers)
+    a_NA[:] = np.nan
+    m_NA = np.empty((num_sellers, num_buyers))
+    m_NA[:] = np.nan
+    ret = {'a_profit' : a_NA,
+           'a_quantity_nash' : a_NA,
+           'm_quantity_bought' : m_NA,
+           'a_price_nash' : a_NA,
+           'a_quantity_sold' : a_NA}
+    return ret
+
 def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
         **kwargs):
     '''
@@ -395,7 +407,8 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
     profile = find_profile_best_nash_from_game(game, num_sellers, a_num_strats)
 # Handle no soutions
     if len(profile) == 0:
-        raise Exception("No pure Nash found in outer game, fix the code: {}".format(profile))
+        warnings.warn("No pure Nash found in outer game, fix the code: {}".format(profile))
+        return empty_ret(num_sellers, num_buyers)
 # Boundary Warnings
     if any(profile == 0) or any (profile == np.array(a_num_strats)-1):
         warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
@@ -443,7 +456,8 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 ### MAIN ###
 ############
 
-def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]), endowment=200, randomize=False):
+def main(num_sellers=2, num_buyers=6, gamma=0, mean_cost=100, cost_ratio=1.0,
+        endowment=200, randomize=False):
     """ Add documentation here """
 # check that input is correct
     assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
@@ -457,15 +471,14 @@ def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]), endo
 # set the quantity discretization and calculate Nash
     num_strats = 21 # number of quantity-strategies
     dist = 40 # deviation from cournot that we search for
+# Determine a_cost
+    a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
     a_strat_quantity = np.linspace(0, 800, num_strats)
-    print(q_min)
-    print(q_max)
-    print(a_strat_quantity)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, endowment)
     print(d_write)
@@ -473,8 +486,8 @@ def main(num_sellers=2, num_buyers=6, gamma=0, a_cost=np.array([100, 100]), endo
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn      = 'S=%s_B=%s_gamma=%s_a_cost=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
-            num_buyers, gamma, a_cost, endowment, randomize)
+    fn      = 'S=%s_B=%s_gamma=%s_mean_cost=%s_cost_ratio=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
+            num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
     jl.dump(d_write, folder + fn)
 
 
@@ -485,9 +498,9 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = [0.1]#np.round(np.linspace(0.0, .3, 11), 3)
+    gamma           = np.round(np.linspace(0.0, .3, 11), 3)
     mean_cost       = [100.]
-    cost_ratio      = np.round(np.linspace(1.9, 2.0, 2), 3)
+    cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [200.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
@@ -495,9 +508,7 @@ def parameter_combination(i):
     num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize = comb
 # Run main function
     print('executing num_sell=%s, num_buy=%s, gamma=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s'%comb)
-    a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
-    print(a_cost)
-    main(num_sellers, num_buyers, gamma, a_cost, endowment, randomize)
+    main(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
 
 
 if __name__ == "__main__":
