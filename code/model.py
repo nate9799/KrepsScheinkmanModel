@@ -72,18 +72,20 @@ def circle_dist(a, b):
     '''
     return .5-abs(abs(a-b)-.5)
 
-def get_m_tax(a_buyer_loc, a_seller_loc, gamma):
+def get_m_tax(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
     '''
-    Calculates tax matrix and distance matrix.
+    Calculates tax matrix.
     '''
     # Matrix with absolute dist
     m_dist = [[circle_dist(buyer_loc, seller_loc)
         for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
-    # Matrix with rel dist with list of prices. '+ 1' because min dist is 1.
-    m_rel_dist = np.argsort(m_dist, axis=0) + 1.
-    # Lot of potential speed up here, only need to do exponent once.
-    m_tax = np.array(m_rel_dist**gamma)
-    return m_tax
+    # Matrix with rel dist with list of prices.
+    m_rel_dist = np.argsort(m_dist, axis=0)
+    m_tax = scalar_tax * (m_rel_dist ** gamma)
+    m_tax[np.where(m_rel_dist == 0)] = 0
+    ret = m_tax + 1.
+    print(ret)
+    return ret
 
 # FIXME: handle a_cost
 def theoretical_Cournot(num_sellers, num_buyers, cost, endowment):
@@ -419,7 +421,8 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
             just_profit=False, **kwargs)
 # Zoom in
     if not is_zoomed:
-        a_a_strat_quant = [get_a_strat_from_center(17, quant, 5) for quant in a_quantity]
+        a_a_strat_quant = [get_a_strat_from_center(17, quant, 5) for quant in
+                a_quantity]
         ret = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
                 is_zoomed=True, **kwargs)
     return ret
@@ -429,24 +432,27 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 #####################
 
 def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-        a_seller_loc, a_buyer_loc, a_cost, gamma, endowment):
+        a_seller_loc, a_buyer_loc, a_cost, mean_cost, cost_ratio, gamma,
+        scalar_tax, endowment):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
     '''
 # Setup
-    m_tax = get_m_tax(a_buyer_loc, a_seller_loc, gamma)
+    m_tax = get_m_tax(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment}
     a_a_strat_quant = [a_strat_quantity] * num_sellers
 # Create and Solve Game.
     d_nash = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
             **kwargs)
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
-    ret = {'gamma' :        gamma,
-           'a_buyer_loc' :  a_buyer_loc,
-           'a_seller_loc' : a_seller_loc,
-           'num_buyers' :   num_buyers,
-           'num_sellers' :  num_sellers }
+    ret = {'gamma'          : gamma,
+           'mean_cost'      : mean_cost,
+           'cost_ratio'     : cost_ratio,
+           'a_buyer_loc'    : a_buyer_loc,
+           'a_seller_loc'   : a_seller_loc,
+           'num_buyers'     : num_buyers,
+           'num_sellers'    : num_sellers}
     ret.update(kwargs)
     ret.update(d_nash)
     return ret
@@ -456,7 +462,7 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 ### MAIN ###
 ############
 
-def main(num_sellers=2, num_buyers=6, gamma=0, mean_cost=100, cost_ratio=1.0,
+def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=.05, mean_cost=100, cost_ratio=1.0,
         endowment=200, randomize=False):
     """ Add documentation here """
 # check that input is correct
@@ -480,7 +486,8 @@ def main(num_sellers=2, num_buyers=6, gamma=0, mean_cost=100, cost_ratio=1.0,
             endowment)
     a_strat_quantity = np.linspace(0, 800, num_strats)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-            a_seller_loc, a_buyer_loc, a_cost, gamma, endowment)
+            a_seller_loc, a_buyer_loc, a_cost, mean_cost, cost_ratio, gamma,
+            scalar_tax, endowment)
     print(d_write)
 # write to the output
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
@@ -498,21 +505,25 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = np.round(np.linspace(0.0, .3, 11), 3)
+    gamma           = np.round(np.linspace(0.06, .27, 8), 3)
+    scalar_tax      = [.05]
     mean_cost       = [100.]
     cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [200.]
     randomize       = [False]
-    combs           = product(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
+    combs           = product(num_sellers, num_buyers, gamma, scalar_tax,
+            mean_cost, cost_ratio, endowment, randomize)
     comb            = list(combs)[i]
-    num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize = comb
+    num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s'%comb)
-    main(num_sellers, num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s'%comb)
+    main(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio,
+            endowment, randomize)
 
 
 if __name__ == "__main__":
-    #i = int(sys.argv[1]) - 1
-    for i in range(121):
-        parameter_combination(i) 
+    i = int(sys.argv[1]) - 1
+    #for i in range(4,110):
+    print(i)
+    parameter_combination(i) 
 
