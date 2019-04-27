@@ -81,10 +81,9 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
         for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
     # Matrix with rel dist with list of prices.
     m_rel_dist = np.argsort(m_dist, axis=0)
-    m_tax = scalar_tax * (m_rel_dist ** gamma)
+    m_tax = m_rel_dist ** gamma
     m_tax[np.where(m_rel_dist == 0)] = 0
-    ret = m_tax + 1.
-    print(ret)
+    ret = scalar_tax * (m_tax + 1.)
     return ret
 
 # FIXME: handle a_cost
@@ -290,8 +289,6 @@ def find_psuedocontinuous_nash(a_strat, num_sellers, func_payoff_handler,
     Basically a handler for refine_m_strat.
     '''
     m_strat = np.array([a_strat] * num_sellers)
-    print(m_strat)
-    print('hi')
     num_iter = 5
     for i in range(num_iter):
         m_strat = refine_m_strat(m_strat, func_payoff_handler, scale_factor, **kwargs)
@@ -313,9 +310,12 @@ def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
         a_strat_nash = np.array([a_strat[profile[i]] for i, a_strat in
             enumerate(a_a_strat)])
         a_payoff = func_payoff(a_strat_nash, **kwargs)
-        for ind in range(num_players):
-            float(a_payoff[ind])
-            ret[profile][ind] = int(a_payoff[ind])
+        try:
+            for ind in range(num_players):
+                ret[profile][ind] = int(a_payoff[ind])
+        except BaseException as e:
+            print(a_payoff)
+            print(e)
     return ret, a_num_strats
 
 def get_a_cost_from_kwargs(m_tax, a_cost, endowment):
