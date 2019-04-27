@@ -81,9 +81,9 @@ def get_m_tax(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
         for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
     # Matrix with rel dist with list of prices.
     m_rel_dist = np.argsort(m_dist, axis=0)
-    m_tax = m_rel_dist ** gamma
-    m_tax[np.where(m_rel_dist == 0)] = 0
-    ret = scalar_tax * (m_tax + 1.)
+    m_tax = m_rel_dist ** gamma - 1.
+    ret = (1 + scalar_tax) * m_tax
+    print(ret)
     return ret
 
 # FIXME: handle a_cost
@@ -94,20 +94,8 @@ def theoretical_Cournot(num_sellers, num_buyers, cost, endowment):
     num_sellers = float(num_sellers)
     num_buyers = float(num_buyers)
     Q = float(num_buyers * (endowment - cost)/(num_sellers + 1))
-    P = float(endowment - (Q/num_buyers))
+    P = float(endowment_actual - (Q/num_buyers))
     return Q, P
-
-def theoretical_Cournots_from_a_cost(num_sellers, num_buyers, a_cost, endowment):
-    """
-    Calculates theoretical Cournot for S sellers and B buyers at given price and endowment/buyer.
-    """
-    assert len(a_cost) == num_sellers, "len(a_cost) != num_sellers. is {}, should be {}".format(len(a_cost), num_sellers)
-    num_sellers = float(num_sellers)
-    num_buyers = float(num_buyers)
-    avg_cost = sum(a_cost)/num_sellers
-    a_quantities = (num_buyers/(num_sellers + 1)) * (endowment + num_sellers * (avg_cost - a_cost) - a_cost)
-    price = float(endowment - (sum(a_quantities)/num_buyers))
-    return a_quantities, price
 
 ###################
 ### FIND BUNDLE ###
@@ -166,7 +154,7 @@ def find_quantity_sold(a_quantity, m_price_rel, endowment):
 ### FIND PROFIT ###
 ###################
 
-def find_profit_cournot(num_buyers, a_quantity, m_tax, a_cost, endowment):
+def find_profit_cournot(num_buyers, a_quantity, m_tax, a_cost, endowment, scalar_tax=.05):
     '''
     Finds profit for each seller based on theoretical cournot model, given
     quantities, cost, endowment, and number of buyers.
@@ -328,8 +316,9 @@ def make_a_strat_price(num_buyers, a_quantity, num_strats=21,
     """
     #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
     _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
-    a_cost = get_a_cost_from_kwargs(**kwargs)
-    return np.linspace(min(a_cost), price, num_strats)
+    cost = min(get_a_cost_from_kwargs(**kwargs))
+    ret = np.linspace(cost, price, num_strats)
+    return ret
 
 def helper_func_price(a_price, a_quantity, m_tax, a_cost, endowment):
     return find_profit(a_quantity, a_price, m_tax, a_cost, endowment,
@@ -493,8 +482,9 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=.05, mean_cost=100, co
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn      = 'S=%s_B=%s_gamma=%s_mean_cost=%s_cost_ratio=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
-            num_buyers, gamma, mean_cost, cost_ratio, endowment, randomize)
+    fn      = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_mean_cost=%s_cost_ratio=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
+            num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment,
+            randomize)
     jl.dump(d_write, folder + fn)
 
 
@@ -505,11 +495,11 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = np.round(np.linspace(0.06, .27, 8), 3)
+    gamma           = [40]#np.round(np.linspace(0.06, .27, 8), 3)
     scalar_tax      = [.05]
-    mean_cost       = [100.]
-    cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
-    endowment       = [200.]
+    mean_cost       = [(100./1.05)]
+    cost_ratio      = [1.]#np.round(np.linspace(1.0, 2.0, 11), 3)
+    endowment       = [(200.*1.05)]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax,
             mean_cost, cost_ratio, endowment, randomize)
@@ -522,8 +512,8 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    i = int(sys.argv[1]) - 1
+    #i = int(sys.argv[1]) - 1
     #for i in range(4,110):
-    print(i)
-    parameter_combination(i) 
+    print(1)
+    parameter_combination(0) 
 

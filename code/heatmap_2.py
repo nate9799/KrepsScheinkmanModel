@@ -59,8 +59,8 @@ m_dict = [[get_dict(cost_ratio, gamma) for cost_ratio in a_cost_ratio]
 # Make plots
 pd_gamma = get_pd_from_m_dict(m_dict, 'gamma')
 pd_cost_ratio = get_pd_from_m_dict(m_dict, 'cost_ratio')
-pd_price = get_pd_from_m_dict(m_dict, 'a_price_nash', lambda x : max(x))
-pd_price = get_pd_from_m_dict(m_dict, 'a_price_nash', lambda x : min(x))
+pd_price_max = get_pd_from_m_dict(m_dict, 'a_price_nash', lambda x : max(x))
+pd_price_min = get_pd_from_m_dict(m_dict, 'a_price_nash', lambda x : min(x))
 print(pd_price)
 print(pd_gamma)
 pd_profit = get_pd_from_m_dict(m_dict, 'a_quantity_nash', lambda x : min(x))
@@ -72,5 +72,6 @@ pd_eff_comp = get_pd_from_m_dict(m_dict, 'a_price_nash',
 print(pd_eff_comp)
 sns.heatmap(pd_eff_comp)
 plt.show()
+
 
 
