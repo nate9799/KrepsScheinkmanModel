@@ -39,6 +39,23 @@ def heat_ax_from_pd(pd, title, ax):
     ax.set_ylabel('gamma')
     return ax
 
+def plot_line_from_pd(pd, gamma, color, is_min=True):
+    if is_min:
+        linestyle='--'
+    else:
+        linestyle='.'
+    ret = plt.plot('cost_ratio', 'price', data=pd, marker='', color=color,
+            linewidth=2, linestyle=linestyle)
+    return ret
+
+def plot_multi_line_from_pd(pd, a_gamma):
+    a_color = sb.color_palette("deep", len(a_gamma))
+    for gamma, color in zip(a_gamma, a_color):
+        plot_line_from_pd(pd, gamma, color, True)
+        plot_line_from_pd(pd, gamma, color, False)
+    plt.show()
+ 
+
 # Create combinations
 ##########################################################
 num_sellers     = 2
@@ -61,7 +78,6 @@ pd_gamma = get_pd_from_m_dict(m_dict, 'gamma')
 pd_cost_ratio = get_pd_from_m_dict(m_dict, 'cost_ratio')
 pd_price_max = get_pd_from_m_dict(m_dict, 'a_price_nash', lambda x : max(x))
 pd_price_min = get_pd_from_m_dict(m_dict, 'a_price_nash', lambda x : min(x))
-print(pd_price)
 print(pd_gamma)
 pd_profit = get_pd_from_m_dict(m_dict, 'a_quantity_nash', lambda x : min(x))
 ax = plt.axes()
@@ -72,6 +88,5 @@ pd_eff_comp = get_pd_from_m_dict(m_dict, 'a_price_nash',
 print(pd_eff_comp)
 sns.heatmap(pd_eff_comp)
 plt.show()
-
 
 
