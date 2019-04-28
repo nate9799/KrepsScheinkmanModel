@@ -429,7 +429,8 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 #####################
 
 def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-        a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment):
+        a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
+        mean_cost, cost_ratio):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
@@ -443,6 +444,9 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             **kwargs)
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
     ret = {'gamma' :        gamma,
+           'scalar_tax' : scalar_tax,
+           'mean_cost' : mean_cost,
+           'cost_ratio' : cost_ratio,
            'a_buyer_loc' :  a_buyer_loc,
            'a_seller_loc' : a_seller_loc,
            'num_buyers' :   num_buyers,
@@ -480,7 +484,8 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
             endowment)
     a_strat_quantity = np.linspace(0, 800, num_strats)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-            a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment)
+            a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
+            mean_cost, cost_ratio)
     print(d_write)
 # write to the output
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
