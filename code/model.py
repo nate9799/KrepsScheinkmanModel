@@ -503,7 +503,7 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = [3.]#np.round(np.linspace(0.0, .3, 11), 3)
+    gamma           = np.round(np.linspace(0.0, .3, 11), 3)
     scalar_tax      = [.05]
     mean_cost       = [100.]
     cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
@@ -518,7 +518,7 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    #i = int(sys.argv[1]) - 1
+    i = int(sys.argv[1]) - 1
     #for i in range(121):
-    parameter_combination(1) 
+    parameter_combination(i) 
 
