@@ -69,7 +69,9 @@ def dic_from_a_dic(a_dic):
 def process(d_settings, num_loops):
     a_d_turns = loop(d_settings, num_loops)
     d_turns = dic_from_a_dic(a_d_turns)
-    folder = '/home/nate/Documents/abmcournotmodel/code/output/data/'
+    folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
+    folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
+    folder  = folder1 if os.path.exists(folder1) else folder2
     fn = folder + 'out.pickle'
     jl.dump(d_turns, fn)
 
