@@ -1,4 +1,5 @@
 from sklearn.externals import joblib as jl
+import os
 import model
 import pandas as pd
 import numpy as np
@@ -72,7 +73,7 @@ def process(d_settings, num_loops):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'out.pickle'
+    fn = folder + 'turn.pickle'
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
@@ -89,4 +90,4 @@ if __name__ == "__main__":
             'endowment' : 200,
             'mean_cost' : 100,
             'cost_ratio' : 1} 
-    process(d_settings, 20)
+    process(d_settings, 2)

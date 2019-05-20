@@ -314,7 +314,6 @@ def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
             enumerate(a_a_strat)])
         a_payoff = func_payoff(a_strat_nash, **kwargs)
         for ind in range(num_players):
-            float(a_payoff[ind])            
             try: ret[profile][ind] = int(a_payoff[ind])
             except: set_trace()
     return ret, a_num_strats
@@ -372,7 +371,7 @@ def find_nash_price(num_sellers, num_buyers, a_quantity, just_profit=False,
         if not just_profit:
             raise Exception("No pure Nash found: {}".format(profile))
         warnings.warn('No pure Nash found in inner game'.format(profile))
-        return np.ones(num_sellers) * -sys.maxint
+        return np.ones(num_sellers) * (-sys.maxint/4)
 # Boundary Warnings
     if any(profile == 0) or any (profile == np.array(a_num_strats)-1):
         warnings.warn('Boundary hit in game table. profile: {}'.format(profile))
