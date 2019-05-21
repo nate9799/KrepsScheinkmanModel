@@ -45,6 +45,9 @@ def loop(d_settings, num_loops):
         print(i)
         dic_ret = turn_dic_from_dic(dic_ret)
         a_dic_ret.append(dic_ret)
+        if np.isnan(dic_ret['a_profit'][0]):
+            print('ended with NAN')
+            break
     return a_dic_ret
 
 def dic_from_a_dic(a_dic):
@@ -77,6 +80,8 @@ def process(d_settings, num_loops):
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
+    i = int(sys.argv[1]) - 1
+    gamma = i*3./100.
     num_sellers = 2
     num_buyers = 13
     d_settings = { 'num_sellers' : num_sellers,
@@ -85,9 +90,10 @@ if __name__ == "__main__":
             'a_seller_loc' : np.linspace(start=0, stop=1, num=num_sellers, endpoint=False),
             'a_buyer_loc'  : np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False),
             'a_cost' : [100, 100],
-            'gamma' : 0,
+            'gamma' : gamma,
             'scalar_tax' : 1,
             'endowment' : 200,
             'mean_cost' : 100,
             'cost_ratio' : 1} 
-    process(d_settings, 2)
+    process(d_settings, 20)
+

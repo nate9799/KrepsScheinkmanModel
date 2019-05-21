@@ -59,11 +59,6 @@ a_buyer_pos             = d_load['a_buyer_loc']
 a_seller_pos            = d_load['a_seller_loc']
 m_tax                   = d_load['m_tax']
 m_quantity_bought       = d_load['m_quantity_bought']
-print(m_tax)
-print(m_quantity_bought)
-print(a_profit)
-print(a_price)
-print(a_quantity)
 
 # positions where the buers are located
 
