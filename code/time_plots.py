@@ -24,7 +24,7 @@ randomize       = False
 fn              = 'S=%s_B=%s_gamma=%s_a_cost=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
                 num_buyers, gamma, a_cost, endowment, randomize)
 print(fn)
-fn = "turn.pickle"
+fn = "turn0.pickle"
 # Run main function
 print('executing num_sell=%s, num_buy=%s, a_cost=%s, gamma=%s, endowment = %s, randomize=%s'%(num_sellers,
     num_buyers, gamma, a_cost, endowment, randomize))
@@ -33,6 +33,8 @@ folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
 folder  = folder1 if os.path.exists(folder1) else folder2
 d_load  = jl.load(folder + fn)
+
+print(d_load['a_cost'])
 
 ################
 ### FUNCTION ###
@@ -68,7 +70,7 @@ pd_cost       		= pd.DataFrame(d_load['a_cost'])
 pd_profit 		= pd.DataFrame(d_load['a_profit'])
 
 
-# positions where the buers are located
+# positions where the buyers are located
 
 
 # PLOT
@@ -115,6 +117,7 @@ ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
 ############################################################
 ax = ax_cost
 pd_data = pd_cost
+print(pd_cost)
 ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
 
 # plot the price for each buyer 
