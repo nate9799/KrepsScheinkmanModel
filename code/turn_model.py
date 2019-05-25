@@ -45,12 +45,12 @@ def loop(d_settings, num_loops):
     a_dic_ret = [dic_ret]
     for i in range(num_loops-1):
         print(i)
-        dic_ret = turn_dic_from_dic(dic_ret)
-        a_dic_ret.append(dic_ret)
-        print(a_dic_ret)
         if np.isnan(dic_ret['a_profit'][0]):
             print('ended with NAN')
             break
+        dic_ret = turn_dic_from_dic(dic_ret)
+        a_dic_ret.append(dic_ret)
+        print(a_dic_ret)
     return a_dic_ret
 
 def dic_from_a_dic(a_dic):
