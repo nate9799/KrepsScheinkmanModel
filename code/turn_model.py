@@ -83,7 +83,7 @@ def process(d_settings, num_loops, i):
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
-    i =0 #= int(sys.argv[1]) - 1
+    i = int(sys.argv[1]) - 1
     gamma = i*3./100.
     num_sellers = 2
     num_buyers = 13
