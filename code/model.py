@@ -6,6 +6,8 @@ import sys
 import os
 import warnings
 
+from pdb import set_trace
+
 
 #####################
 #####################
@@ -312,8 +314,9 @@ def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
             enumerate(a_a_strat)])
         a_payoff = func_payoff(a_strat_nash, **kwargs)
         for ind in range(num_players):
-            float(a_payoff[ind])
-            ret[profile][ind] = int(a_payoff[ind])
+            float(a_payoff[ind])            
+            try: ret[profile][ind] = int(a_payoff[ind])
+            except: set_trace()
     return ret, a_num_strats
 
 def get_a_cost_from_kwargs(m_tax, a_cost, endowment):
