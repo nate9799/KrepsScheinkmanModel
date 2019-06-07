@@ -70,13 +70,13 @@ def dic_from_a_dic(a_dic):
     ret = dict(zip(a_key, a_a_value))
     return ret
 
-def process(d_settings, num_loops):
+def process(d_settings, num_loops, i):
     a_d_turns = loop(d_settings, num_loops)
     d_turns = dic_from_a_dic(a_d_turns)
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn.pickle'
+    fn = folder + 'turn' + i + '.pickle'
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
@@ -95,5 +95,5 @@ if __name__ == "__main__":
             'endowment' : 200,
             'mean_cost' : 100,
             'cost_ratio' : 1} 
-    process(d_settings, 20)
+    process(d_settings, 20, i)
 
