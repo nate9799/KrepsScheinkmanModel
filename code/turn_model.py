@@ -77,7 +77,7 @@ def process(d_settings, num_loops, i):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn' + i + '.pickle'
+    fn = folder + 'turn' + str(i) + '.pickle'
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
