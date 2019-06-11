@@ -6,9 +6,10 @@ import pandas as pd
 import numpy as np
 
 def new_a_cost(a_cost, a_profit):
-    ind = np.argmin(a_profit)
-    a_cost[ind] = .95*a_cost[ind]
-    return a_cost
+    ind = np.argmax(a_profit)
+    ret = list(a_cost)
+    ret[ind] = .95*a_cost[ind]
+    return ret
 
 def get_settings_from_dic_ret(dic_ret):
     '''
@@ -46,6 +47,7 @@ def loop(d_settings, num_loops):
         print(i)
         dic_ret = turn_dic_from_dic(dic_ret)
         a_dic_ret.append(dic_ret)
+        print(a_dic_ret)
         if np.isnan(dic_ret['a_profit'][0]):
             print('ended with NAN')
             break
