@@ -290,8 +290,6 @@ def find_psuedocontinuous_nash(a_strat, num_sellers, func_payoff_handler,
     Basically a handler for refine_m_strat.
     '''
     m_strat = np.array([a_strat] * num_sellers)
-    print(m_strat)
-    print('hi')
     num_iter = 5
     for i in range(num_iter):
         m_strat = refine_m_strat(m_strat, func_payoff_handler, scale_factor, **kwargs)
@@ -466,7 +464,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
         endowment=200, randomize=False):
     """ Add documentation here """
 # check that input is correct
-    assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
+    #assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
 # setup buyer and seller locations
     if randomize:
         a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
@@ -484,7 +482,9 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
             min(a_cost), endowment)
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
-    a_strat_quantity = np.linspace(0, 800, num_strats)
+    cournot_tot_quantity = cournot_quantity(mean_cost, endowment, num_buyers)
+    # Not the best estimate
+    a_strat_quantity = np.linspace(0, num_buyers*100, num_strats)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
             mean_cost, cost_ratio)
@@ -504,11 +504,11 @@ def parameter_combination(i):
     """
 # Create combinations
     num_sellers     = [2]
-    num_buyers      = [12]
-    gamma           = np.round(np.linspace(0.0, .3, 11), 3)
+    num_buyers      = [13]
+    gamma           = [0]#np.round(np.linspace(0.0, .3, 11), 3)
     scalar_tax      = [.05]
-    mean_cost       = [100.]
-    cost_ratio      = np.round(np.linspace(1.0, 2.0, 11), 3)
+    mean_cost       = [60.]
+    cost_ratio      = [5]#np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [200.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
@@ -520,7 +520,8 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    i = int(sys.argv[1]) - 1
+    i = 0
+    #i = int(sys.argv[1]) - 1
     #for i in range(121):
     parameter_combination(i) 
 
