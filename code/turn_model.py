@@ -15,9 +15,10 @@ def get_settings_from_dic_ret(dic_ret):
     '''
     Gets relevent information from dic.
     '''
+    num_buyers = dic_ret['num_buyers']
     ret = { 'num_sellers' : dic_ret['num_sellers'],
-            'num_buyers' : dic_ret['num_buyers'],
-            'a_strat_quantity' : np.linspace(0, 800, 21),
+            'num_buyers' : num_buyers,
+            'a_strat_quantity' : np.linspace(0, 100*num_buyers, 21),
             'a_seller_loc' : dic_ret['a_seller_loc'],
             'a_buyer_loc' : dic_ret['a_buyer_loc'],
             'a_cost' : dic_ret['a_cost'],
