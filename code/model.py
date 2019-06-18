@@ -482,7 +482,6 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
             min(a_cost), endowment)
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
-    cournot_tot_quantity = cournot_quantity(mean_cost, endowment, num_buyers)
     # Not the best estimate
     a_strat_quantity = np.linspace(0, num_buyers*100, num_strats)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
