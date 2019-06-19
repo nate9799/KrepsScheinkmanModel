@@ -8,25 +8,16 @@ from matplotlib import pyplot as plt
 from pprint     import pprint as pp
 from sklearn.externals import joblib as jl
 from itertools  import product,combinations
+from plot_util import customaxis
 
 
-fn = "turn0.pickle"
+fn = "turn_gamma=0.6.pickle"
 # Run main function
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
 folder  = folder1 if os.path.exists(folder1) else folder2
 d_load  = jl.load(folder + fn)
-
-################
-### FUNCTION ###
-################
-
-def get_a_obj_from_a_a_obj(a_a_obj, ind):
-    ret = [a_obj[ind] for a_obj in a_a_obj]
-    return ret
-
-def plot_line_from_pd(pd_data, ax=None):
-    plt.plot
+bug_check = True
 
 
 ##############
@@ -52,9 +43,7 @@ pd_quantity_sold        = pd.DataFrame(d_load['a_quantity_sold'])
 pd_price         	= pd.DataFrame(d_load['a_price_nash'])
 pd_cost       		= pd.DataFrame(d_load['a_cost'])
 pd_profit 		= pd.DataFrame(d_load['a_profit'])
-
-print('hi')
-print(pd_price)
+print(pd_cost)
 
 # Data from calculations
 ##########################################################
@@ -77,11 +66,14 @@ sb.set_style("darkgrid")
 
 # set figure size
 ##########################################################
-nrow 			= 3
+nrow 			= 2
+if bug_check: nrow += 1
 ncol 			= 2
 width_scale		= 12
 height_scale    	= 4
 figsize 		= (width_scale*ncol,height_scale*nrow)
+a_marker = ['s', 'x', '*', 'o', 'D']
+fontsize = 14
 
 # create the plot window
 ##########################################################
@@ -91,56 +83,75 @@ plt.rc('text', usetex=True)
 
 # set all axes instances
 ##########################################################
-ax_circle           = plt.subplot2grid((nrow,ncol), (0,0))
+ax_circle           = plt.subplot2grid((nrow,ncol), (0,0), rowspan=2)
 ax_profit           = plt.subplot2grid((nrow,ncol), (0,1))
-ax_cost_and_price   = plt.subplot2grid((nrow,ncol), (1,0))
-ax_quantity_sold    = plt.subplot2grid((nrow,ncol), (1,1), sharex=ax_profit)
-ax_quantity_unsold  = plt.subplot2grid((nrow,ncol), (2,0), sharex=ax_cost_and_price)
-ax_num_buyers       = plt.subplot2grid((nrow,ncol), (2,1), sharex=ax_profit)
+ax_cost_and_price   = plt.subplot2grid((nrow,ncol), (1,1), sharex=ax_profit)
+if bug_check:
+    ax_quantity_unsold  = plt.subplot2grid((nrow,ncol), (2,0), sharex=ax_cost_and_price)
+    ax_num_buyers       = plt.subplot2grid((nrow,ncol), (2,1), sharex=ax_profit)
 
-# create plot title 
-############################################################
-fn    = 'gamma=%s_endowment=%s_sellers=%s_buyers=%s'%(gamma, endowment,
-        num_sellers, num_buyers)
-title = fn.replace('_',', ')
-fig.suptitle(title, fontsize=16) 
+#annotate
+a_ax = [ax_circle, ax_profit, ax_cost_and_price]
+a_annote = ['(a)','(b)','(c)','(d)']
+for (ax, annote) in zip(a_ax, a_annote[0:len(a_ax)]):
+    ax.annotate(annote,
+            xy          =  (-0.12, 0.96),
+            xycoords    = 'axes fraction',
+            fontsize    =  12,
+            ha          = 'left',
+            va          = 'top' )
 
-# plot the profit for each seller 
+# plot the profit and quantity sold for each seller 
 ############################################################
+a_color = sb.color_palette("deep", num_sellers)
+
+# Profit
 ax = ax_profit
+color = a_color[0]
 pd_data = pd_profit
-ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
-ax.set_ylabel('Profit', fontsize=14)
+for i in range(num_sellers):
+    ax.plot(range(len(pd_data)), pd_data[i], '-', marker=a_marker[i],
+            color=color, label = 'Firm %d'%(i+1))
 ax.set_xlim(0, num_timesteps)
+customaxis(ax = ax, position = 'left', color = color, label = 'Profit',
+        scale = 'linear', size = fontsize, full_nrs = False, location = 0.0)
+ax.legend()
+leg = ax.get_legend()
+(leg.legendHandles[i].set_color('black') for i in range(num_sellers))
 
-# plot the cost for each seller 
+# Quantity
+axt = ax.twinx()
+color = a_color[1]
+pd_data = pd_quantity_sold
+for i in range(num_sellers):
+    axt.plot(range(len(pd_data)), pd_data[i], '-', marker=a_marker[i],
+            color=color)
+axt.grid('False')
+customaxis(ax = axt, position = 'right', color = color, label = 'Quantity',
+        scale = 'linear', size = fontsize, full_nrs = False, location = 1.0)
+
+if bug_check:
+
+# plot the unsold quantity for each seller 
 ############################################################
-ax = ax_quantity_unsold
-pd_data = pd_quantity_unsold
-print(pd_cost)
-ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
-ax.set_xlabel('Timestep', fontsize=14)
-ax.set_ylabel('Unsold Capacity', fontsize=14)
-ax.set_xlim(0, num_timesteps)
+    ax = ax_quantity_unsold
+    pd_data = pd_quantity_unsold
+    print(pd_cost)
+    ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
+    ax.set_xlabel('Timestep', fontsize=14)
+    ax.set_ylabel('Unsold Capacity', fontsize=14)
+    ax.set_xlim(0, num_timesteps)
 
 # plot the number of buyers for each seller
 ############################################################
-ax = ax_num_buyers
-pd_data = pd_num_buyers_per_seller
-ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
-ax.set_xlabel('Timestep', fontsize=14)
-ax.set_ylabel('Number of buyers', fontsize=14)
-ax.set_xlim(0, num_timesteps)
+    ax = ax_num_buyers
+    pd_data = pd_num_buyers_per_seller
+    ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
+    ax.set_xlabel('Timestep', fontsize=14)
+    ax.set_ylabel('Number of Buyers', fontsize=14)
+    ax.set_xlim(0, num_timesteps)
 
-# plot the price for each seller 
-############################################################
-ax = ax_quantity_sold
-pd_data = pd_quantity_sold
-ax.plot(range(len(pd_data)), pd_data[0], pd_data[1])
-ax.set_ylabel('Quantity Sold', fontsize=14)
-ax.set_xlim(0, num_timesteps)
-
-# plot the sold and unsold quantity
+# plot the cost and price
 ############################################################
 ax = ax_cost_and_price
 ax.set_xlim(0, num_timesteps)
@@ -149,14 +160,19 @@ ax.set_xlim(0, num_timesteps)
 pd_data = pd_price
 color = 'Red'
 
-ax.plot(range(len(pd_data)), pd_data[0], pd_data[1], color=color)
-ax.plot(range(len(pd_data)), pd_cournot, color=color, linestyle='dashed')
+for i in range(num_sellers):
+    ax.plot(range(len(pd_data)), pd_data[i], color=color, marker = a_marker[i],
+            label='Price of Firm %d'%(i+1))
+if gamma == 0:
+    ax.plot(range(len(pd_data)), pd_cournot, color=color, linestyle='dashed',
+            label='Theoretical Cournot Price')
 ax.spines['left'].set_color(color)
 ax.tick_params(axis='y', color=color)
 [i.set_color(color) for i in ax.get_yticklabels()]
 ax.yaxis.set_label_position("left")
 ax.set_ylabel('Price', color=color, fontsize=14)
 ax.set_xlim(0, num_timesteps)
+ax.legend()
 
 # for the 'right' axis it is similar
 axt   = ax.twinx()
@@ -169,8 +185,9 @@ axt.spines['right'].set_color(color)
 axt.tick_params(axis='y', color=color)
 [i.set_color(color) for i in axt.get_yticklabels()]
 axt.yaxis.set_label_position("right")
-axt.set_ylabel('cost', color=color, fontsize=14)
+axt.set_ylabel('Cost', color=color, fontsize=14)
 axt.set_ylim(20, 100)
+axt.grid(False)
 
 # Circle of buyers and sellers
 ############################################################
@@ -197,17 +214,18 @@ for s in range(len(a_seller_pos)):
     a_xcoord = [r * np.sin(2 * np.pi * a_pos_subset)]
     a_ycoord = [r * np.cos(2 * np.pi * a_pos_subset)]
     ax.scatter(a_xcoord, a_ycoord, marker='x', color=colors[s], s=80, zorder=2,
-            label='Buyer who bought from Firm %d'%(s+1))
-
+            label='Buyer who bought from Firm %d'%(s+1)) 
 ax.set_xlim(-1.2*r, 1.2*r)
 ax.set_ylim(-1.2*r, 1.5*r)
-ax.legend(loc='best', ncol=6, frameon=False, fontsize=8)
-ax.set_title('Circle with Buyer and Seller positions', fontsize=14)
+ax.legend(loc='center', ncol=2, frameon=False, fontsize=8, labelspacing=2)
 ax.axes.get_xaxis().set_visible(False)
 ax.axes.get_yaxis().set_visible(False)
+ax.axis('equal')
 
 # write figure to the output 
 ############################################################
+fn    = 'gamma=%s_endowment=%s_sellers=%s_buyers=%s'%(gamma, endowment,
+        num_sellers, num_buyers)
 out_folder = './output/plots/'
 if not os.path.exists(out_folder): os.makedirs(out_folder)
 plt.savefig(out_folder + fn + '.pdf', bbox_inches='tight')
@@ -216,31 +234,3 @@ plt.savefig(out_folder + fn + '.pdf', bbox_inches='tight')
 # correctly) 
 ############################################################
 plt.show()
-
-# create Figure
-############################################################
-# for the left y axis of axis Y:
-fig2 = plt.figure(figsize=figsize)
-pd_data = pd_price
-color = 'Red'
-
-fn    = 'gamma=%s_endowment=%s_sellers=%s_buyers=%s'%(gamma, endowment,
-        num_sellers, num_buyers)
-title = fn.replace('_',', ')
-fig2.suptitle(title, fontsize=14) 
-
-ax = plt.axes()
-ax.plot(range(len(pd_data)), pd_data[0], label='Model')
-ax.plot(range(len(pd_data)), pd_cournot, label='Cournot Prediction')
-ax.set_ylabel('Price')
-ax.legend(loc='upper right')
-ax.set_xlim(0, num_timesteps)
-
-
-# write figure to the output 
-############################################################
-out_folder = './output/plots/'
-if not os.path.exists(out_folder): os.makedirs(out_folder)
-fig2.savefig(out_folder + fn + '.png', bbox_inches='tight')
-fig2.show()
-
