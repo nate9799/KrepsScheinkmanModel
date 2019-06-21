@@ -49,6 +49,8 @@ def plot_1timestep_from_data(a_cost, gamma, endowment, num_sellers, num_buyers,
                 fontsize    =  12,
                 ha          = 'left',
                 va          = 'top' )
+# Colors
+    a_color = sb.color_palette("deep", (3 + num_sellers))
 
 # Circle of buyers and sellers
 ############################################################
@@ -60,21 +62,20 @@ def plot_1timestep_from_data(a_cost, gamma, endowment, num_sellers, num_buyers,
     xs      = r * np.sin(angles)  									
     ys      = r * np.cos(angles) 
     ax.plot(xs, ys, color='grey', linestyle='--', zorder=1)
-    colors  = sb.color_palette("deep",len(a_seller_pos))
 
     for i, s in enumerate(a_seller_pos):  						
         xcoord = [ r * np.sin( 2*np.pi*s ) ]
         ycoord = [ r * np.cos( 2*np.pi*s ) ]
-        ax.scatter(xcoord, ycoord, marker='o', color=colors[i], s=400, zorder=3,
-                label='Firm %d'%(i+1))
+        ax.scatter(xcoord, ycoord, marker='o', facecolor='none',
+                color=a_color[i], s=400, zorder=3, label='Firm %d'%(i+1))
 
 # for each buyer, find index of his seller
     seller_ind    = np.argmax(m_quantity_bought, axis=0)
-    for s in range(len(a_seller_pos)):
+    for s in range(num_sellers):
         a_pos_subset = a_buyer_pos[seller_ind == s]
         a_xcoord = [r * np.sin(2 * np.pi * a_pos_subset)]
         a_ycoord = [r * np.cos(2 * np.pi * a_pos_subset)]
-        ax.scatter(a_xcoord, a_ycoord, marker='x', color=colors[s], s=80, zorder=2,
+        ax.scatter(a_xcoord, a_ycoord, marker='x', color=a_color[s], s=80, zorder=2,
                 label='Buyer who bought from Firm %d'%(s+1)) 
     ax.set_xlim(-1.2*r, 1.2*r)
     ax.set_ylim(-1.2*r, 1.5*r)
@@ -88,23 +89,23 @@ def plot_1timestep_from_data(a_cost, gamma, endowment, num_sellers, num_buyers,
     a_xvalues = np.arange(1, num_sellers + 1)
     w = 0.2
     fontsize = 13
-    colors = sb.color_palette("deep",3)
 
     ax = price_axis
-    color = colors[0]
+    color = a_color[num_sellers]
 
     ax.bar(a_xvalues-w, a_price, width=.8*w, color=color, alpha=1.0, align='center')
     ax.bar(a_xvalues-w, a_cost,  width=.8*w, color='black',   alpha=0.2, align='center')
     ax.set_xlabel('')
     ax.set_xticks(a_xvalues)
     ax.set_xticklabels(['Firm %d'%i for i in a_xvalues])
+    [t.set_color(i) for (i,t) in zip(a_color[0:num_sellers], ax.xaxis.get_ticklabels())]
     customaxis(ax = ax, position = 'left', color = color, label = 'Prices',
             scale = 'linear', size = fontsize, full_nrs = False, location = 0.0)
 
-# plot the volume for each seller, on same x axis as price plot, but on separate y axis 
+# plot the quantity for each seller, on same x axis as price plot, but on separate y axis 
 ############################################################
     axt = price_axis.twinx()
-    color = colors[1]
+    color = a_color[num_sellers+1]
 
     axt.grid(False)
     axt.bar(a_xvalues, a_quantity_sold, width=.8*w, color=color, align='center')
@@ -116,7 +117,7 @@ def plot_1timestep_from_data(a_cost, gamma, endowment, num_sellers, num_buyers,
 # plot the profit for each seller
 ############################################################
     axt2 = price_axis.twinx()
-    color = colors[2]
+    color = a_color[num_sellers+2]
 
     axt2.grid(False)
     axt2.bar(a_xvalues+w, a_profit, width=.8*w, color=color, align='center')
@@ -183,10 +184,10 @@ def plot_1timestep_from_dic(d_load, show=False):
 ### SCRIPT ###
 ##############
 
-fn = "turn_gamma=0.6.pickle"
+fn = "turn_gamma=0.0.pickle"
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
 folder  = folder1 if os.path.exists(folder1) else folder2
 d_load  = jl.load(folder + fn)
 
-plot_1timestep_from_a_dic(d_load, 13, show=True)
+plot_1timestep_from_a_dic(d_load, 0, show=True)

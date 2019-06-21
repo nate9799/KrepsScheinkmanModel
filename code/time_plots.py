@@ -5,13 +5,14 @@ import numpy  as np
 import pandas as pd
 import seaborn as sb
 from matplotlib import pyplot as plt
+from matplotlib import ticker as tk
 from pprint     import pprint as pp
 from sklearn.externals import joblib as jl
 from itertools  import product,combinations
 from plot_util import customaxis
 
 
-fn = "turn_gamma=0.6.pickle"
+fn = "turn_gamma=0.0.pickle"
 # Run main function
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
@@ -73,6 +74,7 @@ width_scale		= 12
 height_scale    	= 4
 figsize 		= (width_scale*ncol,height_scale*nrow)
 a_marker = ['s', 'x', '*', 'o', 'D']
+a_color = sb.color_palette("deep", num_sellers+4)
 fontsize = 14
 
 # create the plot window
@@ -101,37 +103,70 @@ for (ax, annote) in zip(a_ax, a_annote[0:len(a_ax)]):
             ha          = 'left',
             va          = 'top' )
 
+# Circle of buyers and sellers
+############################################################
+ax = ax_circle
+
+# plot a grey circle 
+r       = 1
+angles  = np.linspace(0, 2*np.pi, 500)
+xs      = r * np.sin(angles)  									
+ys      = r * np.cos(angles) 
+ax.plot(xs, ys, color='grey', linestyle='--', zorder=1)
+
+for i, s in enumerate(a_seller_pos):  						
+    xcoord = [ r * np.sin( 2*np.pi*s ) ]
+    ycoord = [ r * np.cos( 2*np.pi*s ) ]
+    ax.scatter(xcoord, ycoord, marker='o', facecolor='none', color=a_color[i],
+            s=400, zorder=3, label='Firm %d'%(i+1))
+
+# for each buyer, find index of his seller
+seller_ind    = np.argmax(a_m_quantity_bought[0], axis=0)
+for s in range(len(a_seller_pos)):
+    a_pos_subset = a_buyer_pos[seller_ind == s]
+    a_xcoord = [r * np.sin(2 * np.pi * a_pos_subset)]
+    a_ycoord = [r * np.cos(2 * np.pi * a_pos_subset)]
+    ax.scatter(a_xcoord, a_ycoord, marker='x', color=a_color[s], s=80, zorder=2,
+            label='Buyer who closer to Firm %d'%(s+1)) 
+ax.set_xlim(-1.2*r, 1.2*r)
+ax.set_ylim(-1.2*r, 1.5*r)
+ax.legend(loc='center', ncol=2, frameon=False, fontsize=8, labelspacing=2)
+ax.axes.get_xaxis().set_visible(False)
+ax.axes.get_yaxis().set_visible(False)
+ax.axis('equal')
+
 # plot the profit and quantity sold for each seller 
 ############################################################
-a_color = sb.color_palette("deep", num_sellers)
 
 # Profit
 ax = ax_profit
-color = a_color[0]
+color = a_color[num_sellers + 0]
 pd_data = pd_profit
 for i in range(num_sellers):
     ax.plot(range(len(pd_data)), pd_data[i], '-', marker=a_marker[i],
-            color=color, label = 'Firm %d'%(i+1))
+            markerfacecolor='none', color=color, label = 'Firm %d'%(i+1))
 ax.set_xlim(0, num_timesteps)
+ax.set_xticks(np.arange(0, num_timesteps+1))
 customaxis(ax = ax, position = 'left', color = color, label = 'Profit',
         scale = 'linear', size = fontsize, full_nrs = False, location = 0.0)
+ax.get_xaxis().set_major_formatter(tk.FuncFormatter(lambda x, p:
+    format(int(x),',')))
 ax.legend()
 leg = ax.get_legend()
 (leg.legendHandles[i].set_color('black') for i in range(num_sellers))
 
 # Quantity
 axt = ax.twinx()
-color = a_color[1]
+color = a_color[num_sellers + 1]
 pd_data = pd_quantity_sold
 for i in range(num_sellers):
     axt.plot(range(len(pd_data)), pd_data[i], '-', marker=a_marker[i],
-            color=color)
+            markerfacecolor='none', color=color)
 axt.grid('False')
 customaxis(ax = axt, position = 'right', color = color, label = 'Quantity',
         scale = 'linear', size = fontsize, full_nrs = False, location = 1.0)
 
 if bug_check:
-
 # plot the unsold quantity for each seller 
 ############################################################
     ax = ax_quantity_unsold
@@ -158,69 +193,37 @@ ax.set_xlim(0, num_timesteps)
 
 # for the left y axis of axis Y:
 pd_data = pd_price
-color = 'Red'
+color = a_color[num_sellers + 2]
 
 for i in range(num_sellers):
     ax.plot(range(len(pd_data)), pd_data[i], color=color, marker = a_marker[i],
-            label='Price of Firm %d'%(i+1))
+            markerfacecolor='none', label='')
 if gamma == 0:
     ax.plot(range(len(pd_data)), pd_cournot, color=color, linestyle='dashed',
             label='Theoretical Cournot Price')
+    ax.legend(loc='lower left')
 ax.spines['left'].set_color(color)
 ax.tick_params(axis='y', color=color)
 [i.set_color(color) for i in ax.get_yticklabels()]
 ax.yaxis.set_label_position("left")
 ax.set_ylabel('Price', color=color, fontsize=14)
 ax.set_xlim(0, num_timesteps)
-ax.legend()
 
 # for the 'right' axis it is similar
 axt   = ax.twinx()
 pd_data = pd_cost
-color = 'blue'
+color = a_color[num_sellers + 3]
 
-axt.plot(range(len(pd_data)), pd_data, color=color)
-axt.set_xlim(0, num_timesteps)
+for i in range(num_sellers):
+    axt.plot(range(len(pd_data)), pd_data[i], marker= a_marker[i],
+            markerfacecolor='none', color=color)
 axt.spines['right'].set_color(color)
 axt.tick_params(axis='y', color=color)
 [i.set_color(color) for i in axt.get_yticklabels()]
 axt.yaxis.set_label_position("right")
 axt.set_ylabel('Cost', color=color, fontsize=14)
-axt.set_ylim(20, 100)
+axt.set_ylim(0, 110)
 axt.grid(False)
-
-# Circle of buyers and sellers
-############################################################
-ax = ax_circle
-
-# plot a grey circle 
-r       = 1
-angles  = np.linspace(0, 2*np.pi, 500)
-xs      = r * np.sin(angles)  									
-ys      = r * np.cos(angles) 
-ax.plot(xs, ys, color='grey', linestyle='--', zorder=1)
-colors  = sb.color_palette("deep",len(a_seller_pos))
-
-for i, s in enumerate(a_seller_pos):  						
-    xcoord = [ r * np.sin( 2*np.pi*s ) ]
-    ycoord = [ r * np.cos( 2*np.pi*s ) ]
-    ax.scatter(xcoord, ycoord, marker='o', color=colors[i], s=400, zorder=3,
-            label='Firm %d'%(i+1))
-
-# for each buyer, find index of his seller
-seller_ind    = np.argmax(a_m_quantity_bought[0], axis=0)
-for s in range(len(a_seller_pos)):
-    a_pos_subset = a_buyer_pos[seller_ind == s]
-    a_xcoord = [r * np.sin(2 * np.pi * a_pos_subset)]
-    a_ycoord = [r * np.cos(2 * np.pi * a_pos_subset)]
-    ax.scatter(a_xcoord, a_ycoord, marker='x', color=colors[s], s=80, zorder=2,
-            label='Buyer who bought from Firm %d'%(s+1)) 
-ax.set_xlim(-1.2*r, 1.2*r)
-ax.set_ylim(-1.2*r, 1.5*r)
-ax.legend(loc='center', ncol=2, frameon=False, fontsize=8, labelspacing=2)
-ax.axes.get_xaxis().set_visible(False)
-ax.axes.get_yaxis().set_visible(False)
-ax.axis('equal')
 
 # write figure to the output 
 ############################################################
