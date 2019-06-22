@@ -9,6 +9,7 @@
 \usepackage{dsfont}
 \usepackage[dvipsnames,usenames]{color}
 \usepackage[colorlinks=true,linkcolor=NavyBlue,citecolor=NavyBlue,urlcolor=NavyBlue]{hyperref} % for hyperlinks 
+\usepackage{floatpag} % remove page number for figure that covers entire page
 
 % macros 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -321,9 +322,12 @@ to an Edgeworth game
 [elaborate more on edgeworth game in section above, say that this makes it a
 mixed nash equilibria] game
 
-\begin{figure}
+\begin{figure}[[p!htb] % p stands for 'entire page', '!htb' is to insert as close to code as possible
+	\floatpagestyle{empty} % remove page number
+	\centering
+	\vspace{-2cm} % shift upwards to get more space for caption
   \includegraphics[width=\linewidth]{5x2plot.png}
-  \caption{Shown above are five instances of the model running for different
+  \caption{\small{Shown above are five instances of the model running for different
   $\gamma$ and costs. In the first two rows, $\gamma=0$, with the one
   difference being that in Row 1, both Firm 1 and Firm 2 have the same cost,
   and in Row 2, Firm 1 has a 1\% lower cost than Firm 2. In Row 1, the firms
@@ -338,9 +342,11 @@ mixed nash equilibria] game
   Our idiosyncratic tax thus acts as a speed bump, preventing companies with
   slight advantages from acquiring overwhelming market dominance, while still
   ensuring that minor innovations are profitable, and that large innovations do
-  cause market dominance.}
+  cause market dominance.}}
   \label{fig:fig3x2SingleTimestep}
 \end{figure}
+
+
 
 
 \section{Dynamics}
