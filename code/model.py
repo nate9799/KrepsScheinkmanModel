@@ -17,7 +17,8 @@ from pdb import set_trace
 
 
 #######################
-### SETUP FUNCTIONS ### #######################
+### SETUP FUNCTIONS ###
+#######################
 
 
 def get_a_cost_from_ratio(mean, ratio, num_sellers, is_arithmetic=True):
@@ -483,7 +484,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
     # Not the best estimate
-    a_strat_quantity = np.linspace(0, num_buyers*100, num_strats)
+    a_strat_quantity = np.arange(0, num_buyers*50, 40)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
             mean_cost, cost_ratio)
@@ -503,12 +504,12 @@ def parameter_combination(i):
     """
 # Create combinations
     num_sellers     = [2]
-    num_buyers      = [13]
-    gamma           = [0]#np.round(np.linspace(0.0, .3, 11), 3)
+    num_buyers      = [12]
+    gamma           = [0.0]#np.round(np.linspace(0.0, .3, 11), 3)
     scalar_tax      = [.05]
-    mean_cost       = [60.]
-    cost_ratio      = [5]#np.round(np.linspace(1.0, 2.0, 11), 3)
-    endowment       = [200.]
+    mean_cost       = [100]
+    cost_ratio      = [1.0]#np.round(np.linspace(1.0, 2.0, 11), 3)
+    endowment       = [120.]
     randomize       = [False]
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
     comb            = list(combs)[i]

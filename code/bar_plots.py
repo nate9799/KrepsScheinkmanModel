@@ -185,9 +185,10 @@ def plot_1timestep_from_dic(d_load, show=False):
 ##############
 
 fn = "turn_gamma=0.0.pickle"
+fn = "S=2_B=12_gamma=0.6_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.01_endow=120.0_randomize=False.pkl"
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
 folder  = folder1 if os.path.exists(folder1) else folder2
 d_load  = jl.load(folder + fn)
 
-plot_1timestep_from_a_dic(d_load, 0, show=True)
+plot_1timestep_from_dic(d_load, show=True)

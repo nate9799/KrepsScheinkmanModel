@@ -10,6 +10,7 @@ from sklearn.externals import joblib as jl
 from itertools  import product,combinations
 from plot_util import customaxis
 
+fontsize = 15
 
 ################
 ### FUNCTION ###
@@ -18,10 +19,11 @@ from plot_util import customaxis
 # Circle of buyers and sellers
 ############################################################
 def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
-        ax = None):
+        gamma, ax = None):
 # Setup
     if ax is None:
         _, ax = plt.subplots()
+    ax.set_title(label='Gamma = {}'.format(gamma))
     num_sellers = len(a_seller_pos)
 # plot a grey circle 
     r       = 1
@@ -42,11 +44,12 @@ def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
         a_pos_subset = a_buyer_pos[seller_ind == s]
         a_xcoord = [r * np.sin(2 * np.pi * a_pos_subset)]
         a_ycoord = [r * np.cos(2 * np.pi * a_pos_subset)]
-        ax.scatter(a_xcoord, a_ycoord, marker='x', color=a_color[s], s=80, zorder=2,
-                label='Buyer who bought from Firm %d'%(s+1)) 
+        ax.scatter(a_xcoord, a_ycoord, marker='x', color=a_color[s], s=80,
+                zorder=2, label='Buyer who bought from Firm %d'%(s+1)) 
     ax.set_xlim(-1.2*r, 1.2*r)
     ax.set_ylim(-1.2*r, 1.5*r)
-    ax.legend(loc='center', ncol=2, frameon=False, fontsize=8, labelspacing=2)
+    ax.legend(loc='center', ncol=2, frameon=False, fontsize=2*fontsize/3,
+            labelspacing=2)
     ax.axes.get_xaxis().set_visible(False)
     ax.axes.get_yaxis().set_visible(False)
     ax.axis('equal')
@@ -62,7 +65,6 @@ def ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit, a_color,
     a_color_alt = sb.color_palette("deep", num_sellers)
     a_xvalues = np.arange(1, num_sellers + 1)
     w = 0.2
-    fontsize = 13
 # plot the price for each buyer 
     color = a_color[0]
     ax.bar(a_xvalues-w, a_price, width=.8*w, color=color,   alpha=1.0, align='center')
@@ -70,6 +72,7 @@ def ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit, a_color,
     ax.set_xlabel('')
     ax.set_xticks(a_xvalues)
     ax.set_xticklabels(['Firm %d'%i for i in a_xvalues])
+    ax.set_xlim([0,5])
     [t.set_color(i) for (i,t) in zip(a_color_alt[0:num_sellers], ax.xaxis.get_ticklabels())]
     customaxis(ax = ax, position = 'left', color = color, label = 'Prices',
             scale = 'linear', size = fontsize, full_nrs = False, location = 0.0)
@@ -91,27 +94,53 @@ def ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit, a_color,
     axt2.set_ylabel('Profit', color = color, fontsize=fontsize)
     axt2.autoscale(tight=True)
     customaxis(ax = axt2, position = 'right', color = color, label = 'Profit',
-            scale = 'linear', size= fontsize, full_nrs = False, location = 1.1)
+            scale = 'linear', size= fontsize, full_nrs = False, location = 1.12)
 
 def draw_ax2_from_a_dic(d_load, i, ax_circle, ax_bar):
 # get data
-    a_cost       	= d_load['a_cost'][i]
-    gamma      		= d_load['gamma'][i]
-    endowment  		= d_load['endowment'][i]
-    num_sellers     	= d_load['num_sellers'][i]
-    num_buyers 		= d_load['num_buyers'][i]
-    a_price         	= d_load['a_price_nash'][i]
-    a_quantity          = d_load['a_quantity_nash'][i]
-    a_quantity_sold     = d_load['a_quantity_sold'][i]
-    a_profit 		= d_load['a_profit'][i]
-    a_buyer_pos         = d_load['a_buyer_loc'][i]
-    a_seller_pos        = d_load['a_seller_loc'][i]
-    m_tax               = d_load['m_tax'][i]
-    m_quantity_bought   = d_load['m_quantity_bought'][i]
-    a_color = sb.color_palette("deep", (3 + num_sellers))
+    if i >= 0:
+        a_cost              = d_load['a_cost'][i]
+        gamma               = d_load['gamma'][i]
+        endowment           = d_load['endowment'][i]
+        num_sellers         = d_load['num_sellers'][i]
+        num_buyers          = d_load['num_buyers'][i]
+        a_price             = d_load['a_price_nash'][i]
+        a_quantity          = d_load['a_quantity_nash'][i]
+        a_quantity_sold     = d_load['a_quantity_sold'][i]
+        a_profit            = d_load['a_profit'][i]
+        a_buyer_pos         = d_load['a_buyer_loc'][i]
+        a_seller_pos        = d_load['a_seller_loc'][i]
+        m_tax               = d_load['m_tax'][i]
+        m_quantity_bought   = d_load['m_quantity_bought'][i]
+    else:
+        a_cost              = d_load['a_cost']
+        gamma               = d_load['gamma']
+        endowment           = d_load['endowment']
+        num_sellers         = d_load['num_sellers']
+        num_buyers          = d_load['num_buyers']
+        a_price             = d_load['a_price_nash']
+        a_quantity          = d_load['a_quantity_nash']
+        a_quantity_sold     = d_load['a_quantity_sold']
+        a_profit            = d_load['a_profit']
+        a_buyer_pos         = d_load['a_buyer_loc']
+        a_seller_pos        = d_load['a_seller_loc']
+        m_tax               = d_load['m_tax']
+        m_quantity_bought   = d_load['m_quantity_bought']
+
+    print('cost')
+    print(a_cost)
+    print('gamma')
+    print(gamma)
+    print('a_price')
+    print(a_price)
+    print('a_profit')
+    print(a_profit)
+    print('a_quantity_sold')
+    print(a_quantity_sold)
 # Plots
+    a_color = sb.color_palette("deep", (3 + num_sellers))
     ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought,
-            a_color=a_color, ax=ax_circle)
+            a_color=a_color, gamma=gamma, ax=ax_circle)
     ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit,
             a_color=a_color[num_sellers:], ax=ax_bar)
 
@@ -136,21 +165,21 @@ def draw_grid_of_timesteps(a_fn, a_index, folder=''):
     a_ax = a_ax_circle + a_ax_bar
     a_ax[::2] = a_ax_circle
     a_ax[1::2] = a_ax_bar
-    a_annote = ['(a)','(b)','(c)','(d)','(e)','(f)']
-    for (ax, annote) in zip(a_ax, a_annote[0:len(a_ax)]):
+    a_annote = ['Row {}'.format(i) for i in np.arange(1, len(a_fn) + 1)]
+    for (ax, annote) in zip(a_ax_circle, a_annote):
         ax.annotate(annote,
-                xy          =  (-0.12, 0.96),
+                xy          =  (-0.17, 0.5),
                 xycoords    = 'axes fraction',
-                fontsize    =  12,
+                fontsize    =  fontsize,
                 ha          = 'left',
                 va          = 'top' )
     [draw_ax2_from_a_dic(d_load, index, ax_circle, ax_bar) for
-            (d_load,index,ax_circle,ax_bar) in zip(a_d_load, a_index
+            (d_load,index,ax_circle,ax_bar) in zip(a_d_load, a_index,
                 a_ax_circle, a_ax_bar)]
     return fig
 
 def write_plot(fig):
-    fn_out = 'gamma=0_.39_20'
+    fn_out = '5x2plot'
     out_folder = './output/plots/'
     if not os.path.exists(out_folder): os.makedirs(out_folder)
     plt.savefig(out_folder + fn_out + '.png', bbox_inches='tight')
@@ -159,11 +188,17 @@ def write_plot(fig):
 ### SCRIPT ###
 ##############
 
-a_fn = ["turn_gamma=0.0.pickle", "turn_gamma=0.39.pickle", "turn_gamma=20.0.pickle"]
+a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=False.pkl",
+        "S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.01_endow=120.0_randomize=False.pkl",
+        "S=2_B=12_gamma=0.6_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.0_endow=120.0_randomize=False.pkl",
+        "S=2_B=12_gamma=0.6_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.01_endow=120.0_randomize=False.pkl",
+        "turn_gamma=0.6.pickle"]
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
 folder  = folder1 if os.path.exists(folder1) else folder2
 
-fig = draw_grid_of_timesteps(a_fn, 0, folder=folder)
+a_select_indices = [-1,-1,-1,-1,3]
+
+fig = draw_grid_of_timesteps(a_fn, a_select_indices, folder=folder)
 write_plot(fig)
 

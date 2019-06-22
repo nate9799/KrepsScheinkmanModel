@@ -12,7 +12,7 @@ from itertools  import product,combinations
 from plot_util import customaxis
 
 
-fn = "turn_gamma=0.0.pickle"
+fn = "turn_gamma=0.6.pickle"
 # Run main function
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
@@ -31,19 +31,19 @@ bug_check = True
 
 # Data from d_load
 ##########################################################
-gamma      		= d_load['gamma'][0]
-endowment  		= d_load['endowment'][0]
-num_sellers     	= d_load['num_sellers'][0]
-num_buyers 		= d_load['num_buyers'][0]
-a_buyer_pos             = d_load['a_buyer_loc'][0]
-a_seller_pos            = d_load['a_seller_loc'][0]
-m_tax                   = d_load['m_tax'][0]
-a_m_quantity_bought     = d_load['m_quantity_bought']
-pd_quantity             = pd.DataFrame(d_load['a_quantity_nash'])
-pd_quantity_sold        = pd.DataFrame(d_load['a_quantity_sold'])
-pd_price         	= pd.DataFrame(d_load['a_price_nash'])
-pd_cost       		= pd.DataFrame(d_load['a_cost'])
-pd_profit 		= pd.DataFrame(d_load['a_profit'])
+gamma               = d_load['gamma'][0]
+endowment           = d_load['endowment'][0]
+num_sellers         = d_load['num_sellers'][0]
+num_buyers          = d_load['num_buyers'][0]
+a_buyer_pos         = d_load['a_buyer_loc'][0]
+a_seller_pos        = d_load['a_seller_loc'][0]
+m_tax               = d_load['m_tax'][0]
+a_m_quantity_bought = d_load['m_quantity_bought']
+pd_quantity         = pd.DataFrame(d_load['a_quantity_nash'])
+pd_quantity_sold    = pd.DataFrame(d_load['a_quantity_sold'])
+pd_price            = pd.DataFrame(d_load['a_price_nash'])
+pd_cost             = pd.DataFrame(d_load['a_cost'])
+pd_profit           = pd.DataFrame(d_load['a_profit'])
 print(pd_cost)
 
 # Data from calculations
@@ -110,11 +110,11 @@ ax = ax_circle
 # plot a grey circle 
 r       = 1
 angles  = np.linspace(0, 2*np.pi, 500)
-xs      = r * np.sin(angles)  									
+xs      = r * np.sin(angles)
 ys      = r * np.cos(angles) 
 ax.plot(xs, ys, color='grey', linestyle='--', zorder=1)
 
-for i, s in enumerate(a_seller_pos):  						
+for i, s in enumerate(a_seller_pos):
     xcoord = [ r * np.sin( 2*np.pi*s ) ]
     ycoord = [ r * np.cos( 2*np.pi*s ) ]
     ax.scatter(xcoord, ycoord, marker='o', facecolor='none', color=a_color[i],
