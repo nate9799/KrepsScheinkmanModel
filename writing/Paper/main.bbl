@@ -1,0 +1,14 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\astroncite{Kreps and Scheinkman}{1983}]{kreps1983quantity}
+Kreps, D.~M. and Scheinkman, J.~A. (1983).
+\newblock Quantity precommitment and bertrand competition yield cournot
+  outcomes.
+\newblock {\em The Bell Journal of Economics}, pages 326--337.
+
+\bibitem[\protect\astroncite{McKelvey and Turocy}{2016}]{gambitPython}
+McKelvey, Richard~D., M. A.~M. and Turocy, T.~L. (2016).
+\newblock Gambit: Software tools for game theory, version 16.0.1.
+\newblock \url{http://www.gambit-project.org}.
+
+\end{thebibliography}
