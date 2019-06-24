@@ -478,8 +478,12 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     num_strats = 21 # number of quantity-strategies
     dist = 40 # deviation from cournot that we search for
 # Determine a_cost
+    if cost_ratio == 1.25:
+        mean_cost = 90
     a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
-    #a_cost = np.array([99., 100])
+    if cost_ratio == 1.01:
+        a_cost = np.array([90., 100])
+    a_cost = np.array([90., 100])
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
@@ -507,10 +511,10 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = [1.0]#np.round(np.linspace(0.0, .3, 11), 3)
-    scalar_tax      = [.05]
-    mean_cost       = [100]
-    cost_ratio      = [1.0]#np.round(np.linspace(1.0, 2.0, 11), 3)
+    gamma           = [0, .5]#np.round(np.linspace(0.0, .3, 11), 3)
+    scalar_tax      = [1.0]
+    mean_cost       = [95]
+    cost_ratio      = [1.0, 1.01, 1.1]#np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [120.]
     randomize       = [True]
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
@@ -522,7 +526,7 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    i = 0
+    i = 7
     #i = int(sys.argv[1]) - 1
     #for i in range(121):
     parameter_combination(i) 
