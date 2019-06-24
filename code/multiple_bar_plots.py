@@ -19,11 +19,11 @@ fontsize = 15
 # Circle of buyers and sellers
 ############################################################
 def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
-        gamma, ax = None):
+        gamma, a_cost, ax = None):
 # Setup
     if ax is None:
         _, ax = plt.subplots()
-    ax.set_title(label='Gamma = {}'.format(gamma))
+    ax.set_title(label='gamma = {}, Firm 1\'s cost is {}% lower.'.format(gamma, a_cost[1]-a_cost[0]))
     num_sellers = len(a_seller_pos)
 # plot a grey circle 
     r       = 1
@@ -72,7 +72,6 @@ def ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit, a_color,
     ax.set_xlabel('')
     ax.set_xticks(a_xvalues)
     ax.set_xticklabels(['Firm %d'%i for i in a_xvalues])
-    ax.set_xlim([0,5])
     [t.set_color(i) for (i,t) in zip(a_color_alt[0:num_sellers], ax.xaxis.get_ticklabels())]
     customaxis(ax = ax, position = 'left', color = color, label = 'Prices',
             scale = 'linear', size = fontsize, full_nrs = False, location = 0.0)
@@ -95,6 +94,7 @@ def ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit, a_color,
     axt2.autoscale(tight=True)
     customaxis(ax = axt2, position = 'right', color = color, label = 'Profit',
             scale = 'linear', size= fontsize, full_nrs = False, location = 1.12)
+    ax.set_xlim([min(a_xvalues)-1.5*w, max(a_xvalues)+1.5*w])
 
 def draw_ax2_from_a_dic(d_load, i, ax_circle, ax_bar):
 # get data
@@ -140,7 +140,7 @@ def draw_ax2_from_a_dic(d_load, i, ax_circle, ax_bar):
 # Plots
     a_color = sb.color_palette("deep", (3 + num_sellers))
     ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought,
-            a_color=a_color, gamma=gamma, ax=ax_circle)
+            a_color=a_color, gamma=gamma, a_cost=a_cost, ax=ax_circle)
     ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit,
             a_color=a_color[num_sellers:], ax=ax_bar)
 
@@ -183,21 +183,22 @@ def write_plot(fig):
     out_folder = './output/plots/'
     if not os.path.exists(out_folder): os.makedirs(out_folder)
     plt.savefig(out_folder + fn_out + '.png', bbox_inches='tight')
+    plt.show()
 
 ##############
 ### SCRIPT ###
 ##############
 
-a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=False.pkl",
-        "S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.01_endow=120.0_randomize=False.pkl",
-        "S=2_B=12_gamma=0.6_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.0_endow=120.0_randomize=False.pkl",
-        "S=2_B=12_gamma=0.6_scalar_tax=0.05_mean_cost=100.0_cost_ratio=1.01_endow=120.0_randomize=False.pkl",
-        "turn_gamma=0.6.pickle"]
+a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
+        "S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
+        "S=2_B=12_gamma=1.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
+        "S=2_B=12_gamma=1.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
+        "S=2_B=12_gamma=1.0_scalar_tax=0.05_mean_cost=90_cost_ratio=1.25_endow=120.0_randomize=True.pkl"]
 folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
 folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
 folder  = folder1 if os.path.exists(folder1) else folder2
 
-a_select_indices = [-1,-1,-1,-1,3]
+a_select_indices = [-1,-1,-1,-1,-1]
 
 fig = draw_grid_of_timesteps(a_fn, a_select_indices, folder=folder)
 write_plot(fig)

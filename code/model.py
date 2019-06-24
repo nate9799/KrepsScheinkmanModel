@@ -468,6 +468,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     #assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
 # setup buyer and seller locations
     if randomize:
+        np.random.seed(17)
         a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
         a_buyer_loc  = np.random.uniform(low=0, high=1, size=num_buyers)
     else:
@@ -478,6 +479,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     dist = 40 # deviation from cournot that we search for
 # Determine a_cost
     a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
+    #a_cost = np.array([99., 100])
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
@@ -505,12 +507,12 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = [0.0]#np.round(np.linspace(0.0, .3, 11), 3)
+    gamma           = [1.0]#np.round(np.linspace(0.0, .3, 11), 3)
     scalar_tax      = [.05]
     mean_cost       = [100]
     cost_ratio      = [1.0]#np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [120.]
-    randomize       = [False]
+    randomize       = [True]
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
     comb            = list(combs)[i]
     num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize = comb

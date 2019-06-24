@@ -6,9 +6,9 @@ import pandas as pd
 import numpy as np
 
 def new_a_cost(a_cost, a_profit):
-    ind = np.argmax(a_profit)
-    ret = list(a_cost)
-    ret[ind] = .95*a_cost[ind]
+    a_profit_ratio = a_profit/np.sum(a_profit)
+    a_cost_decrease_ratio = 1 - .05*a_profit_ratio
+    ret = a_cost_decrease*a_cost
     return ret
 
 def get_settings_from_dic_ret(dic_ret):
@@ -85,17 +85,17 @@ def process(d_settings, num_loops):
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
-    gamma = i*3./100.
+    gamma = i/10.
     num_sellers = 2
     num_buyers = 13
     d_settings = { 'num_sellers' : num_sellers,
             'num_buyers' : num_buyers,
-            'a_strat_quantity' : np.linspace(0, 800, 21),
+            'a_strat_quantity' : np.linspace(0, num_buyers*100, 21),
             'a_seller_loc' : np.linspace(start=0, stop=1, num=num_sellers, endpoint=False),
             'a_buyer_loc'  : np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False),
             'a_cost' : [100, 100],
             'gamma' : gamma,
-            'scalar_tax' : 1,
+            'scalar_tax' : .05,
             'endowment' : 200,
             'mean_cost' : 100,
             'cost_ratio' : 1} 
