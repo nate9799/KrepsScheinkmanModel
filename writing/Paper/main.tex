@@ -10,6 +10,9 @@
 \usepackage[dvipsnames,usenames]{color}
 \usepackage[colorlinks=true,linkcolor=NavyBlue,citecolor=NavyBlue,urlcolor=NavyBlue]{hyperref} % for hyperlinks 
 \usepackage{floatpag}
+\usepackage{hyperref}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+\bibliography{refs}
 
 % macros 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,26 +84,26 @@ over time and build up an advantage over other firms. This is especially true
 with network based firms, where quality of the product is dwarfed by quantity
 of the network. 
 
+\green{If we don't add the start up stuff, delete this.}
 With enough market power, a profit seeking firm will try to raise barriers to
 entry to prevent competition. This stops firms that have new innovations from
 surviving long enough to succeed in a market. The distance based tax introduced
 in this paper allows start ups to overcome entrenched monopolies' unfair
 advantages.
 
-In this paper, we propose a new distance based tax, which we call an
-idiosyncratic tax, in order to solve these
-problems, then show that it works by modelling an economy that implements the
-tax. In section 2 we give an overview of this economy. In section 3 we
-formalize the model, and discuss how the firms compete on capacity and price.
-In section 4, we discuss results of running the model. In section 5 we expand
-the model by allowing for multiple timesteps, and having firms decrease their
-costs based on previous profits as a form of investment.
+In this paper, we propose an idiosyncratic tax based on distance in order to
+solve these problems, then show that it works by modelling an economy that
+implements the tax. In section 2 we give an overview of this economy. In
+section 3 we formalize the model, and discuss how the firms compete on capacity
+and price. In section 4, we discuss results of running the model. In section 5
+we expand the model by allowing for multiple timesteps, and having firms
+decrease their costs based on previous profits as a form of investment.
 %[change as we add sections]
 
 \section{Economy}
 We simulate an economy of buyers and firms in some environment with a distance
-metric (e.g. a country, a network economy), then see how firms respond when we
-apply the idiosyncratic tax.
+metric (e.g. a country, a network economy), then observe how firms respond when
+we apply the idiosyncratic tax.
 
 \subsection{Geography}
 The geography of our model is one-dimensional with periodic boundaries (i.e.
@@ -110,7 +113,7 @@ two points (`agents') $x$,$y$ on the circle. Without loss of generality, we set
 $L=1$. Our model does not rely on the implemented geography, and any other,
 potentially more realistic topology could be considered.
 
-The left insets of Figure \pageref{fig:fig3x2SingleTimestep} are examples of
+The left insets of Figure \ref{fig:fig3x2SingleTimestep} are examples of
 such a geography.
 
 \subsection{Buyers}
@@ -128,13 +131,16 @@ is easier to change a price tag.
 
 \subsection{Idiosyncratic Tax}
 The idiosyncratic tax that is introduced by this paper is dependent on a
-distance measuere $D$, or ordinal distance, that gives a discrete distance
-between every pair of buyers and firms. $D$ is defined such that the closest
-firm to a buyer is at ordinal distance $D=1$, the next closest at $D=2$, and
-the $n$th closest at $D=n$. Consider a firm and two buyers, one buyer near the
-firm, the other distant. The idiosyncratic tax means that the nearer buyer can
-buy more cheaply from that firm than can the more distant one. This
-incentivizes buyers to purchase from more local firms.
+distance measure $D$, or ordinal distance, that gives a discrete distance
+between every pair of buyers and firms. We define the ordinal distance $D$ be
+defined such that the closest firm to a buyer is at ordinal distance $D=1$, the
+next closest at $D=2$, and the $n$th closest at $D=n$. Consider a subset of a
+larger economy consisting of a firm and two buyers, one buyer near the firm,
+the other distant. \green{right here I am trying to express show that because
+of the tax, two buyer's can perceive different prices at the same firm.} The
+idiosyncratic tax means that the nearer buyer can buy more cheaply from that
+firm than can the more distant one. This incentivizes buyers to purchase from
+more local firms.
 
 Crucially, this ordinal distance is calculated for every individual type of
 product. This means that a dentist and a bakery do not increase each other's
@@ -147,9 +153,9 @@ When firms choose capacity and price, they make their choices in order to
 maximize profit. First, the firms compete on capacity, by simultaneously
 declaring how much of the product they plan to produce; next, they compete on
 price to determine the firms' non-tax prices. This process, consisting of these
-two subgames, is called a Kreps-Scheinkman game. The major difference we
-introduce to the classical Kreps-Scheinkman game is the idiosyncratic tax,
-which significantly alters the pricing subgame.
+two subgames, is called a Kreps-Scheinkman game \cite{kreps1983quantity}.
+The major difference we introduce to the classical Kreps-Scheinkman game is the
+idiosyncratic tax, which significantly alters the pricing subgame.
 
 \subsection{Capacity Game}
 The first choice is how much capacity $\hat q_i$ each firm $i$ wishes to
@@ -162,8 +168,11 @@ The capacity subgame acts much like a Cournot game.\footnote{A Cournot game is
 where firms compete only on quantity, and sell all of the quantity at the
 market clearing price.} The difference is that instead of being assigned a
 market clearing price and selling everything they produce, in our model the
-firms compete on price in a second subgame where they choose a price. Only
-after that do the buyers determine how much of each firms capacity is sold.
+firms compete on price in a second subgame where they choose a price. This
+subgame is necessary because the idiosyncratic tax can provide incentive for
+firms to charge different prices. For example, a firm with low costs trying to
+sell to non-local buyers would need to price undercut those customer's local
+firm.
 
 \subsection{Pricing Game}
 Each firm $i$, having chosen a capacity $\hat q_i$, now chooses a price, $p_i$.
@@ -172,16 +181,15 @@ with one machine selling soda at a cheaper price than the other. In this
 subgame, buyers will use the cheaper machine first, but if the buyers demand
 more soda than that machine's capacity, buyers will switch to the more
 expensive machine when the cheaper one runs out of soda. Competition on price
-in such a manner is called an Edgeworth game. Edgeworth games are very
-difficult to find an equilibrium in, as depending on demand and capacity, a
-variety of strategies can be employed.
+in such a manner is called an Edgeworth game.
 
 By choosing a lower price, a firm can undercut competitors, ensuring that
 buyers choose to buy from them instead of other firms. Since the amount a buyer
 purchases increases as the product gets less expensive, a lower price increases
 the amount of product purchased in total. But the capacity limitation on total
 quantity sold by a firm means that a single firm usually can't sell to the
-entire market, and it could be more profitable to just sell a low quantity at a much higher price.
+entire market, and it could be more profitable to just sell a low quantity at a
+much higher price.
 
 \subsection{Idiosyncratic Tax}
 The idiosyncratic tax is designed to promote buyers purchasing locally by
@@ -223,8 +231,10 @@ Let the set of buyers be called $B$. Each buyer $b\in B$ buys a quantity $q_b =
 firm $i$. The buyer's all have identical demand curves $p_\text{max} + q_b =
 a$, where $a$ is the endowment they are given exogenously, and $p_\text{max}$
 is the maximum price they pay (including tax). Each buyer tries to maximize
-$q_b$ while keeping $P + Q \le a$. In other words, they buy from the cheapest
-available firm until they hit the demand curve.
+$q_b$ while keeping $p_\text{max} + q_b \le a$. In other words, they buy from
+the cheapest available firm until they hit the demand curve and stop buying, or
+the firm runs out of capacity and the buyer begins buying from the next
+cheapest, repeating the process.
 
 If a buyer perceives multiple firms as offering identical prices, they buy from
 all such firms in identical amounts until either the buyer hits their demand
@@ -232,17 +242,15 @@ curve, or a seller runs out of capacity.
 
 \subsection{Profit Function}
 Finally, firm $i$, having chosen quantity $\hat q_i$ and price $p_i$, and
-having sold the product to buyers, will earn a profit:
+having sold some or all of their capacity to buyers, will earn a profit:
 
 \begin{equation}
     \Pi_i = p_i\sum_{b\in B} q_{b,i} - c_i\hat q_i.
 \end{equation}
 
-Note that while the firm can choose both their capacity $\hat q_i$ and their
-price $p_i$, their cost per unit $c_i$ is set exogenously. Also, each $q_{b,i}$
-is chosen by the buyer $b$ so that they buy as much as possible while staying
-under their demand curve $P+Q\leq a$; this is where taxes affect the firm's
-profit.
+Also, each $q_{b,i}$ is chosen by the buyer $b$ so that they buy as much as
+possible while staying under their demand curve $P+Q\leq a$; this is where
+taxes affect the firm's profit.
 
 If the firm sells all of their capacity, then $q_i = \hat q_i$, and the profit
 equation simplifies to:
@@ -253,7 +261,7 @@ which is the net profit per unit multiplied by quantity sold.
 
 \subsection{Numerical Approximation}
 Because the buyers have individualized preferences and the pricing game does
-not necessarily have a `best' strategy, it is difficult to determine a
+not necessarily have a `best' price choice, it is difficult to determine a
 generalized, theoretical solution to the model laid out above. Instead, we
 numerically determine the Nash equilibrium.\footnote{A Nash equilibrium
 for a game is a set of choices, one for each player, such that upon seeing the
@@ -264,34 +272,32 @@ either capacity or price, depending on the subgame.}
 To find the capacities and prices that the firms will choose, we begin by
 discretizing the capacity and pricing choices so we only have a finite number
 of possible combinations. Then, for every outcome of the capacity game, we find
-the Nash equilibrium of the pricing game using the Python library Gambit. Then,
-using the equilibrium prices, we calculate the profits for every outcome of the
-capacity game. We finally use this information to find the Nash equilibrium of
-the capacity game, again using Gambit.
+the Nash equilibrium of the pricing game using the Python library Gambit
+\cite{gambitPython}. Then, using the equilibrium prices, we calculate the
+profits for every outcome of the capacity game. We finally use this information
+to find the Nash equilibrium of the capacity game.
 
 \section{Examples}
-Figure \ref{fig:fig3x2SingleTimestep} contains the output of five instances
-of finding the numerical solution for different $\gamma$ and costs. In the
-first two rows $\gamma=0$, with the one difference being that in Row 1, both
-Firm 1 and Firm 2 have the same cost, and in Row 2, Firm 1 has a 1\% lower cost
-than Firm 2. In Row 1, the firms sell the same amount of product and make the
-same amount of profit. But in Row 2, Firm 1 sells 33\% more quantity and makes
-53\% more profit. As a side note, since when $\gamma = 0$ there is no tax on
-distance, we can see on the left insets of these rows that buyers do not
-necessarily buy from the closest firm.
+In Figure \ref{fig:fig3x2SingleTimestep} we can see the idiosyncratic tax
+dampen Firm 1's attempts to become a monopoly power. In Rows 1 and 2, there is
+no tax as $\gamma = 0$. While Firm 1 and 2 have an equal cost per unit, no firm
+can become a monopoly. But if we reduce Firm 1's cost per unit by $1\%$, they
+sell 14\% more than their competition, and earn 33\% more profit, which is out
+of proportion to Firm 1's actual accomplishment, and can lead to
+anti-competitive behavior by Firm 1.
 
-In the Rows 3, 4, and 5, we let $\gamma = .5$ instead. In Row 3 we can see a
+In contrast, in Rows 3, 4, and 5, we let $\gamma = 1$. In Row 3 we can see a
 mirror of Row 1, where both firms, faced with the same costs, produce the same
 quantity, and make the same profit. But in row 4, where we give Firm 1 the same
 advantage we game them in the row 2, they sell the same amount, and only make
-12\% more profit than Firm 2. To increase their market share, Firm 1 needs to
-reduce their costs to 80\% of Firm 2, as shown in row 5.
+12\% more profit than Firm 2, which implies that our tax protects Firm 2 from
+small decrease in Firm 1's cost per unit. To increase their market share, Firm
+1 needs to reduce their costs to 80\% of Firm 2, as shown in row 5.
 
-The idiosyncratic tax thus acts as a dampener, preventing companies with
-slight advantages from acquiring overwhelming market dominance, while still
-ensuring that minor innovations are profitable. But, if one firm is
-significantly better, as in Row 5, then that firm will still dominate the
-market.
+The idiosyncratic tax thus dampens monopolistic tendencies of firms with slight
+competitive advantages, while still ensuring that minor innovations are
+profitable. But, if one firm is significantly better, as in Row 5, then that
+firm will still dominate the market.
 
 \begin{figure}[[p!htb] % p stands for 'entire page', '!htb' is to insert as close to code as possible
   \floatpagestyle{empty} % remove page number
@@ -299,26 +305,28 @@ market.
   \vspace{-2cm} % shift upwards to get more space for caption
   \includegraphics[width=\linewidth]{5x2plot.png}
   \caption{\small{Above are the model's results for a variety of
-  conditions. The Rows 1 and 2 have $\gamma=0$, while Rows 3, 4, and 5 have
-  $\gamma = .5$. In Rows 1 and 3, the firms have an equal cost per unit, sell
+  conditions. The Rows 1 and 2 have $\gamma=0.0$, while Rows 3, 4, and 5 have
+  $\gamma = 0.5$. In Rows 1 and 3, the firms have an equal cost per unit, sell
   equal quantity, and make equal profit. In Row 2, where $\gamma=0$, a 1\%
-  difference in cost means Firm 1 has a 10\% greater market share, and a 53\%
+  difference in cost implies Firm 1 sells 14\% more quantity, and earns a 33\%
   larger profit.
   In Row 4, where $\gamma=.5$, Firm 1's 1\% difference in cost now results in
-  an equal market share, but they still profit 12\% more. To get a larger
+  an equal market share, but they still profit 11\% more. To get a larger
   market share, as in Row 5, Firm 1 must have a 20\% lower cost per unit. This
-  means that $\gamma$ acts as a dampener on monopolization by increasing the
-  amount of innovation needed to gain market power while still encouraging
-  innovation. %[Check numbers after new gamma]
+  implies that $\gamma$ dampens a firm's ability to gain market power from
+  small innovations, without significantly discouraging innovation. 
+  %[Check numbers after new gamma]
   }}
   \label{fig:fig3x2SingleTimestep}
 \end{figure}
 
 \section{Dynamics}
 We run this model once for every timestep, then update the costs for the firms
-between the timesteps. Every timestep we determine which firm has made the most
-profit. For that firm, we reduce its cost per unit by 5\% in order to simulate
-the company investing its excess profits in itself to become more profitable in
-the long term. 
+between the timesteps. Every timestep we split a 5\% decrease in costs between
+the firms according to the fraction of total profit the Firm makes. For
+example, if Firm 1 earned a profit of 80, and Firm 2 earned a profit of 20,
+then Firm 1's per unit cost would decrease by 4\%, and Firm 1's by 1\%.
 
+\newpage
+\printbibliography
 \end{document}
