@@ -81,15 +81,16 @@ def process(d_settings, num_loops, price_diff):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'alt_fast_adv={}_turn_gamma={}_scalar_tax={}_endow={}.pickle'.format(price_diff, round(d_settings['gamma'],3), d_settings['scalar_tax'], d_settings['endowment'])
+    fn = folder + 'turn_fast_adv={}_gamma={}_scalar_tax={}_endow={}.pickle'.format(price_diff, round(d_settings['gamma'],3), d_settings['scalar_tax'], d_settings['endowment'])
+    print(fn)
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
     gamma = i/10.
     scalar_tax = 1.0
-    price_diff = 10
-    endowment = 200
+    price_diff = 1
+    endowment = 120
     num_sellers = 2
     num_buyers = 12
     np.random.seed(17)
