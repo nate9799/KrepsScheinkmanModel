@@ -14,19 +14,15 @@ from multiple_bar_plots import ax_circle_from_data
 
 
 def write_time_plot_from_file(fn):
-# Run main function
-
-
-##############
-### SCRIPT ###
-##############
 
 ########
 # DATA #
 ########
-
+    d_load  = jl.load(folder + fn)
 # Data from d_load
 ##########################################################
+    scalar_tax          = d_load['scalar_tax'][0]
+    print(scalar_tax)
     gamma               = d_load['gamma'][0]
     endowment           = d_load['endowment'][0]
     num_sellers         = d_load['num_sellers'][0]
@@ -38,7 +34,7 @@ def write_time_plot_from_file(fn):
     pd_quantity         = pd.DataFrame(d_load['a_quantity_nash'])
     pd_quantity_sold    = pd.DataFrame(d_load['a_quantity_sold'])
     pd_price            = pd.DataFrame(d_load['a_price_nash'])
-    pd_cost             = pd.DataFrame(d_load['a_cost'])
+    pd_cost             = pd.DataFrame(np.array(d_load['a_cost']))
     pd_profit           = pd.DataFrame(d_load['a_profit'])
     print(pd_cost)
 
@@ -201,12 +197,12 @@ def write_time_plot_from_file(fn):
             num_sellers, num_buyers)
     out_folder = './output/plots/'
     if not os.path.exists(out_folder): os.makedirs(out_folder)
-    plt.savefig(out_folder + fn + '.pdf', bbox_inches='tight')
+    plt.savefig(out_folder + fn + '.png', bbox_inches='tight')
 
 # write figure to the screen (must go after file creation or doesn't write
 # correctly) 
 ############################################################
-    plt.show()
+    #plt.show()
 
 ##############
 ### SCRIPT ###
@@ -214,9 +210,9 @@ def write_time_plot_from_file(fn):
 
 if __name__ == "__main__":
     fn = str(sys.argv[1])
+    a_fn = np.array([['alt_adv_fast_turn_gamma={}.{}_scalar_tax=1.0_endow=200.pickle'.format(i, j) for i in range(2)] for j in range(10)]).flatten()
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
-    folder  = folder1 if os.path.exists(folder1) else folder2
-    d_load  = jl.load(folder + fn)
+    folder  = "C:/Users/CAREBEARSTARE3_USER/Documents/WORK/MITInternship/ModelWithSandro/abmcournotmodel/code/output/data/"
     bug_check=False
-    write_time_plot_from_file(fn)
+    [write_time_plot_from_file(fn_tmp) for fn_tmp in a_fn]

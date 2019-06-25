@@ -9,3 +9,5 @@
 *.sw?
 *.pdf
 lsf.*
+*.pickle
+*.zip
