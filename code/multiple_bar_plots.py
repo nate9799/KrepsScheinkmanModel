@@ -23,7 +23,7 @@ def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
 # Setup
     if ax is None:
         _, ax = plt.subplots()
-    ax.set_title(label='$\gamma$ = {}, Firm 1\'s cost is {}% lower.'.format(gamma, a_cost[1]-a_cost[0]))
+    ax.set_title(label='$\gamma$ = {}'.format(gamma))
     num_sellers = len(a_seller_pos)
 # plot a grey circle 
     r       = 1
@@ -66,6 +66,7 @@ def ax_bars_from_data(a_price, a_cost, a_quantity_sold, a_profit, a_color,
     a_xvalues = np.arange(1, num_sellers + 1)
     w = 0.2
 # plot the price for each buyer 
+    ax.set_title('Firm 1\'s cost is {}\% of firm 2\'s and makes {}\% more profit'.format(a_cost[0], int(round(a_profit[0]/a_profit[1] -1, 2)*100)))
     color = a_color[0]
     ax.bar(a_xvalues-w, a_price, width=.8*w, color=color,   alpha=1.0, align='center')
     ax.bar(a_xvalues-w, a_cost,  width=.8*w, color='black', alpha=0.2, align='center')
