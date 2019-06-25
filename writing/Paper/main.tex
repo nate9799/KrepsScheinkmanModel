@@ -74,42 +74,42 @@ A new, firm-buyer specific idiosyncratic tax is introduced.
 
 Until not too long ago, people used to live in more self-contained villages,
 with local markets where people buy different products.  Take clothing as an
-example. Most villages had one or several clothing merchants competing for
+example. Most villages had one or more clothing merchants competing for
 customers.  There is some healthy competition among merchants within a village,
-as people can flexibly switch according to prices and preferences. But
-customers would rarely buy clothing from a faraway village, as the transaction
-cost associated with visiting that village would be high,  and could not offset
-a marginally better price or quality.  On the other hand, people living far
-away from any village are disadvantaged as they always incur such high costs.
+as people can flexibly switch according to prices and preferences. But customers
+would rarely buy clothing from a faraway village, as the transaction cost
+associated with visiting that village would be high,  and could not offset a
+marginally better price or quality.  On the other hand, people living far away
+from any village were disadvantaged as they would always incur such high costs.
 Similarly, if there is a specialized product that can only be produced in some
-villages, it was harder to find customers across village borders,  making it
-more difficult for new products and technologies to succeed. 
+villages, it was harder to find customers across village borders, making it more
+difficult for new products and technologies to succeed. 
 
-From the industrial to the technological revolution, more efficient
-distribution channels have emerged, enabling people to buy almost any product
-in online stores.  Independent of a customer's physical location, orders can be
-delivered to their door within a day.  More specialized products are now sold
-globally, and people living far away from hubs benefit from the availability of
-a wide range of products.  While such efficiency is beneficial for the economy
-as a whole, it comes at the cost of potential monopolies.  Consider a merchant
-that manages to sell a product for a few cents cheaper than its competitors. 
-Given modern distribution channels, and ignoring potential differences in
-quality, every buyer is now incentivized to buy from that one firm at the
-cheaper price. One potential outcome is that the competitors follow along,
-increase their efficiency, and a new equilibrium is reached.  However, in a
-suboptimal scenario, that one firm leverages the temporarily increased revenue
-to further outpace and potentially undercut its competitors.  In the short
-term, feedback mechanisms kick in, and an initially minor gap in competitive
-advantage, mixed with efficient distribution channels, manifests itself in a suboptimal monopoly. 
+From the industrial to the technological revolution, more efficient distribution
+channels have emerged, enabling people to buy almost any product in online
+stores. Now, orders can be delivered to their door within a day independent of a
+customer's physical location  More specialized products are now sold globally,
+and even people living far away from cities benefit from the availability of a
+wide range of products. While such efficiency is beneficial for the economy as a
+whole, it comes at the cost of potential monopolies.  Consider a merchant that
+manages to sell a product for a few cents cheaper than its competitors.  Given
+modern distribution channels, and ignoring potential differences in quality,
+every buyer is now incentivized to buy from that one firm offering the cheaper
+price. One potential outcome is that the competitors follow along, increase
+their efficiency, and a new equilibrium is reached.  However, in a suboptimal
+scenario, that one firm leverages the temporarily increased revenue to further
+outpace and potentially undercut its competitors.  In the short term, feedback
+mechanisms kick in, and an initially minor gap in competitive advantage, mixed
+with efficient distribution channels, manifests itself in a suboptimal monopoly. 
 
 In this article, we show that such monopolies can be prevented by introducing an idiosyncratic buyer-seller transaction cost.
 This tax leverages the benefits of modern distribution channels, making sure that no buyer remains disadvantaged. 
-At the same time, innovative products can spread globally, whereas less specialised products remain local. 
+At the same time, innovative products can spread globally, whereas less specialized products remain local. 
 This is achieved through the following taxation mechanism: 
 Consider a set of $|F|$ firms, all offering the same product, and a set of $|B|$ potential buyers (customers). 
-For any buyer $b \in C$ and firm $f \in F$, we define the ordinal distance $D = D(b,f)$ such that the firm $f$ that is physically closest to $b$ has distance $D(b,f)=1$, the next closest has distance $D=2$, and the $n$-th closest has distance $D=n$. 
+For any buyer $b \in B$ and firm $f \in F$, we define the ordinal distance $D = D(b,f)$ such that the firm $f$ that is physically closest to $b$ has distance $D(b,f)=1$, the next closest has distance $D=2$, and the $n$-th closest has distance $D=n$. 
 The tax when customer $b$ buys from the $n$-th closest firm is then proportional to $D^\gamma$, for some exponent $\gamma > 0$. 
-If we were to set $\gamma = 0$, everybody can buy from every firm for the same amount of tax. 
+If we were to set $\gamma = 0$, everybody can buy from every firm at single tax rate. 
 If we were to set $\gamma=\infty$, a seller can only buy from its closest firm.
 A gamma in-between those two extremes represents a trade-off: 
 Close-by products are taxed less than far away products. 
@@ -119,13 +119,13 @@ In particular, if there is only one firm offering the product, everybody buys fo
 
 Through tuning of $\gamma$ and targeted redistribution of tax money to regions of low economic activity, we show that this model is able to fuel a self-consistent economy, 
 with fair competition, where innovations can spread freely, but without the chance of monopolies emerging through disproportional feedback mechanisms. 
-In summary, we present a model that avoids the winner-take-all monopoly tendency and associated negative externalities of today's internet enabled business through a low cost tax based on a topological constraint. 
+In summary, we present a model that avoids the winner-take-all monopoly tendency and associated negative externalities of today's Internet enabled business through a tax based on a topological constraint \green{the tax is not always small, and definitely not in our examples}. 
 
 
 \section{Model Set-Up}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We simulate an economy of firms and customers in some environment with a distance metric (e.g. a country) and study how firms respond to the idiosyncratic tax.
+We simulate an economy of firms and customers in some environment with a distance metric (e.g. a country using road distance) and study how firms respond to the idiosyncratic tax.
 In this section, we outline the model semi-quantitatively. 
 Game-theoretical details are then elaborated in section \ref{sec:game_theory} and concrete applications are described in the subsequent sections. 
 Section \ref{sec:conclusions} summarises the results and suggests future directions. 
@@ -134,12 +134,12 @@ Section \ref{sec:conclusions} summarises the results and suggests future directi
 The geography of our model is one-dimensional with periodic boundaries (i.e. a topological circle) of length $L$. 
 Due to the periodic boundary conditions, we measure physical distances with the metric $\min(|b-f|, L-|b-f|)$ for any two points $b$,$f$ (i.e. buyers and firms) on the circle. 
 Without loss of generality, we set $L=1$. 
-The left-hand-side plots of Figure \ref{fig:fig3x2SingleTimestep} are examples of this `abstract geography'.
+The left-hand-side plots of Figure \ref{fig:static_game} are examples of this `abstract geography'.
 Our results not rely on the implemented geography, and any other, potentially more realistic topology could be considered.
 However, as we outline above, a simple ring-topology is sufficient for practical purposes, and could be implemented on digital market places such as Amazon. 
 
 \subsection{Product}
-In a first approach, we consider an economy of only one unique product. 
+In a first approach, we consider an economy of only one product. 
 We assume that all firms produce that same product, but at potentially different production costs. 
 Extensions to more products are essentially straight forward and discussed in the outlook section below. 
 
@@ -149,7 +149,7 @@ Each buyer tries to buy as much product as possible, but is constrained by a neg
 
 \subsection{Firms}
 The firms, like the buyers, are also randomly placed on the circle, and compete non-cooperatively to maximize their profit. 
-In this competition, also known as a `game' in the context of gam theory, each firm makes two choices, first capacity (i.e. how much they produce), then price. 
+In this competition, also known as a `game' in the context of game theory, each firm makes two choices, first capacity (i.e. how much they produce), then price. 
 A firm chooses capacity before price because it is difficult to adapt capacity due to supply chain restraints, while it is easier to change a price tag.
 
 For the remainder of this article, the location of buyers and sellers is held fixed. 
@@ -159,19 +159,19 @@ This can be relaxed later on, assuming that their location changes on time-scale
 The idiosyncratic tax that is introduced by this paper is dependent on a distance measure $D$, or ordinal distance, that gives a discrete distance between every pair of buyers and firms. 
 We define the ordinal distance $D$ be defined such that the closest firm to a buyer is at ordinal distance $D=1$, the next closest at $D=2$, and the $n$th closest at $D=n$. 
 If buyer $b$ wants to buy a product from its $n$-th closest firms, a tax proportional to $n^\gamma$ for some $\gamma \geqslant 0$ is raised. 
-This incentivizes buyers to purchase from more local firms, unless a remote firm offers th same product for a considerably lower price, that offsets the tax. 
+This incentivizes buyers to purchase from more local firms, unless a remote firm offers the same product for a considerably lower price, offsetting the tax. 
 
 Crucially, this ordinal distance is calculated for every individual type of product. 
-So for instance a car manufacturer and a bakery do not increase each other's distance from their buyers.
+For instance, a car manufacturer and a bakery do not increase each other's distance from their buyers.
 Thus, if a firm produces a new product, such as a drug for a previously incurable disease, it is considered at distance $D=1$ from all buyers, at least until a competitor emerges.
-This way, new technologies and true innovation can spread freely, whereas more basic products remain more localised. 
+This way, new technologies and true innovation can spread freely, whereas more basic products remain more localized. 
 
 \section{Equilibrium Capacities \& Prices}
 \label{sec:game_theory} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section, we explain how firms set their production quantities and prices based on game theoretically equilibria. 
-The reader only interested in qualitative results may skip this section, and continue reading in section \ref{sec:static_game}. 
+In this section, we explain how firms set their production quantities and prices based on game theoretic equilibria. 
+The reader only interested in qualitative results may skip this section and continue reading in section \ref{sec:static_game}. 
 
 When firms choose capacity and price, they make their choices in order to maximize profit. 
 First, the firms compete on capacity, by simultaneously declaring how much of the product they plan to produce; next, they compete on price to determine the firms' non-tax prices. 
@@ -188,16 +188,15 @@ First, firm $f$ incurs a unit price of $c_f$ for every unit of product they
 install, regardless of whether or not the product is sold. 
 Second, buyers have limited demand. 
 
-The capacity sub-game acts much like a Cournot game.
-\footnote{
-A Cournot game is where firms compete only on quantity, and sell all of the quantity at the market clearing price.
-} 
-The difference is that instead of being assigned a
+%put the '\footnote' right next to the period to avoid weird spacing between footnote and end of sentence
+The capacity sub-game acts much like a Cournot game.\footnote{
+A Cournot game is where firms compete only on quantity, and sell all of the quantity at the market clearing price.} 
+The difference is that instead of firms being assigned a
 market clearing price and selling everything they produce, in our model the
 firms compete on price in a second sub-game where they choose a price. This
 sub-game is necessary because the idiosyncratic tax can provide incentive for
 firms to charge different prices. For example, a firm with low costs trying to
-sell to non-local buyers would need to undercut firms that ar more local to those potential customers. 
+sell to non-local buyers would need to undercut firms that are more local to those potential customers. 
 Depending on the tax, this may or may not increase profits. 
 
 \subsection{Pricing Game}
@@ -208,7 +207,7 @@ By choosing a lower price, a firm can undercut competitors.
 Since the amount a buyer purchases increases as the product gets less expensive, a lower price increases the amount of product purchased in total. 
 
 Note that usually, it is not optimal for a firm to offer products so cheaply that it can sell to the entire market. 
-It tends to be more profitable to sell a lower quantity locally at a higher price.
+It tends to be more profitable to sell a lower quantity locally at a higher price.\green{I don't know if I would go this far here.}
 
 \subsection{Idiosyncratic Tax}
 The idiosyncratic tax is designed to promote buyers purchasing locally by
@@ -217,6 +216,8 @@ the tax in discrete steps as firms get more and more ordinally distant. Since
 each buyer-seller pair can have a different tax, the tax can cause two buyers
 to perceive separate prices at the same firm.
 
+\green{This is the third time we define ordinal distance. We should cut at least
+one}
 For any buyer $b$ and firm $f$, we define the ordinal distance $D = D(b,f)$
 such that the firm $f$ that is physically closest to $b$ has distance
 $D(b,f)=1$, the next closest has distance $D=2$, and the $n$th closest has
@@ -226,7 +227,8 @@ including tax, is given by
 	p(b,f) = p_f + p_f ~ r~ \left( D(b,f)^\gamma - 1 \right)
 \end{equation}
 where $\gamma$ is the coefficient governing how quickly the tax increases, and
-$r$ is a simple scaling coefficient (set to $5\%$ in the remainder of this report). 
+$r$ is a simple scaling coefficient (set to $100\%$ in the remainder of this
+report\green{in teh bar plots, $r=1$}). 
 
 Implementing this tax gives the buyers individualized preferences over the firms. 
 For example, imagine two firms $f$ and $g$, and let $p_f <p_g$. 
@@ -245,13 +247,13 @@ In contrast, when $\gamma = \infty$, it becomes impossible for buyers to purchas
 Consider two vending machines right beside one another selling the same soda, with one machine selling soda at a cheaper price than the other. 
 Customers will buy from the cheaper machine first until it runs out, and will then switch to the more expensive machine until their demand is satisfied. 
 This generic type of consumer behaviour is implemented in our two-step game as well: 
-Buyer's start buying from the cheapest buyer first (incl. taxes), then move on to the second cheapest, and so forth. 
+buyer's start buying from the cheapest buyer first (incl. taxes), then move on to the second cheapest, and so forth. 
 Throughout the game, we assume global information, i.e. buyers are perfectly aware of all prices. 
 This is good approximation of reality when considering digital market places such as Amazon. 
 
 More formally, let the set of buyers be called $B$. 
 Each buyer $b\in B$ buys a quantity $q_b =\sum_{f\in F} q_{b,f}$, where $q_{b,f}$ is the amount buyer $b$ buys from the firm $f$. 
-The buyer's all have identical demand curves $p_\text{max} + q_b = a$, where $a$ is the endowment, and $p_\text{max}$is the maximum price they are willing to pay (including tax). 
+The buyers all have identical demand curves $p_\text{max} + q_b = a$, where $a$ is the endowment, and $p_\text{max}$ is the maximum price they buy product at (including tax). 
 Each buyer tries to maximize $q_b$ while keeping $p_\text{max} + q_b \le a$. 
 In other words, they buy from the cheapest available firm until they hit the demand curve and stop buying, or the firm runs out of capacity and the buyer begins buying from the next cheapest, repeating the process.
 
@@ -263,10 +265,10 @@ This assumption is known as rationing.
 \subsection{Profit Function}
 After having produced $\hat q_f$ units sold at price $p_f$, firm $f$'s profit is given by 
 \begin{equation}
-    \Pi_f = p_f \sum_{b\in B} q_{b,f} - c_f\hat q_f.
-\end{equation}
-Also, each $q_{b,f}$ is chosen by the buyer $b$ so that they buy as much as possible while staying under their demand curve $P+Q\leq a$; 
-this is where taxes affect the firm's profit.
+    \Pi_f = p_f \sum_{b\in B} q_{b,f} - c_f\hat q_f,
+\end{equation} 
+where  $p_f \sum_{b\in B} q_{b,f}$ is the firm's revenue, and $ c_f\hat q_f$ is the firm's total cost.
+Taxes affect the firm's profit by altering buyer's preferences, hence changing $q_{b,f}$.
 
 If the firm sells all of their capacity, then $q_f = \hat q_f$, and the profit equation simplifies to:
 \begin{equation}
@@ -276,7 +278,7 @@ which is the net profit per unit multiplied by quantity sold.
 
 \subsection{Numerical Solution of Nash Equilibria}
 
-The firms determine their capacity and price such that they are in a Nash equilibrium. 
+The firms choose their capacity and price such that they are in a Nash equilibrium. 
 Because of the idiosyncratic structure of the game, which depends on the exact location of buyers and sellers, 
 it is not possible to determine the Nash equilibrium analytically, for general cases. 
 Instead, we use the Gambit library developed by  \cite{gambitPython} to find the Nash equilibrium numerically. 
@@ -323,7 +325,7 @@ This highlights the destabilising long-term effect that an economy of global tra
 While a cost difference of only $1\%$ is hardly considered a major competitive advantage, the resulting difference in revenue is. 
 
 A different scenario is shown in rows $3$ and $4$ of Figure \ref{fig:static_game}, where the distance-tax applies ($\gamma = 1/2$).
-In row 3, we witness again a symmetric outcome, as $c_1 = c_2 = 100$. 
+In row 3, we again witness a symmetric outcome, as $c_1 = c_2 = 100$. 
 In row 4, we assume again that firm $1$'s production costs are just $1\%$ below firm $2$'s. 
 Here, however, the resulting difference in profit is reduced to $11\%$ (and could be reduced further if we were to increase $\gamma$  above $1/2$). 
 This shows clearly the balancing effect that the taxation based distance has. 
@@ -332,7 +334,7 @@ Row 5 finally shows the profit asymmetry obtained in a $\gamma=1/2$ economy wher
 The equilibrium profit functions determine that firm $1$ makes \red{(@Nate: add number)}-times more profit than firm $2$. 
 
 This demonstrates the subtle but important difference induced by our distance-based tax:
-A minor difference in production cost, associated with an essentially negligible, random difference in one firm's competitiveness, is dampened to a balanced difference in profits. 
+a minor difference in production cost, associated with an essentially negligible, random difference in one firm's competitiveness, is dampened to a balanced difference in profits. 
 On the other hand, a major difference in production cost, associated with major difference in one firm's competitiveness, is rewarded accordingly by significantly increased profits. 
 
 
@@ -341,7 +343,7 @@ On the other hand, a major difference in production cost, associated with major 
 In the previous subsection, we have demonstrated how a distance-tax-free economy disproportionally rewards essentially random, minor differences in firm competitiveness. 
 But even more concerningly, the problem does not stay static: 
 This disproportional revenue can be used to further invest in aggressive marketing, thereby increasing the difference between the two firms even more. 
-This may ultimately run a firm out of business, although it was initially as competitive as the other firms. 
+This may ultimately run a firm out of business, despite initially being as competitive as the other firms. 
 
 We highlight this mechanism more quantitatively by running the following simple game:
 The same economy as in subsection \ref{sec:static_economy} is considered (2 firms, 12 buyers, 6 closest buyers each). 
