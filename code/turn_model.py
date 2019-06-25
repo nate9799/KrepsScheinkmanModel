@@ -75,19 +75,20 @@ def dic_from_a_dic(a_dic):
     ret = dict(zip(a_key, a_a_value))
     return ret
 
-def process(d_settings, num_loops):
+def process(d_settings, num_loops, price_diff):
     a_d_turns = loop(d_settings, num_loops)
     d_turns = dic_from_a_dic(a_d_turns)
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'alt_adv_fast_turn_gamma={}_scalar_tax={}_endow={}.pickle'.format(round(d_settings['gamma'],3), d_settings['scalar_tax'], d_settings['endowment'])
+    fn = folder + 'alt_fast_adv={}_turn_gamma={}_scalar_tax={}_endow={}.pickle'.format(price_diff, round(d_settings['gamma'],3), d_settings['scalar_tax'], d_settings['endowment'])
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
     gamma = i/10.
     scalar_tax = 1.0
+    price_diff = 10
     endowment = 200
     num_sellers = 2
     num_buyers = 12
@@ -99,11 +100,11 @@ if __name__ == "__main__":
             'a_strat_quantity' : np.linspace(0, num_buyers*100, 21),
             'a_seller_loc' : np.linspace(start=0, stop=1, num=num_sellers, endpoint=False),
             'a_buyer_loc'  : np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False),
-            'a_cost' : np.array([99, 100]),
+            'a_cost' : np.array([100.-price_diff, 100.]),
             'gamma' : gamma,
             'scalar_tax' : scalar_tax,
             'endowment' : endowment,
             'mean_cost' : 100,
             'cost_ratio' : 1} 
-    process(d_settings, 20)
+    process(d_settings, 20, price_diff)
 
