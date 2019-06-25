@@ -23,7 +23,7 @@ def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
 # Setup
     if ax is None:
         _, ax = plt.subplots()
-    ax.set_title(label='gamma = {}, Firm 1\'s cost is {}% lower.'.format(gamma, a_cost[1]-a_cost[0]))
+    ax.set_title(label='$\gamma$ = {}, Firm 1\'s cost is {}% lower.'.format(gamma, a_cost[1]-a_cost[0]))
     num_sellers = len(a_seller_pos)
 # plot a grey circle 
     r       = 1
@@ -189,17 +189,18 @@ def write_plot(fig):
 ### SCRIPT ###
 ##############
 
-a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
-        "S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
-        "S=2_B=12_gamma=1.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
-        "S=2_B=12_gamma=1.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
-        "S=2_B=12_gamma=1.0_scalar_tax=0.05_mean_cost=90_cost_ratio=1.25_endow=120.0_randomize=True.pkl"]
-folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
-folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
-folder  = folder1 if os.path.exists(folder1) else folder2
+if __name__ == "__main__":
+    a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
+            "S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
+            "S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
+            "S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
+            "S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=90_cost_ratio=1.25_endow=120.0_randomize=True.pkl"]
+    folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
+    folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
+    folder  = folder1 if os.path.exists(folder1) else folder2
 
-a_select_indices = [-1,-1,-1,-1,-1]
+    a_select_indices = [-1,-1,-1,-1,-1]
 
-fig = draw_grid_of_timesteps(a_fn, a_select_indices, folder=folder)
-write_plot(fig)
+    fig = draw_grid_of_timesteps(a_fn, a_select_indices, folder=folder)
+    write_plot(fig)
 
