@@ -206,7 +206,7 @@ By choosing a lower price, a firm can undercut competitors.
 Since the amount a buyer purchases increases as the product gets less expensive, a lower price increases the amount of product purchased in total. 
 
 Note that usually, it is not optimal for a firm to offer products so cheaply that it can sell to the entire market. 
-It tends to be more profitable to sell a lower quantity locally at a higher price.\green{I don't know if I would go this far here.}
+It tends to be more profitable to sell a lower quantity locally at a higher price.
 
 \subsection{Idiosyncratic Tax}
 The idiosyncratic tax is designed to promote buyers purchasing locally by
@@ -215,8 +215,6 @@ the tax in discrete steps as firms get more and more ordinally distant. Since
 each buyer-seller pair can have a different tax, the tax can cause two buyers
 to perceive separate prices at the same firm.
 
-\green{This is the third time we define ordinal distance. We should cut at least
-one}
 For any buyer $b$ and firm $f$, we define the ordinal distance $D = D(b,f)$
 such that the firm $f$ that is physically closest to $b$ has distance
 $D(b,f)=1$, the next closest has distance $D=2$, and the $n$th closest has
@@ -227,7 +225,7 @@ including tax, is given by
 \end{equation}
 where $\gamma$ is the coefficient governing how quickly the tax increases, and
 $r$ is a simple scaling coefficient (set to $100\%$ in the remainder of this
-report\green{in teh bar plots, $r=1$}). 
+report). 
 
 Implementing this tax gives the buyers individualized preferences over the firms. 
 For example, imagine two firms $f$ and $g$, and let $p_f <p_g$. 
@@ -338,30 +336,81 @@ On the other hand, a major difference in production cost, associated with major 
 
 
 \subsection{A Dynamic Economy} 
+\label{sec:dynamic}
 
-In the previous subsection, we have demonstrated how a distance-tax-free economy disproportionally rewards essentially random, minor differences in firm competitiveness. 
+In the previous subsection, we have demonstrated how a no-transportation-cost economy disproportionally rewards essentially random, minor differences in firm competitiveness. 
 But even more concerningly, the problem does not stay static: 
-This disproportional revenue can be used to further invest in aggressive marketing, thereby increasing the difference between the two firms even more. 
+This disproportional revenue can be used to further under-cut prices, invest in aggressive marketing etc. 
+This increases the difference between the two firms even more. 
 This may ultimately run a firm out of business, despite initially being as competitive as the other firms. 
 
 We highlight this mechanism more quantitatively by running the following simple game:
 The same economy as in subsection \ref{sec:static_economy} is considered (2 firms, 12 buyers, 6 closest buyers each). 
 However, instead of just offering one static set of quantities and prices, here we consider multiple business cycles (e.g. quarters, or years). 
 Firm $1$ starts with an initial production cost that is only $1\%$ below that of firm $2$'s. 
-But then, each of the two firms use their profit to effectively subsidise their costs, allowing them to offer lower prices during the next round. 
-The outcome of this experiment is depicted in figure \ref{fig:dynamic_game}, 
+But then, each of the two firms use their profit to effectively subsidise their costs, proportional to the revenue they have received. 
+This allows them to offer lower prices during the next round. 
+The outcome of this experiment is depicted in Figure \ref{fig:dynamic_game} both with tax $(\gamma > 0)$ and without tax $(\gamma=0)$. 
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=\textwidth]{dynamic_game}
+	\caption{	The left (right) column depicts a situation of repeated business cycles (`games'), without (with) a distance based idiosyncratic tax, $\gamma=0$ ($\gamma > 0$). 
+			Initially, firm $1$ is able to produce only $1\%$ cheaper than firm $2$. 
+			After each round, the firms use their revenue to subsidies their own prices (or alternatively: reinvest into higher production efficiency, etc.). 
+			We witness in the left column that this essentially drives firm $2$ out of business, as it is is forced to decrease prices as low as firm $1$, in order to stay competitive. 
+			Consequently,  firm $2$'s  profit decreases, until it would ultimately run out of business.
+			If only a minimal distance-based tax is raised $(\gamma=0.1)$, such a scenario can be prevented: 
+			Both firms are able to decrease their prices and remain competitive. 
+			The dashed line in the lower left plot depicts the analytically calculable `Cournot price', i.e. the Nash-equilibrium price in a zero-tax-model.
+			As we can see: the lines almost perfectly match, thus showing that our numerical results are consistent. 
+			}
+	\label{fig:dynamic_game}
+\end{figure}
+We witness that despite an initially marginal difference where firm $1$ is producing the products for only $1\%$ less than firm $2$, if we set $\gamma=0$. 
+Firm $2$ ultimately runs out of business, as it is forced to compete with firm $1$. 
+If $\gamma > 0$, both firms remain competitive. 
+A detailed description of the outcome is found in the figure caption. 
 
+Although not shown here, we can deduce from row 5 in Figure \ref{fig:static_game} that even for $\gamma = 1/2$, firm $2$ is ran out of business, if the difference in cost is initially large, as anticipated. 
+The only way firm $2$ can survive unconditionally of its competitiveness, is if $\gamma$ is set to effectively infinite. 
+With basic calculus, we can calculate analytically an upper bound $\overline{\gamma}$ at which all firms are selling in effective monopolies (derivation will be shown in an Appendix of a next report). 
 
 \section{Conclusions \& Outlook}
 \label{sec:conclusions} 
 
-\red{
-mention
-- multiple products
-- fixed location
-- implementation on digital market place
-- vision
-} 
+In this report, we have shown that problematic disproportional revenue is generated as our economy converges to a zero-transportation-cost limit. 
+This is essentially rooted in the fact that initially minor (and essentially random) imbalances in product quality reward massively more the marginally cheaper/better product, 
+as no rational agent has any incentive to deviate. 
+
+We have then introduced an idiosyncratic buyer-seller distance-based tax, that avoids such disproportional revenue in case the differences in production cost are minor, 
+but at the same time continues to reward competitiveness in the sense of significantly cheaper production costs. 
+
+The current state of the paper serves as proof of concept, 
+A lot of work has been devoted to determine the Nash equilibria correctly. 
+Now that everything is set up, we can move forward quickly. 
+
+In particular, the following points should still be addressed: 
+\red{@Sandy: please tell us what you think we should focus on}
+
+For now, the tax revenue has not been used. 
+We should implement a targeted redirection of the tax money. 
+We have to be careful that we do not thereby distort the game-theoretical equilibria. 
+So for instance, if we give back the tax revenue directly to the most effected firms (either the richest or the poorest), it essentially distorts their incentives. 
+Funding of new start-ups, or an equal redistribution to customers comes to mind. 
+\red{@Sandy: any practical suggestions?}
+
+A value for $\gamma$ striking an optimal balance between competition and firm protection has to be set. 
+A value too low leads to reward of essentially random, minor production advantages. 
+A value too large dampens competition by protecting firms too much. 
+We will have to find a balance, ideally one that is defined algorithmically and adjusts itself automatically. 
+We can implement one $\gamma$ per product, and continue to consider a single-product economy. 
+Ideally, we can couple it to the tax revenue, once that has been defined. 
+
+The requirement that firms and buyers are placed uniformly at random appears unnecessarily restrictive. 
+If we want to impose such a mechanism e.g, on a digital market place such as Amazon, one should give buyers and sellers at least the illusion of having a choice. 
+We can use our simulations to show that the model still holds, if buyers and sellers can chose their location on the circle freely, as long as change happens on time-scales much slower than multiple transactions. 
+
+Ultimately, we want to run more realistic simulations of real market places, such as Amazon.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{References}
