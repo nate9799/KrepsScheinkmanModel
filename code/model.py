@@ -38,30 +38,10 @@ def get_a_cost_from_a_ratio(mean, a_ratio):
     ret = ret * mean / avg_ratio
     return ret
 
-def get_a_strat_quantity(lower_bound, upper_bound, num_strats,
-        is_randomized=False, is_shifted = False):
-    if is_randomized:
-        return get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05)
-    shift = 0.
-    if is_shifted:
-        jump = (upper_bound - lower_bound)/(num_strats - 1)
-        shift = float(jump)/6
-    return np.linspace(lower_bound, upper_bound, num_strats) + shift
-    
 def get_a_strat_from_center(n, center, jump, shift = 0):
     dist = float(n * jump)/2
     ret = np.linspace(center - dist, center + dist, n) + shift
     return(ret)
-
-def get_rand_strats(lower_bound, upper_bound, num_strats, frac=.05):
-    '''
-    Slightly randomizes an array.
-    '''
-    a_strat_base, step = np.linspace(lower_bound, upper_bound, num_strats, retstep=True)
-    scale = frac * step
-    a_rand = np.random.uniform(low=-scale, high=+scale, size=len(a_strat_base))
-    a_strat_rand = a_strat_base + a_rand
-    return(a_strat_rand)
 
 
 #####################
@@ -74,7 +54,20 @@ def circle_dist(a, b):
     '''
     return .5-abs(abs(a-b)-.5)
 
-def get_m_tax(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
+def get_m_tax_dist(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
+    '''
+    Calculates tax matrix and distance matrix.
+    '''
+    # Matrix with absolute dist
+    m_dist = [[circle_dist(buyer_loc, seller_loc)
+        for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
+    # Matrix with rel dist with list of prices. '+ 1' because min dist is 1.
+    # Lot of potential speed up here, only need to do exponent once.
+    m_tax = scalar_tax * np.array(m_dist**gamma) + 1.
+    print(m_tax)
+    return m_tax
+
+def get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
     '''
     Calculates tax matrix and distance matrix.
     '''
@@ -198,6 +191,25 @@ def find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = Tru
            'a_price_nash' : a_price,
            'a_quantity_sold' : a_quantity_sold}
     return ret
+
+def find_payoff_of_mixed_strategy(game, a_nash):
+# Get a_strat and probability of a_strat
+    num_players = len(a_nash)
+    a_payoff = np.zero(num_players)
+    for profile in game:
+        prob = 1
+# Check how enumerate works
+        for strat_ind, player_ind in enumerate(profile):
+https://forums.spacebattles.com/threads/a-better-class-of-criminal-dc-si.394632            prob_player = a_nash[player_ind]
+            if prob_player = 0:
+                prob = 0
+                break
+            prob = prob * prob_seller
+        if prob = 0:
+            continue
+        for seller_ind in range(num_players):
+            a_payoff[player_ind] = prob * game[profile][player_ind]
+    return a_payoff
 
 
 ###########################
@@ -431,13 +443,12 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 
 def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
         a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-        mean_cost, cost_ratio):
+        mean_cost, cost_ratio, m_tax):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
     '''
 # Setup
-    m_tax = get_m_tax(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment}
     a_a_strat_quant = [a_strat_quantity] * num_sellers
 # Create and Solve Game.
@@ -491,9 +502,14 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
             endowment)
     # Not the best estimate
     a_strat_quantity = np.arange(0, num_buyers*50, 40)
+# Calculate m_tax
+    if ordinal:
+        m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
+    else:
+        m_tax = get_m_tax_dist(a_buyer_loc, a_seller_loc, scalar_tax)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-            mean_cost, cost_ratio)
+            mean_cost, cost_ratio, m_tax)
     print(d_write)
 # write to the output
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'

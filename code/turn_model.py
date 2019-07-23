@@ -5,12 +5,29 @@ import model
 import pandas as pd
 import numpy as np
 
+def new_m_tax(m_tax):
+    ret = .9 * (m_tax - 1) + 1
+    return ret
+
 def new_a_cost(a_cost, a_profit):
     a_profit_ratio = a_profit/np.sum(a_profit)
     a_cost_decrease_ratio = 1 - .05*a_profit_ratio
     ret = a_cost_decrease_ratio*a_cost
     print(ret)
     return ret
+
+def a_func_executor(a_func, a_a_key, dic):
+    '''
+    Ensure subfunctions do not do in-place weirdness. NO SIDEEFFECTS PLEASE!
+    '''
+    a_key_ret = []
+    a_data_ret = []
+    for func, a_key in zip(a_func, a_a_key):
+        d_tmp = {key : dic[key] for key in a_key}
+        a_key_ret.append(a_key[0])
+        a_data_ret.append(func(**d_tmp))
+    return a_key_ret, a_data_ret
+
 
 def get_settings_from_dic_ret(dic_ret):
     '''
@@ -24,33 +41,39 @@ def get_settings_from_dic_ret(dic_ret):
             'a_buyer_loc' : dic_ret['a_buyer_loc'],
             'a_cost' : dic_ret['a_cost'],
             'gamma' : dic_ret['gamma'],
-            'scalar_tax' : 1,
+            'scalar_tax' : dic_ret['scalar_tax'],
             'endowment' : dic_ret['endowment'],
             'mean_cost' : dic_ret['mean_cost'],
-            'cost_ratio' : dic_ret['cost_ratio']} 
+            'cost_ratio' : dic_ret['cost_ratio'],
+            'm_tax' : dic_ret['m_tax']} 
     return ret
 
-def turn_dic_from_dic(dic):
+def turn_dic_from_dic(dic, a_func, a_a_keys):
     '''
     Computes a single turn
     '''
-    a_cost = dic['a_cost']
-    a_profit = dic['a_profit']
     a_cost = new_a_cost(a_cost, a_profit)
+    m_tax_new = new_m_tax(m_tax)
+    a_key, a_data = a_func_executor(a_func, a_a_keys, dic)
     d_settings = get_settings_from_dic_ret(dic)
+    for key, data in zip(a_key, a_data):
+        d_settings[key] = data
     d_settings['a_cost'] = a_cost
+    d_settings['m_tax'] = m_tax_new
     ret = model.make_dic_of_pure_nash(**d_settings)
     return ret
 
 def loop(d_settings, num_loops):
     dic_ret = model.make_dic_of_pure_nash(**d_settings)
     a_dic_ret = [dic_ret]
+    a_func = [new_m_tax]
+    a_a_keys = [['m_tax']]
     for i in range(num_loops-1):
         print(i)
         if np.isnan(dic_ret['a_profit'][0]):
             print('ended with NAN')
             break
-        dic_ret = turn_dic_from_dic(dic_ret)
+        dic_ret = turn_dic_from_dic(dic_ret, a_func, a_a_keys)
         a_dic_ret.append(dic_ret)
         print(a_dic_ret)
     return a_dic_ret

@@ -45,7 +45,7 @@ def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
         a_xcoord = [r * np.sin(2 * np.pi * a_pos_subset)]
         a_ycoord = [r * np.cos(2 * np.pi * a_pos_subset)]
         ax.scatter(a_xcoord, a_ycoord, marker='x', color=a_color[s], s=80,
-                zorder=2, label='Buyer who bought from Firm %d'%(s+1)) 
+                zorder=2, label='Buyer closest to from Firm %d'%(s+1)) 
     ax.set_xlim(-1.2*r, 1.2*r)
     ax.set_ylim(-1.2*r, 1.5*r)
     ax.legend(loc='center', ncol=2, frameon=False, fontsize=2*fontsize/3,
@@ -166,7 +166,7 @@ def draw_grid_of_timesteps(a_fn, a_index, folder=''):
     a_ax = a_ax_circle + a_ax_bar
     a_ax[::2] = a_ax_circle
     a_ax[1::2] = a_ax_bar
-    a_annote = ['Row {}'.format(i) for i in np.arange(1, len(a_fn) + 1)]
+    #a_annote = ['Row {}'.format(i) for i in np.arange(1, len(a_fn) + 1)]
     for (ax, annote) in zip(a_ax_circle, a_annote):
         ax.annotate(annote,
                 xy          =  (-0.17, 0.5),
@@ -180,7 +180,7 @@ def draw_grid_of_timesteps(a_fn, a_index, folder=''):
     return fig
 
 def write_plot(fig):
-    fn_out = '5x2plot'
+    fn_out = '1x2plot1'
     out_folder = './output/plots/'
     if not os.path.exists(out_folder): os.makedirs(out_folder)
     plt.savefig(out_folder + fn_out + '.png', bbox_inches='tight')
@@ -191,14 +191,15 @@ def write_plot(fig):
 ##############
 
 if __name__ == "__main__":
-    a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
-            "S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
-            "S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
-            "S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
-            "S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=90_cost_ratio=1.25_endow=120.0_randomize=True.pkl"]
+    a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl"]
+            #"S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
+            #"S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
+            #"S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
+            #"S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=90_cost_ratio=1.25_endow=120.0_randomize=True.pkl"]
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
+    folder  = "C:/Users/CAREBEARSTARE3_USER/Documents/WORK/MITInternship/ModelWithSandro/abmcournotmodel/code/output/data/"
 
     a_select_indices = [-1,-1,-1,-1,-1]
 
