@@ -200,7 +200,7 @@ def find_payoff_of_mixed_strategy(game, a_nash):
         prob = 1
 # Check how enumerate works
         for strat_ind, player_ind in enumerate(profile):
-https://forums.spacebattles.com/threads/a-better-class-of-criminal-dc-si.394632            prob_player = a_nash[player_ind]
+            prob_player = a_nash[player_ind]
             if prob_player = 0:
                 prob = 0
                 break
@@ -489,12 +489,11 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     num_strats = 21 # number of quantity-strategies
     dist = 40 # deviation from cournot that we search for
 # Determine a_cost
-    if cost_ratio == 1.25:
-        mean_cost = 90
     a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
     if cost_ratio == 1.01:
-        a_cost = np.array([90., 100])
-    a_cost = np.array([90., 100])
+        a_cost = np.array([99., 100.])
+    if cost_ratio == 1.0:
+        a_cost = np.array([100., 100.])
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
@@ -503,6 +502,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     # Not the best estimate
     a_strat_quantity = np.arange(0, num_buyers*50, 40)
 # Calculate m_tax
+    ordinal = False
     if ordinal:
         m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     else:
@@ -527,10 +527,10 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = [0, .5]#np.round(np.linspace(0.0, .3, 11), 3)
-    scalar_tax      = [1.0]
-    mean_cost       = [95]
-    cost_ratio      = [1.0, 1.01, 1.1]#np.round(np.linspace(1.0, 2.0, 11), 3)
+    gamma           = [1.]#np.round(np.linspace(0.0, .3, 11), 3)
+    scalar_tax      = np.round(np.linspace(0.0, 1.0, 11), 3)
+    mean_cost       = [100]
+    cost_ratio      = [1.0, 1.01]#np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [120.]
     randomize       = [True]
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
