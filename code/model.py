@@ -63,7 +63,7 @@ def get_m_tax_dist(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
         for buyer_loc in a_buyer_loc] for seller_loc in a_seller_loc]
     # Matrix with rel dist with list of prices. '+ 1' because min dist is 1.
     # Lot of potential speed up here, only need to do exponent once.
-    m_tax = scalar_tax * np.array(m_dist**gamma) + 1.
+    m_tax = scalar_tax * (np.array(m_dist)**gamma) + 1.
     print(m_tax)
     return m_tax
 
@@ -77,7 +77,7 @@ def get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
     # Matrix with rel dist with list of prices. '+ 1' because min dist is 1.
     m_rel_dist = np.argsort(m_dist, axis=0) + 1.
     # Lot of potential speed up here, only need to do exponent once.
-    m_tax = scalar_tax * (np.array(m_rel_dist**gamma) - 1.) + 1.
+    m_tax = scalar_tax * (np.array(m_rel_dist)**gamma - 1.) + 1.
     print(m_tax)
     return m_tax
 
@@ -201,11 +201,11 @@ def find_payoff_of_mixed_strategy(game, a_nash):
 # Check how enumerate works
         for strat_ind, player_ind in enumerate(profile):
             prob_player = a_nash[player_ind]
-            if prob_player = 0:
+            if prob_player == 0:
                 prob = 0
                 break
             prob = prob * prob_seller
-        if prob = 0:
+        if prob == 0:
             continue
         for seller_ind in range(num_players):
             a_payoff[player_ind] = prob * game[profile][player_ind]
@@ -506,7 +506,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     if ordinal:
         m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     else:
-        m_tax = get_m_tax_dist(a_buyer_loc, a_seller_loc, scalar_tax)
+        m_tax = get_m_tax_dist(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
             mean_cost, cost_ratio, m_tax)
@@ -542,8 +542,7 @@ def parameter_combination(i):
 
 
 if __name__ == "__main__":
-    i = 7
-    #i = int(sys.argv[1]) - 1
+    i = int(sys.argv[1]) - 1
     #for i in range(121):
     parameter_combination(i) 
 
