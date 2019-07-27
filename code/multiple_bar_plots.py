@@ -23,7 +23,6 @@ def ax_circle_from_data(a_seller_pos, a_buyer_pos, m_quantity_bought, a_color,
 # Setup
     if ax is None:
         _, ax = plt.subplots()
-    ax.set_title(label='$\gamma$ = {}'.format(gamma))
     num_sellers = len(a_seller_pos)
 # plot a grey circle 
     r       = 1
@@ -167,6 +166,7 @@ def draw_grid_of_timesteps(a_fn, a_index, folder=''):
     a_ax[::2] = a_ax_circle
     a_ax[1::2] = a_ax_bar
     #a_annote = ['Row {}'.format(i) for i in np.arange(1, len(a_fn) + 1)]
+    '''
     for (ax, annote) in zip(a_ax_circle, a_annote):
         ax.annotate(annote,
                 xy          =  (-0.17, 0.5),
@@ -174,35 +174,31 @@ def draw_grid_of_timesteps(a_fn, a_index, folder=''):
                 fontsize    =  fontsize,
                 ha          = 'left',
                 va          = 'top' )
+    '''
     [draw_ax2_from_a_dic(d_load, index, ax_circle, ax_bar) for
             (d_load,index,ax_circle,ax_bar) in zip(a_d_load, a_index,
                 a_ax_circle, a_ax_bar)]
     return fig
 
-def write_plot(fig):
-    fn_out = '1x2plot1'
+def write_plot(fig, fn):
     out_folder = './output/plots/'
     if not os.path.exists(out_folder): os.makedirs(out_folder)
-    plt.savefig(out_folder + fn_out + '.png', bbox_inches='tight')
-    plt.show()
+    plt.savefig(out_folder + fn + '.png', bbox_inches='tight')
 
 ##############
 ### SCRIPT ###
 ##############
 
 if __name__ == "__main__":
-    a_fn = ["S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl"]
-            #"S=2_B=12_gamma=0.0_scalar_tax=0.05_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
-            #"S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.0_endow=120.0_randomize=True.pkl",
-            #"S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl",
-            #"S=2_B=12_gamma=0.5_scalar_tax=1.0_mean_cost=90_cost_ratio=1.25_endow=120.0_randomize=True.pkl"]
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
     folder  = "C:/Users/CAREBEARSTARE3_USER/Documents/WORK/MITInternship/ModelWithSandro/abmcournotmodel/code/output/data/"
-
-    a_select_indices = [-1,-1,-1,-1,-1]
-
-    fig = draw_grid_of_timesteps(a_fn, a_select_indices, folder=folder)
-    write_plot(fig)
-
+    a_scalar_tax = np.round(np.linspace(0.0, 1.0,11), 1)
+    for scalar_tax in a_scalar_tax[2:]:
+        fn = "S=2_B=12_gamma=1.0_scalar_tax={}_mean_cost=100_cost_ratio=1.01_endow=120.0_randomize=True.pkl".format(scalar_tax)
+        print('hi')
+        fig = draw_grid_of_timesteps([fn], [-1], folder=folder)
+        fig.suptitle('lambda = {}'.format(scalar_tax))
+        print('write')
+        write_plot(fig, 'IMAGE_' + fn)
