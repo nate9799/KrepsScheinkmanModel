@@ -154,9 +154,9 @@ price $s$ offers, $d(b, s)$ is the distance between buyer $b$ and seller $s$,
 and $\lambda$ is a scaling factor. Lowering $\lambda$ is how we model
 decreasing transaction costs.
 
-Each buyer has an individual demand curve that is negatively sloped, meaning
-that the more expensive the product, the less the buyer purchases. Buyers also
-always buy the from the cheapest available seller.
+Each buyer has an individual, linear demand curve that is negatively sloped,
+meaning that the more expensive the product, the less the buyer purchases.
+Buyers also always buy the from the cheapest available seller.
 
 To separate fit sellers from unfit sellers, we use assign sellers differing
 cost-per-unit values, with more competitive sellers having lower cost-per-unit
@@ -171,15 +171,31 @@ determine and announce their price $p_s$. They choose their capacity and price
 trying to maximize their profit $$\Pi = p_sq_s - c_s\hat q_s,$$ where $q_s$ is
 the quantity the seller actually sells, and $c_s$ is the cost-per-unit. 
 
-
 \section{Results}
-We can see in Figure [blank] that as $\lambda$ gets closer to 0, the more fit
-company is able to sell to more buyers, and eventually become a dominant
-market force. [add actual numbers here.] This is despite only a 1\% lower
-cost-per-unit. 
+We can see in Figure \ref{fig:no_tax}, where $\lambda=0$ and there is no
+transaction cost, that Firm 1 is able to make 33\% more profit despite only a
+1\% lower cost-per-unit. But in Figure \ref{fig:no_tax}, where there is a
+significant transaction cost of $\lambda = .4$, the difference in profits
+is much closer, with Firm 1 only earning 8\% more than firm 2, with the same
+1\% difference in costs. This decrease in monopolization comes at a great cost
+though, as both firm's profit in the first scenario is significantly higher
+than in the second.
 
-When $\lambda$ is present but not too large, we have healthy competition
-without seeing competitors being run out of business.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=\textwidth/2]{no_tax.png}
+	\caption{The trade-offs of the transaction costs are demonstrated.
+		This figure depicts an economy where the is no distance-based tax. In the economy, the profits of both firms are high, but one firm has 33\% larger profits because of a slight advantage in having 1\% cheaper unit costs.}
+	\label{fig:no_tax}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=\textwidth/2]{lambda=4Over10.png}
+	\caption{
+		In contrast to Figure \ref{fig:no_tax}, this figure depicts an economy with a significant transaction cost. The profits for both firms are significantly lower, but also are much closer, with Firm 1 earning 8\% more profit, as opposed to 33\% in the previous figure.}
+	\label{fig:lambda=.4}
+\end{figure}
 
 \section{Iterating the Model}
 This difference becomes even more apparent when we iterate the model and
@@ -192,9 +208,9 @@ two firms can stay competitive and neither firm will become the monopoly power.
 
 At MIT, we are currently developing a new form of taxation that leverages
 benefits of digital market place with this mechanism. We hope to still capture
-all of the benefits of low transaction costs, including increased trade and
-fairness, while at the same time reducing the ability and incentive for sellers
-with transaction costs close to 0.
+all of the benefits of low transaction costs, including increased trade,
+profit, and  fairness, while at the same time reducing the ability and
+incentive for sellers to monopolize.
 
 \section{Side Notes}
 Since we are now using a physical distance instead of an ordinal distance, when $\lambda$ is high, the transaction cost can be more important than the cost-per-unit in determining profit and relative fitness of firms.
