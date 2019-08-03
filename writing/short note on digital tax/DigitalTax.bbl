@@ -1,0 +1,23 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\astroncite{Hotelling}{1929}]{Hotelling1929}
+Hotelling, H. (1929).
+\newblock {Stability in Competition}.
+\newblock {\em The Economic Journal}, 39(153):41--57.
+
+\bibitem[\protect\astroncite{Isard}{1954}]{Isard1954}
+Isard, W. (1954).
+\newblock {Location theory and trade theory: short-run analysis}.
+\newblock {\em The Quarterly Journal of Economics}, pages 305--320.
+
+\bibitem[\protect\astroncite{Kreps and Scheinkman}{1983}]{Kreps1983}
+Kreps, D.~M. and Scheinkman, J.~A. (1983).
+\newblock {Quantity precommitment and Bertrand competition yield Cournot
+  outcomes}.
+\newblock {\em The Bell Journal of Economics}, pages 326--337.
+
+\bibitem[\protect\astroncite{McKelvey and Turocy}{2016}]{McKelvey2016}
+McKelvey, R.~D., M. A.~M. and Turocy, T.~L. (2016).
+\newblock {Gambit: Software Tools for Game Theory, Version 16.0.1}.
+
+\end{thebibliography}

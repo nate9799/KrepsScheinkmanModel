@@ -1,0 +1,248 @@
+
+% document settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[final,5p,times,twocolumn,11pt,authoryear]{elsarticle}
+
+
+% standard packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{empheq} 
+\usepackage{comment}
+\usepackage{enumerate}
+\usepackage{setspace}
+\usepackage[inline,shortlabels]{enumitem}
+
+
+% other packages 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{balance} 					% to balance the last columns 
+\usepackage[usenames,dvipsnames]{color} 	% to get color with fancy colornames
+\usepackage{floatpag} 					% remove page number for figure that covers entire page
+\usepackage{bbm}						% for indicator function with \mathbbm{1}
+\usepackage[normalem]{ulem} 				% for tables
+\useunder{\uline}{\ul}{} 					% for tables
+
+
+% some settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\numberwithin{equation}{section} % numerates equations according to sections	
+\linespread{1.2} 		           % space between lines
+
+ % bibilography settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\biboptions{sort&compress} % cite as [1,2,3] and not [3,1,2] etc. 	
+
+% bug fix in elsearticle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\def\@author#1{\g@addto@macro\elsauthors{\normalsize%
+    \def\baselinestretch{1}%
+    \upshape\authorsep#1\unskip\textsuperscript{%
+      \ifx\@fnmark\@empty\else\unskip\sep\@fnmark\let\sep=,\fi
+      \ifx\@corref\@empty\else\unskip\sep\@corref\let\sep=,\fi
+      }%
+    \def\authorsep{\unskip,\space}%
+    \global\let\@fnmark\@empty
+    \global\let\@corref\@empty  %% Added
+    \global\let\sep\@empty}%
+    \@eadauthor={#1}
+}
+\makeatother
+
+
+% This removes the Preprint `submitted to "Journal_name"' footnote.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\def\ps@pprintTitle{%
+ \let\@oddhead\@empty 
+ \let\@evenhead\@empty
+ \def\@oddfoot{}%
+ \let\@evenfoot\@oddfoot}
+ \makeatother
+ 
+ 
+ % specify the colors of links
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[table,xcdraw,svgnames]{xcolor}
+\usepackage[colorlinks]{hyperref}
+\AtBeginDocument{%
+  \hypersetup{
+    citecolor=SteelBlue,
+    linkcolor=SteelBlue,   
+    urlcolor=SteelBlue}
+   }
+   
+  % shortcuts & makros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\red}[1]{\textcolor{WildStrawberry}{#1}} 					%  red text
+\newcommand{\pd}[2]{ \frac{\partial #1}{\partial #2}} 						% first partial derivative
+\newcommand{\pdt}[2]{\frac{\partial^2 #1}{\partial #2^2}} 					% second partial derivative 
+\newcommand{\td}[2]{ \frac{\mathrm{d} #1}{\mathrm{d} #2}}				 % first total derivative
+\newcommand{\tdt}[2]{ \frac{\mathrm{d}^2 #1}{\mathrm{d} #2^2}}			 % second total derivative
+\newcommand{\nt}[3]{\int \limits_{#1}^{#2} \mathrm{d}#3~} 				% integral with boundaries
+\newcommand{\dd}{\mathrm{d}} 									% differential d
+\newcommand{\ord}[1]{\mathcal{O} \left( #1 \right)} 						% Landau
+\newcommand{\mw}[1]{\left< #1 \right>} 								% mean value
+\newcommand{\expt}[2]{\mathbb{E}_{#2} \left[ #1 \right]}					% expectation value
+\newcommand{\exptn}[3]{\mathbb{E}_{#2}^{(#3)} \left[ #1 \right]}			% n-th order expectation value
+\newcommand{\exptc}[3]{\mathbb{E}_{#2} \left[ #1 ~ \left|  #3 \right. \right]} 	% conditional expectation value
+ 
+
+% title, authors and affiliations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\journal{~}
+\begin{document}
+\begin{frontmatter}
+
+\title{Idiosyncratic, Ordinal Tax To Sustain a Digital Economy}
+
+\author{Nate Dwyer}
+
+\author{Sandro Claudio Lera\corref{cor1}}
+\cortext[cor1]{corresponding author: Sandro Claudio Lera (slera@mit.edu)}
+
+\author{Alex `Sandy' Pentland}
+
+\address{Massachusetts Institute of Technology, 77 Massachusetts Avenue, 02139 Cambridge, Massachusetts, USA}
+
+\begin{abstract}
+
+Recently, the French Senate approved a law that imposes a $3\%$ tax on revenue generated from digital services by companies above a certain size. 
+While there is a lot of debate about political consequences of this action, it is actually interesting to reverse the question and instead ask what are the long-term implications of an economy with no such digital tax. 
+More generally, we can see a digital task as a special case of products with low or zero physical transportation costs. 
+We show from basic economic models that such an economy is prone to monopolisation in that minuscule differences in quality are rewarded disproportionally. 
+We then propose a distance-based tax to counter-balance the instabilities induced by low costs of transportation. 
+Compared to an obvious tax based on physical (cardinal) distance, we instead show that a ranked (ordinal) distance tax leverages the benefits of digitalisation while keeping the economy stable. 
+
+\end{abstract} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{frontmatter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Until not too long ago, people used to live in relatively self-contained tribes or villages. 
+Trade would exist mostly for specialised products, whereas basic products such as bread or textiles would be produced locally. 
+From the industrial to the technological revolution, more efficient distribution channels have emerged, enabling people to buy almost any product in online stores. 
+Orders can be delivered often within one or two days, largely independent of the customer’s physical location. 
+Pushing this development to the limit, we arrive at an economy where, at least within country borders, physical distance becomes irrelevant. 
+For digital products, this is already reality and in direct contrast to established economic theories like \cite{Isard1954}'s gravity model of trade, stating that trade activity is inversely proportional to physical distance. 
+
+To analyse the potential impact of vanishing physical transaction costs, we consider the following model economy: 
+Two firms, offering the same product, are competing for a total of $n$ potential buyers. 
+Firms and buyers are randomly placed on a one-dimensional ring of length $\ell$ with periodic boundary conditions (figure \ref{fig:topology}). 
+Hence, the maximum distance between any buyer and firm is $D=\ell/2$. 
+
+
+Firm $i$ $(i=1,2)$ produces $q_i$ units of the good at unit cost $c_i$ and offers to sell at a price $p_i$. 
+Their profit calculates to $\Pi_i = p_i \hat{q}_i - c_i q_i$ where $\hat{q}_i$ is the quantity that is actually sold ($\hat{q}_i \leqslant q_i$). 
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.3\textwidth]{topology.pdf}
+	\caption{	Ring of length $\ell=1$ representing a `geography', on which we place two firms (circles) and $n=12$ buyers (crosses) at random. 
+			Albeit random, here we have picked a balanced configuration where each seller has $n=6$ closest potential customers. 
+			Throughout this article, we consider the buyer and firm arrangement fixed as shown here. 
+			Any other generic arrangement or geography could be used and would not significantly alter our results.
+			The two buyers compete for profit and set their production quantity and offered price according to the Nash equilibrium, 
+			taking into consideration the different levels of taxation. 
+			}
+	\label{fig:topology}
+\end{figure}
+
+The buyers cannot buy at price $p_i$, but additionally have to pay a transaction cost $\lambda \cdot D^\gamma$ where $D$ is the idiosyncratic distance between buyer and firm $i$. 
+We shall call this the \textit{cardinal tax} from hereon. 
+In its most basic form, the gravity model predicts a value of $\gamma=2$, whereas here we have set $\gamma=1$ without loss of the generality of our results. 
+The case of zero physical transaction cost is recovered in the limit where the scaling factor $\lambda$ approaches $0$. 
+The buyers are all characterised by the same negatively sloped demand curve, $p = u - q$ with $u$ the upper price limit at which no good is bought.
+In the remainder of this article, we set $\lambda = 0.1$ and $u = 120$. 
+\footnote{
+Changing these numbers does not alter the qualitative statements of our results, 
+while some of the numbers quoted in figure \ref{fig:results} may change.
+} 
+
+The two firms choose capacity and price to maximize their respective profit in equilibrium. 
+Here, we assume they first compete on capacity, by simultaneously declaring how much of the product they plan to produce; 
+next, they compete on price to determine the firms' non-tax prices. 
+This process, consisting of these two sub-games, is similar to the games studied by \cite{Kreps1983}.
+From a game-theoretical perspective, the major difference is the idiosyncratic tax, which alters the pricing sub-game.
+The exact quantity and price offered by each firm are determined as the Nash equilibrium of this two-stage game. 
+The firm's strategy-space is thus given by the quantity that they can produce and the prices that they can offer. 
+Because of the idiosyncratic structure of the game, which depends on the exact location of buyers and firms, 
+it is not possible to determine the Nash equilibrium analytically, for general cases. 
+Instead, we use the Gambit library developed by \cite{McKelvey2016} to find the Nash equilibrium numerically. 
+To this end, the strategy space of capacities and prices are discretised into a sufficiently fine grid. 
+The quantity-price two-step game is solved in reverse order: 
+For every choice of quantity, the equilibrium price is determined.
+Then, the equilibrium quantity is determined. 
+
+As both firms are offering the same good, the only differentiating feature is their cost of production per unit good $c_i$.  
+Let us consider the case where both sellers are equally competitive ($c_1 = c_2 = 100$), solve for Nash equilibrium prices and consider their profits. 
+We then find that the relative difference in profit between the two sellers is $5\%$ (left bar and left axis in figure \ref{fig:results}). 
+The slight difference stems from the fact that we have chosen a relatively homogeneous distribution of buyers and sellers (figure \ref{fig:topology}).
+If the distribution of buyers were more irregular, so would be the profits, and the sellers would ultimately move to similar locations, as was already predicted by \cite{Hotelling1929}.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.5\textwidth]{performance}
+	\caption{	On the left axis (blue bars), we show the relative difference in profit of the two firms.
+			If both sellers have equal production cost, their revenue is similar. 
+			This remains true if there is a marginal $1\%$ difference in cost, as long as there is a distance dependent tax. 
+			Imbalance in revenue is increased drastically once that tax is removed, but is decreased in case it is replaced by an ordinal tax. 
+			Major imbalances in production costs (i.e. competitive advantage) lead to significantly different revenue with and without tax. 
+			On the right axis (orange bars), we show the relative difference in total market revenue, as generated by the two firms combined. 
+			The revenue is rescaled to a value of $1$ for the case of no tax. 
+			All other revenue values are in proportion thereof. 
+			While the cardinal tax significantly decreases revenue, the ordinal tax brings it back to a similar level than without any tax. 
+			}
+	\label{fig:results}
+\end{figure}
+
+In case there was no cost of transportation, the difference in profit would be zero by symmetry. 
+However, this equality is highly unstable. 
+To see this, let us now consider the case where seller $1$ is marginally more competitive ($c_1 = 99, c_2 =100$). 
+As long as there is a cost of transportation $(\lambda=0.1)$, the difference in profit merely increases from $5\%$ to $7\%$ (see left axis in figure \ref{fig:results} for a visualisation of this and subsequent results).
+But in absence of such a cardinal tax ($\lambda=0$), the difference in revenue amounts to a whopping $33\%$!
+This result is particularly bothersome as such profit can be used to further decrease costs of production. 
+Either through genuine innovation, or temporary undercutting of prices, the difference in $c_2 - c_1$ is further increased and the second firm is run out of business quickly. 
+\footnote{
+This claim can be formalised by considering multi-stage games, but is omitted here for brevity.
+} 
+In general, the outpace of competition is natural and in many cases even desired, as efficiency is to be rewarded. 
+However, we stress that a minor, essentially random difference of $1\%$ production cost disproportionally benefited one firm. 
+We may rationalise this by going back to the example of self-contained villages from the introduction: 
+Once there is no more cost of transportation, the economic agent has little incentive to favour local bread, if bread from another village is just marginally cheaper. 
+Monopolisation initiated by minor, random initial differences in quality is thus to be expected. 
+
+These ever decreasing (or non-existing) cost of transportation can be counter-balanced by introducing a tax that scales with distance (e.g. a carbon tax). 
+An immediate side-effect of such market interference is less consumption and hence decreased revenue for both firms. (second vs. third bar on right axis in figure \ref{fig:results}). 
+While decentralised, locally self-contained economies may benefit consumers on a grand scheme, it certainly punishes remote buyers and is susceptible to potentially small changes in location. 
+Therefore, we propose to introduce an \textit{ordinal tax} instead. 
+For each buyer, the distance to the different sellers is enumerated in increasing order. 
+They have a distance of $D=0$ from the physically (cardinally) closest seller, a distance $D=1$ from the second closest, and so forth. 
+The advantages of this tax are manifold. 
+First, it resolves the issue of remote buyers being worse off. 
+Second, it is not susceptible to (small) changes in buyer or seller locations, and hence does not lead to physical centralisation. 
+Third, the overall level of revenue is elevated compared to a cardinal tax, as now only remote purchases are taxed (right axis in figure \ref{fig:results}). 
+Fourth, marginal differences in quality remain unnoticed, as the difference in production cost does not outweigh taxation costs. 
+Fifth, major difference in quality (true competitive advantage), overcomes the tax and rewards the more competitive seller 
+(cf. in figure \ref{fig:results} the $50$ times higher revenue in case of a production cost difference of $20\%$). 
+
+By tuning the scaling factor $\lambda$ once can interpolate between the two extremes of no transaction cost $(\lambda=0)$ and forced local monopolisation $(\lambda=\infty)$. 
+The ordinal tax is similar in spirit to, but more broadly applicable and dynamic than a country-border based tax. 
+Most importantly, specialised products are traded without tax ($D=0$ everywhere) such that innovation spreads globally. 
+Products that are easy to reproduce remain local, to a degree that is largely controlled by $\lambda$. 
+A self-regulating adjustment of $\lambda$ and targeted redistribution of tax money are part of ongoing research. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{References}
+\bibliographystyle{apa}
+\bibliography{bibliography.bib}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
