@@ -161,11 +161,6 @@ def plot_with_smart_legend(hi) :
 
 
 
-
-
-
-
-
 def three_y_axes(hi):
 
     _  = plt.figure(figsize=(12,4))
@@ -211,65 +206,3 @@ def three_y_axes(hi):
                     location    = 1.1, 
                     )    
 
-
-
-def circle_plot( a_seller_pos, a_buyer_pos, a_color=None, seller_ind=None, ax=None ):
-    """
-    Plot a circle of length 2pi and annotate the location of buyers and sellers on that circle. 
-
-    input:
-    -----
-
-    a_seller_pos:       Array of seller locations (values between 0 and 2pi)
-    a_buyer_pos:        Array of buyer locations (values between 0 and 2pi)
-    a_color:            Array of length a_seller_pos, with one color per seller 
-    seller_ind:         If not None, should be for each buyer the index number of the seller they bought from the most. 
-                        This is then used to color the buyers in the same color as the respective sellers. If this 
-                        variable is set to None, all buyers will be plotted in grey. 
-    ax:                 Axis instance to plot into. 
-    """
-
-    # create the plot window and define other plotting related quantities
-    ####################################################################################################################
-    if ax is None:
-
-        fig = plt.figure(figsize=(7,7))
-        ax  = plt.gca()
-
-    if a_color is None: a_color = sb.color_palette("deep",2)
-
-    # plot a grey circle 
-    ####################################################################################################################    
-    r       = 1
-    angles  = np.linspace(0, 2*np.pi, 500)
-    xs      = r * np.sin(angles)                                    
-    ys      = r * np.cos(angles) 
-    ax.plot(xs, ys, color='grey', linestyle='--', zorder=1)
-
-    # plot the seller locations 
-    ####################################################################################################################    
-    for i, s in enumerate(a_seller_pos):                        
-        xcoord = [ r * np.sin( 2*np.pi*s ) ]
-        ycoord = [ r * np.cos( 2*np.pi*s ) ]
-        ax.scatter(xcoord, ycoord, marker='o', facecolor=a_color[i], alpha=0.8, 
-                color=a_color[i], s=400, zorder=3, label='Firm %d'%(i+1))
-
-    # for each buyer, find index of his seller
-    ####################################################################################################################
-    for j, b in enumerate(a_buyer_pos): 
-
-        col    = 'ForestGreen' if seller_ind is None else a_color[seller_ind[j]]
-        label  = ''            if seller_ind is None else 'Buyer who bought from Firm %d'%(seller_ind[j]+1)
-        xcoord = [ r * np.sin( 2*np.pi*b ) ]
-        ycoord = [ r * np.cos( 2*np.pi*b ) ]        
-
-        ax.scatter(xcoord, ycoord, marker='x', color=col, s=150, zorder=2, label=label ) 
-
-    # adjust the axis limits
-    ####################################################################################################################
-    ax.set_xlim(-1.2*r, 1.2*r)
-    ax.set_ylim(-1.2*r, 1.5*r)
-    ax.legend(loc='center', ncol=2, frameon=False, fontsize=8, labelspacing=2)
-    ax.axes.get_xaxis().set_visible(False)
-    ax.axes.get_yaxis().set_visible(False)
-    ax.axis('equal')

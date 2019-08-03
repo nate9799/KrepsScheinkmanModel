@@ -114,7 +114,7 @@
 Recently, the French Senate approved a law that imposes a $3\%$ tax on revenue generated from digital services by companies above a certain size. 
 While there is a lot of debate about political consequences of this action, it is actually interesting to reverse the question and instead ask what are the long-term implications of an economy with no such digital tax. 
 More generally, we can see a digital service as a special case of products with low or zero cost of transportation. 
-With basic economic models we show that an economy with no transportation cost is prone to monopolisation in that minuscule, random differences in quality are rewarded disproportionally. 
+With basic economic models we show that an economy with no transportation costs is prone to monopolisation in that minuscule, random differences in quality are rewarded disproportionally. 
 We then propose a distance-based tax to counter-balance the tendencies of random centralisation.  
 Compared to an obvious tax that scales with physical (cardinal) distance, we show that a ranked (ordinal) distance tax leverages the benefits of digitalisation while keeping the economy stable. 
 
@@ -134,11 +134,11 @@ For digital products and services, this is largely reality, and in direct contra
 To analyse the potential impact of vanishing distance-based transaction costs, we consider the following model economy: 
 Two firms offering the same product are competing for a total of $n$ potential buyers. 
 Firms and buyers are randomly placed on a one-dimensional ring of length $\ell$ with periodic boundary conditions (Figure \ref{fig:topology}). 
-Hence, the maximum distance between any buyer and firm is $D=\ell/2$. 
+Hence, the maximum distance between any buyer and firm is $d=\ell/2$. 
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.3\textwidth]{topology.pdf}
+	\includegraphics[width=0.3\textwidth]{circle_topology}
 	\caption{	Ring of length $\ell=1$ representing a `geography', on which we place at random two firms (circles) and $n=12$ buyers (crosses). 
 			Here we have picked a balanced configuration where each firm has $n=6$ closest potential customers. 
 			Throughout this article, we consider the buyer and firm arrangement fixed as shown here. 
@@ -154,7 +154,7 @@ Hence, the maximum distance between any buyer and firm is $D=\ell/2$.
 Firm $i$ $(i=1,2)$ produces $q_i$ units of the good at unit cost $c_i$ and offers to sell at a price $p_i$. 
 Their profit calculates to $\Pi_i = p_i \hat{q}_i - c_i q_i$ where $\hat{q}_i$ is the quantity that is actually sold ($\hat{q}_i \leqslant q_i$). 
 
-The buyers cannot buy at price $p_i$, but additionally have to pay a transaction cost $\lambda \cdot D^\gamma \cdot p_i$ where $D$ is the idiosyncratic distance between a given buyer and firm $i$. 
+The buyers cannot buy at price $p_i$, but additionally have to pay a transaction cost $\lambda \cdot d^\gamma \cdot p_i$ where $d$ is the distance between a given buyer and firm $i$. 
 From hereon, we shall call this the \textit{cardinal tax}. 
 In its most basic form, the gravity model predicts a value of $\gamma=2$, whereas here we have set $\gamma=1$.  
 \footnote{
@@ -170,7 +170,7 @@ In the remainder of this article, we set $\lambda = 0.1$ and $u = 120$. \footref
 The two firms choose capacity and price to maximize their respective profit in equilibrium. 
 Here, we assume they first compete on capacity, by simultaneously declaring how many units they produce;
 next, they compete on price, taking into consideration the tax and assuming the location of buyers is known. 
-This process, consisting of these two dependent sub-games, is similar to the game theoretical problems studied by \cite{Kreps1983}, the major difference being the idiosyncratic tax.
+This process, consisting of these two dependent sub-games, is similar to the game theoretical problems studied by \cite{Kreps1983}, the major difference being the buyer-seller specific tax.
 Quantity and price offered by each firm are determined as the Nash equilibrium of this two-stage game. 
 %The firm's strategy-space is thus given by the quantity that they can produce and the prices that they can offer. 
 Because the tax depends on the exact location of buyers and firms, 
@@ -189,7 +189,7 @@ If the distribution of buyers were more irregular, so would be the profits, and 
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.5\textwidth]{performance}
+	\includegraphics[width=0.5\textwidth]{performance_histogram}
 	\caption{	On the left axis (blue bars), we show the relative difference in profit of the two firms.
 			If both firms have equal production cost, their revenue is similar. 
 			This remains true if there is a marginal $1\%$ difference in cost, as long as there is a distance dependent cardinal tax. 
