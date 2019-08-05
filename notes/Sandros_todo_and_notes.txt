@@ -1,0 +1,81 @@
+
+to do: 
+-----
+
+-	examine lambda --> 0 limit: is lambda=0 a singular perturbation e.g. in the market share or the relative profit? 
+
+-	implement decaying c_i as a function of number of quantities sold to simulate a digital economy
+
+-	analytical description of N=2 case
+
+-	read "strategy proof of redistribution of VCG payments" by a guy called Cavaillo. 
+	Asks the question of "when is it ok to redistribute and at what point does it become harmful".
+
+-	Check out trade-off between fairness & efficiency papers by Nikos Trichakis @ MIT Sloan.	
+
+
+ideas and notes:
+---------------
+
+-	Note that this is some sort of Pigovian tax. Maybe needs to be referenced as such https://en.wikipedia.org/wiki/Pigovian_tax
+
+-	Didier Sornette has another interesing idea for a follow up paper: 
+	Given this taxation metric, how do the number of surviving firms scale as a number of customers. 
+	Denote by N the number of customers. 
+	Denote the number of firms by N^alpha, where alpha = alpha(gamma) is the scaling coefficient. 
+	As N goes to infinity, what is the value of alpha? 
+	There are two phases: alpha < 1 and alpha = 1. 
+	The alpha=1 case is the case where the number of sellers grows linearly with the number of sellers.
+	They are some sort of dragon-kings. 
+
+-	Scott Kominer says: economists don't care about N > 2. They want analytical results. 
+
+-	Herfindahl index ---> adjust gamma to be able to hit some desired concentration 
+
+-	Our project is promoting competition, and we show that smaller firms can survive with this new mechanism. 
+	This is one of the key messages. 
+
+-	Sandy's feedback to Nate's presentation: tax money should flow to local government, as they provide the 
+	infrastructure. 
+
+-	neat connection that I came up with during a discussion with Ankur Mani: 
+	Two problems that can cause monopolies in today's world:
+	(a)		data-superiority (e.g. FB users, Uber users etc.)
+	(b)		if products have similar quality + low distance cost (e.g. FB can be accessed everywhere) 
+			---> 	can outpace the others with minimal ingredients, by undercutting just a little bit, as there
+					is no benefits to stay localized. 
+	Problem (a) can be addressed by a blockchain-data-ownership kind  of approach, whereby for instance we have a 
+	"ride-sharing" blockchain, where a suer broadcastss the request to go from A to B, and different apps like Uber and
+	Lyft can tap into. 
+	Now, this does not yet solve the problem of UBER etc. outpacing by being marginally better (instead of being signifincantly
+	better). The follow up idea is to impose on that blockchain a type of ring-topology like the one I suggest in my 
+	decentralized exchange project. 
+
+-	insights from meeting with Dean Eckles:
+	history of trade 	---> gravity literature (I think Sandy has a paper on that, that he sent me already)
+	Prof. Robert Jensen ---> the digital provide & information demand and the growth of firms (boat builders)
+	hotelling problem 	---> ice stand on the beach problem could be somewhat related
+
+-	Very important idea by David Solo: 
+	The practical vulnerability of this approach is the following: 
+	Amazon just buys a random "warehouse with 1 employee" in every town. 
+	This way, they can hack the system. 
+	We can say: no we forbid this behavior etc. 
+	But obviously, this is not very robust. 
+	Instead, we could tax the less if they employ a lot of local employees. 
+	Indeed, this is a very direct measure of "local-ness". 
+	Can I somehow include this into my network structure? 
+	Quick fix for now: We can just say that we consider this punishment implicitly by taking that taxation 
+	represented through decreased quality / increased prices. 
+
+-	Didier Sornette suggests to look at the work of Sorin Solomon and co-authors in the 1990s, who looked at multiplicative maps
+	with coupling to redistribute some of the wealth.  With no coupling, you get the Zipf law.  With coupling, you get
+	something less unequal.  The question is how to justify and implement a kind of redistribution which is not plain communism.
+	One could imagine that there is a ``tax’’ on any transaction that is put in a pool serving to fund new innovations
+	with a mechanism for drawing from this pool to reveal quality and potential via a fitness dynamics that could also be 
+	modelled by a stochastic process.  
+	This is also related to one of my present projects with Peter Cauwels, for which we are soon finalising a paper
+	on ``reward process, not success’’ in order to promote skill and fundamental value rather than gambling and luck.
+	Indeed, most of the time, success is due more to luck than to skill. This is captured by the stochastic term in the
+	multiplicative growth processes and is at the origin of Zipf’s law.
+	GBM asymptotic: due to sigma term? 
