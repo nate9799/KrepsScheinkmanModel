@@ -6,7 +6,7 @@ to do:
 
 -	implement decaying c_i as a function of number of quantities sold to simulate a digital economy
 
--	analytical description of N=2 case
+-	@Nate: get back to analytical description of N=2 case
 
 -	read "strategy proof of redistribution of VCG payments" by a guy called Cavaillo. 
 	Asks the question of "when is it ok to redistribute and at what point does it become harmful".
@@ -18,6 +18,9 @@ ideas and notes:
 ---------------
 
 -	Note that this is some sort of Pigovian tax. Maybe needs to be referenced as such https://en.wikipedia.org/wiki/Pigovian_tax
+
+-	Morgan Frank's idea: work on US map and apply model to real-world distances. Measure somehow the cost of transaction
+	for different goods. 
 
 -	Didier Sornette has another interesing idea for a follow up paper: 
 	Given this taxation metric, how do the number of surviving firms scale as a number of customers. 

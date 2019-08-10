@@ -168,20 +168,14 @@ The case of zero cost of transportation is recovered in the limit where the scal
 The buyers are all characterised by the same negatively sloped demand curve, $p = u - q$ with $u$ the upper price limit at which no good is bought.
 In the remainder of this article, we set $\lambda = 0.1$ and $u = 120$. \footref{ftn:wlog}
 
-
 The two firms choose capacity and price to maximize their respective profit in equilibrium. 
 Here, we assume they first compete on capacity, by simultaneously declaring how many units they produce;
 next, they compete on price, taking into consideration the tax and assuming the location of buyers is known. 
 This process, consisting of these two dependent sub-games, is similar to the game theoretical problems studied by \cite{Kreps1983}, the major difference being the buyer-seller specific tax.
 Quantity and price offered by each firm are determined as the Nash equilibrium of this two-stage game. 
-%The firm's strategy-space is thus given by the quantity that they can produce and the prices that they can offer. 
 Because the tax depends on the exact location of buyers and firms, 
-it is not possible to determine the Nash equilibrium analytically, for general cases. 
-Instead, we use the Gambit library developed by \cite{McKelvey2016} to find the Nash equilibrium numerically. 
-%To this end, the strategy space of capacities and prices are discretised into a sufficiently fine grid. 
-%The quantity-price two-step game is solved in reverse order: 
-%For every choice of quantity, the equilibrium price is determined.
-%Then, the equilibrium quantity is determined. 
+it is in general not possible to determine the Nash equilibrium analytically. 
+We thus revert to numerical techniques described in \ref{apx:Nash_numerical}. 
 
 As both firms are offering the same good, they differ only in their marginal cost of production $c_i$ (and their physical location, as shown in Figure \ref{fig:topology}). 
 Let us consider the case where both firms are equally competitive ($c_1 = c_2 = 100$), solve for Nash equilibrium prices and consider their profits. 
@@ -250,7 +244,7 @@ A self-regulating adjustment of $\lambda$ based on different market conditions, 
 \section*{Acknowledgements} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-SC Lera acknowledges stimulating discussions with S. Donick. 
+S. Lera acknowledges stimulating discussions with S. Donick. 
 
 
 
@@ -259,6 +253,24 @@ SC Lera acknowledges stimulating discussions with S. Donick.
 \bibliographystyle{apa}
 \bibliography{bibliography.bib}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\appendix
+\section{Numerical Solution of Nash Equilibrium} 
+\label{apx:Nash_numerical}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In order to maximise their profit, firms first compete on capacity, by simultaneously declaring how many units they produce.
+Subsequently, they compete on price. 
+This amounts to a two-step game theoretical problem, whereby quantity and price are determined as the Nash equilibrium. 
+Each firm's strategy-space is given by the quantity that they can produce and the prices that they can offer. 
+We use the Gambit library developed by \cite{McKelvey2016} to find this equilibrium numerically. 
+To this end, the strategy space of capacities and prices are discretised into a sufficiently fine grid. 
+The quantity-price two-step game is then solved in reverse order: 
+For every choice of quantity, the equilibrium price is determined.
+Then, the equilibrium quantity is determined. 
+%A detailed description and code is available from the authors upon request. 
+
 
 \end{document}
 
