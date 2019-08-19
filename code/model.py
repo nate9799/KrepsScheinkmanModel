@@ -194,7 +194,10 @@ def find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = Tru
 
 def find_payoff_of_mixed_strategy(game, a_nash):
 # Get a_strat and probability of a_strat
-    num_players = len(a_nash)
+    num_nash = len(a_nash)
+    if num_nash == 0:
+        raise Exception
+    num_players = len(a_nash[0])
     a_payoff = np.zero(num_players)
     for profile in game:
         prob = 1
@@ -261,6 +264,24 @@ def get_a_payoff_from_profile(game, profile, num_players):
     '''
     return [game[profile][player] for player in range(num_players)]
 
+def find_a_mixed_profile_nash_strat_from_game(game, num_players, a_num_strats):
+    '''
+    Finds array of pure nash profiles from a game.  A profile is a np.array
+    where the ith element is the index of the strategy chosen by the ith
+    player.
+    '''
+    solver = gmb.nash.ExternalEnumPureSolver()
+    a_nash = solver.solve(game)
+# Handle Exceptions
+    if len(a_nash) == 0:
+        return np.array([])
+# Parse a_nash into an actual array
+    a_split = np.cumsum(a_num_strats)
+    a_split = a_split[0:(len(a_split)-1)]
+    a_split = np.insert(a_split, 0, 0)
+    a_nash = np.array([np.nonzero(nash)[0] for nash in a_nash])
+    ret = a_nash - a_split
+    return ret
 
 ############################
 ### SEARCH ON GAME TABLE ###
@@ -437,6 +458,7 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
                 is_zoomed=True, **kwargs)
     return ret
 
+
 #####################
 ### CREATE PICLKE ###
 #####################
@@ -455,17 +477,29 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
     d_nash = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
             **kwargs)
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
-    ret = {'gamma' :        gamma,
-           'scalar_tax' : scalar_tax,
-           'mean_cost' : mean_cost,
-           'cost_ratio' : cost_ratio,
-           'a_buyer_loc' :  a_buyer_loc,
+    ret = {'gamma'        : gamma,
+           'scalar_tax'   : scalar_tax,
+           'mean_cost'    : mean_cost,
+           'cost_ratio'   : cost_ratio,
+           'a_buyer_loc'  : a_buyer_loc,
            'a_seller_loc' : a_seller_loc,
-           'num_buyers' :   num_buyers,
-           'num_sellers' :  num_sellers }
+           'num_buyers'   : num_buyers,
+           'num_sellers'  : num_sellers }
     ret.update(kwargs)
     ret.update(d_nash)
     return ret
+
+
+#############
+### WRITE ###
+#############
+
+def write_output(d_out, fn):
+# write to the output
+    folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
+    folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
+    folder  = folder1 if os.path.exists(folder1) else folder2
+    jl.dump(d_write, folder + fn)
 
 
 ############
@@ -473,13 +507,13 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 ############
 
 def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cost_ratio=1.0,
-        endowment=200, randomize=False):
+        endowment=200, randomize=False, random_seed=17, tax_model='ordinal'):
     """ Add documentation here """
 # check that input is correct
     #assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
 # setup buyer and seller locations
     if randomize:
-        np.random.seed(17)
+        np.random.seed(random_seed)
         a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
         a_buyer_loc  = np.random.uniform(low=0, high=1, size=num_buyers)
     else:
@@ -502,22 +536,17 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     # Not the best estimate
     a_strat_quantity = np.arange(0, num_buyers*50, 40)
 # Calculate m_tax
-    ordinal = False
-    if ordinal:
+    if tax_model == 'ordinal':
         m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
-    else:
+    elif tax_model == 'cardinal':
         m_tax = get_m_tax_dist(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
             mean_cost, cost_ratio, m_tax)
     print(d_write)
-# write to the output
-    folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
-    folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
-    folder  = folder1 if os.path.exists(folder1) else folder2
-    fn      = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_mean_cost=%s_cost_ratio=%s_endow=%s_randomize=%s.pkl'%(num_sellers,
+    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_mean_cost=%s_cost_ratio=%s_endow=%s_randomize=%s_tax_model=%s.pkl'%(num_sellers,
             num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
-    jl.dump(d_write, folder + fn)
+    write_output(d_out, fn)
 
 
 def parameter_combination(i):
@@ -527,22 +556,23 @@ def parameter_combination(i):
 # Create combinations
     num_sellers     = [2]
     num_buyers      = [12]
-    gamma           = [1.]#np.round(np.linspace(0.0, .3, 11), 3)
+    gamma           = [1.]
     scalar_tax      = np.round(np.linspace(0.0, 1.0, 11), 3)
     mean_cost       = [100]
-    cost_ratio      = [1.0, 1.01]#np.round(np.linspace(1.0, 2.0, 11), 3)
+    cost_ratio      = [1.01]#np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [120.]
+    random_seed     = [17]
     randomize       = [True]
-    combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
+    tax_model       = ['cardinal']
+    combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model)
     comb            = list(combs)[i]
-    num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize = comb
+    num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s'%comb)
-    main(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s, random_seed=%s, tax_model=%s'%comb)
+    main(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model)
 
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
-    #for i in range(121):
     parameter_combination(i) 
 
