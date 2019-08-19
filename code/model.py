@@ -534,7 +534,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
     q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
             endowment)
     # Not the best estimate
-    a_strat_quantity = np.arange(0, num_buyers*50, 40)
+    a_strat_quantity = np.arange(0, num_buyers*50, 41)
 # Calculate m_tax
     if tax_model == 'ordinal':
         m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
@@ -544,8 +544,8 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
             mean_cost, cost_ratio, m_tax)
     print(d_write)
-    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_mean_cost=%s_cost_ratio=%s_endow=%s_randomize=%s_tax_model=%s.pkl'%(num_sellers,
-            num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize)
+    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_randomize=%s_tax_model=%s_rand_seed=%s.pkl'%(num_sellers,
+            num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, tax_model, random_seed)
     write_output(d_out, fn)
 
 
@@ -561,7 +561,7 @@ def parameter_combination(i):
     mean_cost       = [100]
     cost_ratio      = [1.01]#np.round(np.linspace(1.0, 2.0, 11), 3)
     endowment       = [120.]
-    random_seed     = [17]
+    random_seed     = [17, 34, 51]
     randomize       = [True]
     tax_model       = ['cardinal']
     combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model)
