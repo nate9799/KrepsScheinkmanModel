@@ -445,9 +445,8 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 ### CREATE PICLKE ###
 #####################
 
-def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-        a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-        m_tax):
+def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity, a_cost,
+        endowment, m_tax):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
@@ -456,18 +455,10 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
     kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment}
     a_a_strat_quant = [a_strat_quantity] * num_sellers
 # Create and Solve Game.
-    d_nash = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
+    ret = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
             **kwargs)
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
-    ret = {'gamma'        : gamma,
-           'scalar_tax'   : scalar_tax,
-           'a_cost'       : a_cost,
-           'a_buyer_loc'  : a_buyer_loc,
-           'a_seller_loc' : a_seller_loc,
-           'num_buyers'   : num_buyers,
-           'num_sellers'  : num_sellers }
     ret.update(kwargs)
-    ret.update(d_nash)
     return ret
 
 
@@ -475,7 +466,7 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 ### WRITE ###
 #############
 
-def write_output(d_out, fn):
+def write_output(d_write, fn):
 # write to the output
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
@@ -510,6 +501,8 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
             endowment)
     # Not the best estimate
     a_strat_quantity = np.arange(0, num_buyers*50, 41)
+# Normalize a_cot inot numpy array
+    a_cost = np.array(a_cost)
 # Calculate m_tax
     if tax_model == 'ordinal':
         m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
@@ -518,13 +511,21 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
 # Special for when used by turn_model.py
     elif tax_model == 'given':
         m_tax = m_tax
+    d_settings = {'gamma' : gamma,
+           'scalar_tax'   : scalar_tax,
+           'a_cost'       : a_cost,
+           'a_buyer_loc'  : a_buyer_loc,
+           'a_seller_loc' : a_seller_loc,
+           'num_buyers'   : num_buyers,
+           'num_sellers'  : num_sellers,
+           'randomize'    : randomize,
+           'random_seed'  : random_seed,
+           'tax_model'    : tax_model}
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-            a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-            a_cost, m_tax)
+        a_cost, endowment, m_tax)
+    d_write.update(d_settings)
     print(d_write)
-    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_randomize=%s_tax_model=%s_rand_seed=%s.pkl'%(num_sellers,
-            num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, tax_model, random_seed)
-    write_output(d_out, fn)
+    return d_write
 
 
 def parameter_combination(i):
@@ -546,7 +547,10 @@ def parameter_combination(i):
     num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model = comb
 # Run main function
     print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize=%s, random_seed=%s, tax_model=%s'%comb)
-    main(num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model)
+    d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model)
+    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_randomize=%s_tax_model=%s_rand_seed=%s.pkl'%(num_sellers,
+            num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, tax_model, random_seed)
+    write_output(d_write, fn)
 
 
 if __name__ == "__main__":
