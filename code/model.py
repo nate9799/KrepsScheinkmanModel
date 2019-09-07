@@ -20,24 +20,6 @@ from pdb import set_trace
 ### SETUP FUNCTIONS ###
 #######################
 
-
-def get_a_cost_from_ratio(mean, ratio, num_sellers, is_arithmetic=True):
-    '''
-    Creates a sequence with a given mean using a ratio. Sequence can be
-    arithmetic or geometric.
-    '''
-    a_ratio = [ratio ** i for i in range(num_sellers)]
-    if is_arithmetic:
-        a_ratio = [(ratio-1) * i + 1 for i in range(num_sellers)]
-    return get_a_cost_from_a_ratio(mean, a_ratio)
-
-def get_a_cost_from_a_ratio(mean, a_ratio):
-    assert a_ratio[0] == 1, "a_ratio[0] should be 1, is {}".format(a_ratio[0])
-    ret = np.array(a_ratio)
-    avg_ratio = sum(a_ratio)/float(len(a_ratio))
-    ret = ret * mean / avg_ratio
-    return ret
-
 def get_a_strat_from_center(n, center, jump, shift = 0):
     dist = float(n * jump)/2
     ret = np.linspace(center - dist, center + dist, n) + shift
@@ -465,7 +447,7 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 
 def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
         a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-        mean_cost, cost_ratio, m_tax):
+        a_cost, m_tax):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
@@ -479,8 +461,7 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
 # Create dic to return. Note Gambit forces the use of Python 2, hence 'update'.
     ret = {'gamma'        : gamma,
            'scalar_tax'   : scalar_tax,
-           'mean_cost'    : mean_cost,
-           'cost_ratio'   : cost_ratio,
+           'a_cost'       : a_cost,
            'a_buyer_loc'  : a_buyer_loc,
            'a_seller_loc' : a_seller_loc,
            'num_buyers'   : num_buyers,
@@ -506,7 +487,7 @@ def write_output(d_out, fn):
 ### MAIN ###
 ############
 
-def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cost_ratio=1.0,
+def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
         endowment=200, randomize=False, random_seed=17, tax_model='ordinal'):
     """ Add documentation here """
 # check that input is correct
@@ -522,12 +503,6 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
 # set the quantity discretization and calculate Nash
     num_strats = 21 # number of quantity-strategies
     dist = 40 # deviation from cournot that we search for
-# Determine a_cost
-    a_cost = get_a_cost_from_ratio(mean_cost, cost_ratio, num_sellers)
-    if cost_ratio == 1.01:
-        a_cost = np.array([99., 100.])
-    if cost_ratio == 1.0:
-        a_cost = np.array([100., 100.])
 # need to fix theoretical Cournot.
     q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
             min(a_cost), endowment)
@@ -542,7 +517,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., mean_cost=100, cos
         m_tax = get_m_tax_dist(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-            mean_cost, cost_ratio, m_tax)
+            a_cost, m_tax)
     print(d_write)
     fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_randomize=%s_tax_model=%s_rand_seed=%s.pkl'%(num_sellers,
             num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, tax_model, random_seed)
@@ -558,18 +533,17 @@ def parameter_combination(i):
     num_buyers      = [12]
     gamma           = [1.]
     scalar_tax      = np.round(np.linspace(0.0, 1.0, 11), 3)
-    mean_cost       = [100]
-    cost_ratio      = [1.01]#np.round(np.linspace(1.0, 2.0, 11), 3)
+    a_cost          = [[99, 100], [100, 100]]
     endowment       = [120.]
     random_seed     = [17, 34, 51]
     randomize       = [True]
     tax_model       = ['cardinal']
-    combs           = product(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model)
+    combs           = product(num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model)
     comb            = list(combs)[i]
-    num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model = comb
+    num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, mean_cost=%s, cost_ratio=%s, endowment = %s, randomize=%s, random_seed=%s, tax_model=%s'%comb)
-    main(num_sellers, num_buyers, gamma, scalar_tax, mean_cost, cost_ratio, endowment, randomize, random_seed, tax_model)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize=%s, random_seed=%s, tax_model=%s'%comb)
+    main(num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model)
 
 
 if __name__ == "__main__":
