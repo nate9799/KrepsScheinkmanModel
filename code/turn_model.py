@@ -84,14 +84,14 @@ def dic_from_a_dic(a_dic):
     ret = dict(zip(a_key, a_a_value))
     return ret
 
-def process(d_settings, num_loops, price_diff):
+def process(d_settings, num_loops):
     a_func = [new_scalar_tax]
     a_d_turns = loop(d_settings, num_loops, a_func)
     d_turns = dic_from_a_dic(a_d_turns)
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn_fast_adv={}_gamma={}_scalar_tax={}_endow={}.pickle'.format(price_diff, round(d_settings['gamma'],3), d_settings['scalar_tax'], d_settings['endowment'])
+    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed'])
     print(fn)
     jl.dump(d_turns, fn)
 
@@ -107,5 +107,5 @@ if __name__ == "__main__":
             'random_seed' : 17 * i,
             'tax_model' : 'cardinal',
             'm_tax' : None} 
-    process(d_settings, 11, price_diff)
+    process(d_settings, 11)
 
