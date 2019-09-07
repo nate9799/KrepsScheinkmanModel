@@ -30,8 +30,8 @@ def get_settings_from_dic_ret(dic_ret):
     '''
     num_buyers = dic_ret['num_buyers']
     ret = { 'num_sellers' : dic_ret['num_sellers'],
-            'num_buyers' : dic_ret['num_buyers']
-            'gamma' : dic_ret['gamma']
+            'num_buyers' : dic_ret['num_buyers'],
+            'gamma' : dic_ret['gamma'],
             'scalar_tax' : dic_ret['scalar_tax'],
             'a_cost' : dic_ret['a_cost'],
             'endowment' : dic_ret['endowment'],
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             'endowment' : 120.,
             'randomize' : True,
             'random_seed' : 17,
-            'tax_model' : 'cardinal'
+            'tax_model' : 'cardinal',
             'm_tax' : None} 
     process(d_settings, 11, price_diff)
 
