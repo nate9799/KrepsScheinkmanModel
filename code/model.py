@@ -447,7 +447,7 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 
 def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
         a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
-        a_cost, m_tax):
+        m_tax):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
@@ -488,7 +488,7 @@ def write_output(d_out, fn):
 ############
 
 def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
-        endowment=200, randomize=False, random_seed=17, tax_model='ordinal'):
+        endowment=200, randomize=False, random_seed=17, tax_model='ordinal', m_tax=None):
     """ Add documentation here """
 # check that input is correct
     #assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
@@ -515,6 +515,9 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
         m_tax = get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
     elif tax_model == 'cardinal':
         m_tax = get_m_tax_dist(a_buyer_loc, a_seller_loc, gamma, scalar_tax)
+# Special for when used by turn_model.py
+    elif tax_model == 'given':
+        m_tax = m_tax
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
             a_seller_loc, a_buyer_loc, a_cost, gamma, scalar_tax, endowment,
             a_cost, m_tax)
