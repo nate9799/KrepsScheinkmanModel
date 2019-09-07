@@ -97,16 +97,6 @@ def process(d_settings, num_loops, price_diff):
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
-    gamma = 1.0
-    scalar_tax = 1.0
-    price_diff = 1
-    endowment = 120
-    num_sellers = 2
-    num_buyers = 12
-    np.random.seed(17)
-    a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
-    a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
-    m_tax = 
     d_settings = { 'num_sellers' : 2,
             'num_buyers' : 12,
             'gamma' : 1.,
@@ -117,5 +107,5 @@ if __name__ == "__main__":
             'random_seed' : 17,
             'tax_model' : 'cardinal'
             'm_tax' : None} 
-    process(d_settings, 20, price_diff)
+    process(d_settings, 11, price_diff)
 
