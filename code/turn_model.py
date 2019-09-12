@@ -104,7 +104,7 @@ if __name__ == "__main__":
             'a_cost' : [99., 100.],
             'endowment' : 120.,
             'randomize' : True,
-            'random_seed' : 17 * i,
+            'random_seed' : i,
             'tax_model' : 'cardinal'} 
     process(d_settings, 11)
 
