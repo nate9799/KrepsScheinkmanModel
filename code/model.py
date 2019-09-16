@@ -63,17 +63,6 @@ def get_m_tax_ordinal(a_buyer_loc, a_seller_loc, gamma, scalar_tax):
     print(m_tax)
     return m_tax
 
-# FIXME: handle a_cost
-def theoretical_Cournot(num_sellers, num_buyers, cost, endowment):
-    """
-    Calculates theoretical Cournot for S sellers and B buyers at given price and endowment/buyer.
-    """
-    num_sellers = float(num_sellers)
-    num_buyers = float(num_buyers)
-    Q = float(num_buyers * (endowment - cost)/(num_sellers + 1))
-    P = float(endowment - (Q/num_buyers))
-    return Q, P
-
 def theoretical_Cournots_from_a_cost(num_sellers, num_buyers, a_cost, endowment):
     """
     Calculates theoretical Cournot for S sellers and B buyers at given price and endowment/buyer.
@@ -479,28 +468,33 @@ def write_output(d_write, fn):
 ############
 
 def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
-        endowment=200, randomize=False, random_seed=17, tax_model='ordinal', m_tax=None):
+        endowment=200, randomize_quant=False, random_seed_quant=17,
+        randomize_loc=False, random_seed_loc=17, tax_model='ordinal',
+        m_tax=None):
     """ Add documentation here """
 # check that input is correct
     #assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
 # setup buyer and seller locations
-    if randomize:
-        np.random.seed(random_seed)
+    if randomize_loc:
+        np.random.seed(random_seed_loc)
         a_seller_loc = np.random.uniform(low=0, high=1, size=num_sellers)
         a_buyer_loc  = np.random.uniform(low=0, high=1, size=num_buyers)
     else:
         a_seller_loc = np.linspace(start=0, stop=1, num=num_sellers, endpoint=False)
         a_buyer_loc  = np.linspace(start=0, stop=.999, num=num_buyers,  endpoint=False)
 # set the quantity discretization and calculate Nash
-    num_strats = 21 # number of quantity-strategies
-    dist = 40 # deviation from cournot that we search for
+    num_strats = 41 # number of quantity-strategies
+    dist = 50 # deviation from cournot that we search for
+    if dist =< 1:
+        raise ValueError('dist too small, should be at least 1, is {}'.format(dist))
 # need to fix theoretical Cournot.
-    q_min, _ = theoretical_Cournot(1, num_buyers/float(num_sellers),
-            min(a_cost), endowment)
-    q_max, _ = theoretical_Cournot(num_sellers, num_buyers, max(a_cost),
-            endowment)
-    # Not the best estimate
-    a_strat_quantity = np.arange(0, num_buyers*50, 41)
+    a_strat_quantity = np.arange(0, num_buyers*dist, num_strats)
+    if randomize_quant == True:
+        clip = (dist-1.)/2.
+        np.random.seed(random_seed_quant)
+        a_random = np.random(loc=0, scale = dist/2, size=len(a_strat_quantity))
+        a_random_clip = np.clip(a_random, -clip, clip)
+        a_strat_quantity = a_strat_quantity + a_random
 # Normalize a_cot inot numpy array
     a_cost = np.array(a_cost)
 # Calculate m_tax
@@ -511,16 +505,18 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
 # Special for when used by turn_model.py
     elif tax_model == 'given':
         m_tax = m_tax
-    d_settings = {'gamma' : gamma,
-           'scalar_tax'   : scalar_tax,
-           'a_cost'       : a_cost,
-           'a_buyer_loc'  : a_buyer_loc,
-           'a_seller_loc' : a_seller_loc,
-           'num_buyers'   : num_buyers,
-           'num_sellers'  : num_sellers,
-           'randomize'    : randomize,
-           'random_seed'  : random_seed,
-           'tax_model'    : tax_model}
+    d_settings = {'gamma'       : gamma,
+           'scalar_tax'         : scalar_tax,
+           'a_cost'             : a_cost,
+           'a_buyer_loc'        : a_buyer_loc,
+           'a_seller_loc'       : a_seller_loc,
+           'num_buyers'         : num_buyers,
+           'num_sellers'        : num_sellers,
+           'randomize_quant'    : randomize_quant,
+           'random_seed_quant'  : random_seed_quant,
+           'randomize_loc'      : randomize_loc,
+           'random_seed_loc'    : random_seed_loc,
+           'tax_model'          : tax_model}
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
         a_cost, endowment, m_tax)
     d_write.update(d_settings)
@@ -533,27 +529,35 @@ def parameter_combination(i):
     Execute the i-th parameter combination.
     """
 # Create combinations
-    num_sellers     = [2]
-    num_buyers      = [12]
-    gamma           = [1.]
-    scalar_tax      = np.round(np.linspace(0.0, 1.0, 11), 3)
-    a_cost          = [[99, 100], [100, 100]]
-    endowment       = [120.]
-    random_seed     = [17, 34, 51]
-    randomize       = [True]
-    tax_model       = ['cardinal']
-    combs           = product(num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model)
-    comb            = list(combs)[i]
-    num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model = comb
+    num_sellers         = [2]
+    num_buyers          = [12]
+    gamma               = [1.]
+    scalar_tax          = np.round(np.linspace(0.0, 1.0, 11), 3)
+    a_cost              = [[99, 100], [100, 100]]
+    endowment           = [120.]
+    random_seed_quant   = [17, 34, 51]
+    randomize_quant     = [False]
+    random_seed_loc     = [17, 34, 51]
+    randomize_loc       = [True]
+    tax_model           = ['cardinal']
+    combs = product(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
+            endowment, randomize_quant, random_seed_quant, randomize_loc,
+            random_seed_loc, tax_model)
+    comb = list(combs)[i]
+    num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize_quant, random_seed_quant, randomize_loc, random_seed_loc, tax_model = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize=%s, random_seed=%s, tax_model=%s'%comb)
-    d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, random_seed, tax_model)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
+    d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
+            endowment, randomize_quant, random_seed_quant, randomize_loc,
+            random_seed_loc, tax_model)
     fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_randomize=%s_tax_model=%s_rand_seed=%s.pkl'%(num_sellers,
-            num_buyers, gamma, scalar_tax, a_cost, endowment, randomize, tax_model, random_seed)
+            num_buyers, gamma, scalar_tax, a_cost, endowment, tax_model, randomize_quant, random_seed_quant, randomize_loc, random_seed_loc)
+    write_output(d_write, fn)
+
+randomize_loc, random_seed_loc)
     write_output(d_write, fn)
 
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
     parameter_combination(i) 
-

@@ -35,8 +35,10 @@ def get_settings_from_dic_ret(dic_ret):
             'scalar_tax' : dic_ret['scalar_tax'],
             'a_cost' : dic_ret['a_cost'],
             'endowment' : dic_ret['endowment'],
-            'randomize' : dic_ret['randomize'],
-            'random_seed' : dic_ret['random_seed'],
+            'randomize_price' : dic_ret['randomize_price'],
+            'random_seed_price' : dic_ret['random_seed_price'],
+            'randomize_loc' : dic_ret['randomize_loc'],
+            'random_seed_loc' : dic_ret['random_seed_loc'],
             'tax_model' : dic_ret['tax_model'],
             'm_tax' : dic_ret['m_tax']} 
     return ret
@@ -69,7 +71,6 @@ def dic_from_a_dic(a_dic):
     Takes an array of dictionaries with the same keys, then turns it into a
     single dictionary with the same keys, except now the values are arrays of
     values of the dictionary.
-
     For example, an array of dictionaries which all have key 'key' and value
     'value' would become a single dictionary with the key 'key' and value
     ['value', 'value', ..., 'value']. 
@@ -91,7 +92,7 @@ def process(d_settings, num_loops):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed'])
+    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed_quant={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_quant'])
     print(fn)
     jl.dump(d_turns, fn)
 
@@ -103,8 +104,10 @@ if __name__ == "__main__":
             'scalar_tax' : 1.0,
             'a_cost' : [99., 100.],
             'endowment' : 120.,
-            'randomize' : True,
-            'random_seed' : i,
+            'randomize_quant' : True,
+            'random_seed_quant' : i,
+            'randomize_loc' : True,
+            'random_seed_loc' : 17,
             'tax_model' : 'cardinal'} 
     process(d_settings, 11)
 
