@@ -550,7 +550,7 @@ def parameter_combination(i):
     d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
             endowment, randomize_quant, random_seed_quant, randomize_loc,
             random_seed_loc, tax_model)
-    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_randomize=%s_tax_model=%s_rand_seed=%s.pkl'%(num_sellers,
+    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_tax_model=%s_rand_quant=%s_seed_quant=%s_rand_loc=%s_seed_loc=%s.pkl'%(num_sellers,
             num_buyers, gamma, scalar_tax, a_cost, endowment, tax_model, randomize_quant, random_seed_quant, randomize_loc, random_seed_loc)
     write_output(d_write, fn)
 
