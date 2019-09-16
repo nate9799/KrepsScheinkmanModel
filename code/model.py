@@ -485,14 +485,14 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
 # set the quantity discretization and calculate Nash
     num_strats = 41 # number of quantity-strategies
     dist = 50 # deviation from cournot that we search for
-    if dist =< 1:
+    if dist <= 1:
         raise ValueError('dist too small, should be at least 1, is {}'.format(dist))
 # need to fix theoretical Cournot.
     a_strat_quantity = np.arange(0, num_buyers*dist, num_strats)
     if randomize_quant == True:
         clip = (dist-1.)/2.
         np.random.seed(random_seed_quant)
-        a_random = np.random(loc=0, scale = dist/2, size=len(a_strat_quantity))
+        a_random = np.random.normal(loc=0, scale = dist/2, size=len(a_strat_quantity))
         a_random_clip = np.clip(a_random, -clip, clip)
         a_strat_quantity = a_strat_quantity + a_random
 # Normalize a_cot inot numpy array
@@ -552,9 +552,6 @@ def parameter_combination(i):
             random_seed_loc, tax_model)
     fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_tax_model=%s_rand_quant=%s_seed_quant=%s_rand_loc=%s_seed_loc=%s.pkl'%(num_sellers,
             num_buyers, gamma, scalar_tax, a_cost, endowment, tax_model, randomize_quant, random_seed_quant, randomize_loc, random_seed_loc)
-    write_output(d_write, fn)
-
-randomize_loc, random_seed_loc)
     write_output(d_write, fn)
 
 
