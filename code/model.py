@@ -26,6 +26,21 @@ def get_a_strat_from_center(n, center, jump, shift = 0):
     return(ret)
 
 
+#################
+### RANDOMIZE ###
+#################
+
+def make_even_spaced_array_noisy(arr, random_seed=None):
+    dist = ret[1] - ret[0]
+    clip = dist/2.
+    if not random_seed is None:
+        np.random.seed(random_seed)
+    a_rand = np.random.normal(loc=0, scale = dist/8, size=len(arr))
+    a_rand_clip = np.clip(a_rand, -clip, clip)
+    ret = arr + a_rand_clip
+    return ret
+
+
 #####################
 ### CALCULATE TAX ###
 #####################
@@ -325,14 +340,17 @@ def get_a_cost_from_kwargs(m_tax, a_cost, endowment):
     return a_cost
 
 def make_a_strat_price(num_buyers, a_quantity, num_strats=21,
-        is_randomized=False, is_shifted = False, **kwargs):
+        randomized=False, is_shifted = False, random_seed_price=-1, **kwargs):
     """
     Makes array of possilbe price strategies.  Don't allow even num_strats.
     """
     #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
     _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
     a_cost = get_a_cost_from_kwargs(**kwargs)
-    return np.linspace(min(a_cost), price, num_strats)
+    ret = np.linspace(min(a_cost), price, num_strats)
+    if randomized == True:
+        ret = make_even_spaced_array_noisy(ret, random_seed_price)
+    return ret
 
 def helper_func_price(a_price, a_quantity, m_tax, a_cost, endowment):
     return find_profit(a_quantity, a_price, m_tax, a_cost, endowment,
@@ -441,7 +459,8 @@ def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity, a_cost,
     solution(s), then makes a dictionary for pickle
     '''
 # Setup
-    kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment}
+    kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment,
+            'random_seed_price' : random_seed_price}
     a_a_strat_quant = [a_strat_quantity] * num_sellers
 # Create and Solve Game.
     ret = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
@@ -469,8 +488,8 @@ def write_output(d_write, fn):
 
 def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
         endowment=200, randomize_quant=False, random_seed_quant=17,
-        randomize_loc=False, random_seed_loc=17, tax_model='ordinal',
-        m_tax=None):
+        randomize_price=False, random_seed_price=-1, randomize_loc=False,
+        random_seed_loc=17, tax_model='ordinal', m_tax=None):
     """ Add documentation here """
 # check that input is correct
     #assert num_buyers%num_sellers == 0, "number of sellers does not divide number of buyers"
@@ -490,11 +509,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
 # need to fix theoretical Cournot.
     a_strat_quantity = np.arange(0, num_buyers*dist, num_strats)
     if randomize_quant == True:
-        clip = (dist-1.)/2.
-        np.random.seed(random_seed_quant)
-        a_random = np.random.normal(loc=0, scale = dist/2, size=len(a_strat_quantity))
-        a_random_clip = np.clip(a_random, -clip, clip)
-        a_strat_quantity = a_strat_quantity + a_random
+        a_strat_quantity = make_even_spaced_array_noisy(a_strat_quantity, random_seed_quant)
 # Normalize a_cot inot numpy array
     a_cost = np.array(a_cost)
 # Calculate m_tax
@@ -514,6 +529,8 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
            'num_sellers'        : num_sellers,
            'randomize_quant'    : randomize_quant,
            'random_seed_quant'  : random_seed_quant,
+           'randomize_price'    : randomize_price,
+           'random_seed_price'  : random_seed_price,
            'randomize_loc'      : randomize_loc,
            'random_seed_loc'    : random_seed_loc,
            'tax_model'          : tax_model}
@@ -537,6 +554,8 @@ def parameter_combination(i):
     endowment           = [120.]
     random_seed_quant   = [17, 34, 51]
     randomize_quant     = [False]
+    random_seed_price   = [17, 34, 51]
+    randomize_price     = [False]
     random_seed_loc     = [17, 34, 51]
     randomize_loc       = [True]
     tax_model           = ['cardinal']
@@ -544,14 +563,16 @@ def parameter_combination(i):
             endowment, randomize_quant, random_seed_quant, randomize_loc,
             random_seed_loc, tax_model)
     comb = list(combs)[i]
-    num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize_quant, random_seed_quant, randomize_loc, random_seed_loc, tax_model = comb
+    num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize_quant, random_seed_quant, randomize_price, random_seed_price, randomize_loc, random_seed_loc, tax_model = comb
 # Run main function
     print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
     d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
-            endowment, randomize_quant, random_seed_quant, randomize_loc,
-            random_seed_loc, tax_model)
-    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_tax_model=%s_rand_quant=%s_seed_quant=%s_rand_loc=%s_seed_loc=%s.pkl'%(num_sellers,
-            num_buyers, gamma, scalar_tax, a_cost, endowment, tax_model, randomize_quant, random_seed_quant, randomize_loc, random_seed_loc)
+            endowment, randomize_quant, random_seed_quant, randomize_price,
+            random_seed_price, randomize_loc, random_seed_loc, tax_model)
+    fn = 'S=%s_B=%s_gamma=%s_scalar_tax=%s_a_cost=%s_endow=%s_tax_model=%s_rand_price=%s_seed_price=%s_rand_quant=%s_seed_quant=%s_rand_loc=%s_seed_loc=%s.pkl'%(num_sellers,
+            num_buyers, gamma, scalar_tax, a_cost, endowment, tax_model,
+            randomize_price, random_seed_price, randomize_quant,
+            random_seed_quant, randomize_loc, random_seed_loc)
     write_output(d_write, fn)
 
 

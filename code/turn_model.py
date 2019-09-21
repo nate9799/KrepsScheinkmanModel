@@ -104,8 +104,10 @@ if __name__ == "__main__":
             'scalar_tax' : 1.0,
             'a_cost' : [99., 100.],
             'endowment' : 120.,
-            'randomize_quant' : True,
-            'random_seed_quant' : i,
+            'randomize_quant' : False,
+            'random_seed_quant' : -1,
+            'randomize_price' : True,
+            'random_seed_price' : i,
             'randomize_loc' : True,
             'random_seed_loc' : 17,
             'tax_model' : 'cardinal'} 

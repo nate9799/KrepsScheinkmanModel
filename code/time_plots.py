@@ -17,7 +17,6 @@ from plot_util import customaxis
 ############################################################
 def make_ax_profit_quantity(pd_profit, pd_quantity_sold, a_marker, a_color,
         num_sellers, gamma, fontsize=20, x_ticks=None, ax=None):
-    # FIXME: x_ticks
     color = a_color[0]
     pd_data = pd_profit
     if x_ticks is None:
@@ -46,6 +45,45 @@ def make_ax_profit_quantity(pd_profit, pd_quantity_sold, a_marker, a_color,
                 markerfacecolor='none', color=color)
     axt.grid(False)
     customaxis(ax = axt, position = 'right', color = color, label = 'Quantity',
+            scale = 'linear', size = fontsize, full_nrs = False, location = 1.0)
+
+# plot the profit and quantity sold for each seller 
+############################################################
+def make_ax_profit_quantity_share(pd_profit, pd_quantity_sold, a_marker,
+        a_color, num_sellers, gamma, fontsize=20, x_ticks=None, ax=None):
+    # FIXME: x_ticks
+    color = a_color[0]
+    pd_data = pd_profit.div(pd_profit.sum(1), 0)
+    print('HIHIHI')
+    print(pd_profit)
+    print(pd_data)
+    if x_ticks is None:
+        x_ticks = range(len(pd_data))
+    x_ticks = np.round(x_ticks, 2)
+    for i in range(num_sellers):
+        ax.plot(x_ticks, pd_data[i], '-', marker=a_marker[i],
+                markerfacecolor='none', color=color, label = 'Firm %d'%(i+1))
+    ax.set_xlim(min(x_ticks), max(x_ticks))
+    ax.set_xticks(x_ticks)
+    customaxis(ax = ax, position = 'left', color = color, label = 'Profit Share',
+            scale = 'linear', size = fontsize, full_nrs = False, location = 0.0)
+    ax.get_xaxis().set_major_formatter(tk.FuncFormatter(lambda x, p:
+        format(x,',')))
+    ax.legend()
+    leg = ax.get_legend()
+    (leg.legendHandles[i].set_color('black') for i in range(num_sellers))
+# Quantity
+    axt = ax.twinx()
+    color = a_color[1]
+    pd_data = pd_quantity_sold.div(pd_quantity_sold.sum(1), 0)
+    print('BYBYBY')
+    print(pd_quantity_sold)
+    print(pd_data)
+    for i in range(num_sellers):
+        axt.plot(x_ticks, pd_data[i], '-', marker=a_marker[i],
+                markerfacecolor='none', color=color)
+    axt.grid(False)
+    customaxis(ax = axt, position = 'right', color = color, label = 'Quantity Share',
             scale = 'linear', size = fontsize, full_nrs = False, location = 1.0)
 
 # plot the cost and price
@@ -86,20 +124,19 @@ def make_ax_cost_price(pd_cost, pd_price, pd_cournot, a_marker, a_color,
     axt.grid(False)
     return ax
 
-def make_column(fn, ax_profit_quantity, ax_cost_price, x_ticks_name=None):
+def make_column(fn, ax_profit_quantity, ax_profit_quantity_share,
+        ax_cost_price, x_ticks_name=None):
     print(fn)
     d_load = jl.load(fn)
 # Data from d_load
 ##########################################################
+    print(d_load)
     scalar_tax          = d_load['scalar_tax'][0]
     gamma               = d_load['gamma'][0]
     endowment           = d_load['endowment'][0]
-    num_sellers         = d_load['num_sellers'][0]
-    num_buyers          = d_load['num_buyers'][0]
-    a_buyer_pos         = d_load['a_buyer_loc'][0]
-    a_seller_pos        = d_load['a_seller_loc'][0]
+    num_sellers         = int(d_load['num_sellers'][0])
+    num_buyers          = int(d_load['num_buyers'][0])
     m_tax               = d_load['m_tax'][0]
-    a_m_quantity_bought = d_load['m_quantity_bought']
     pd_quantity         = pd.DataFrame(d_load['a_quantity_nash'])
     pd_quantity_sold    = pd.DataFrame(d_load['a_quantity_sold'])
     pd_price            = pd.DataFrame(d_load['a_price_nash'])
@@ -113,8 +150,6 @@ def make_column(fn, ax_profit_quantity, ax_cost_price, x_ticks_name=None):
     x_ticks = np.round(x_ticks, 3)
     print(x_ticks)
 # Data from calculations
-    pd_num_buyers_per_seller = pd.DataFrame([np.count_nonzero(m_quant, axis=1) for
-        m_quant in a_m_quantity_bought])
     pd_quantity_unsold      = pd_quantity - pd_quantity_sold
 # Cournot price at Nash quantity (A + n\bar c)/(n+1)
     pd_cournot              = (endowment + pd_cost.sum(1))/(num_sellers+1)
@@ -124,13 +159,16 @@ def make_column(fn, ax_profit_quantity, ax_cost_price, x_ticks_name=None):
         num_timesteps = num_timesteps - 1
 # Stuff for plotting
     a_marker = ['s', 'x', '*', 'o', 'D']
-    a_color = sb.color_palette("deep", num_sellers+4)
+    a_color = sb.color_palette("deep", 6)
 # Plots Here
     make_ax_profit_quantity(pd_profit, pd_quantity_sold, a_marker,
             a_color[0:2], num_sellers, gamma, x_ticks=x_ticks,
             ax=ax_profit_quantity)
+    make_ax_profit_quantity_share(pd_profit, pd_quantity_sold, a_marker,
+            a_color[2:4], num_sellers, gamma, x_ticks=x_ticks,
+            ax=ax_profit_quantity_share)
     print(5)
-    make_ax_cost_price(pd_cost, pd_price, pd_cournot, a_marker, a_color[2:4],
+    make_ax_cost_price(pd_cost, pd_price, pd_cournot, a_marker, a_color[4:6],
             num_sellers, gamma, x_ticks=x_ticks, ax=ax_cost_price)
 
 def write_time_plot_from_file(fn, fn_out, folder = None):
@@ -138,7 +176,7 @@ def write_time_plot_from_file(fn, fn_out, folder = None):
     sb.set_style("darkgrid")
 # set figure size
 ##########################################################
-    nrow            = 2
+    nrow            = 3
     ncol            = 1
     width_scale     = 12
     height_scale    = 4
@@ -151,8 +189,9 @@ def write_time_plot_from_file(fn, fn_out, folder = None):
     plt.rc('text', usetex=True)
 # set all axes instances
 ##########################################################
-    ax_profit_quantity  = plt.subplot2grid((nrow,ncol), (0,0))
-    ax_cost_price       = plt.subplot2grid((nrow,ncol), (1,0), sharex=ax_profit_quantity)
+    ax_profit_quantity          = plt.subplot2grid((nrow,ncol), (0,0))
+    ax_profit_quantity_share    = plt.subplot2grid((nrow,ncol), (1,0), sharex=ax_profit_quantity)
+    ax_cost_price               = plt.subplot2grid((nrow,ncol), (2,0), sharex=ax_profit_quantity)
 # annotate
 ##########################################################
     a_ax = fig.get_axes()
@@ -164,7 +203,7 @@ def write_time_plot_from_file(fn, fn_out, folder = None):
                 fontsize    =  12,
                 ha          = 'left',
                 va          = 'top' )
-    make_column(fn, ax_profit_quantity, ax_cost_price, 'scalar_tax')
+    make_column(fn, ax_profit_quantity, ax_profit_quantity_share, ax_cost_price, 'scalar_tax')
 # write figure to the output 
 ############################################################
     fn_out = 'plot_' + fn_out
@@ -183,11 +222,12 @@ def write_time_plot_from_file(fn, fn_out, folder = None):
 
 if __name__ == "__main__":
     a_fn_out = np.array(['turn_gamma=1.0_endow=120.0_taxmethod=cardinal_seed={}.pickle'.format(i)
-        for i in np.arange(0,69,17)])
+        for i in range(1,100)])
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder3 = "C:/Users/CAREBEARSTARE3_USER/Documents/WORK/MITInternship/ModelWithSandro/abmcournotmodel/code/output/data/"
     folder = folder3
     a_fn = glob.glob(folder + "turn*")
+    write_time_plot_from_file(folder + 'mean_turn1.pkl', 'mean_turn2')
+    print('asdfasdfasfdas')
     [write_time_plot_from_file(a_fn[i], a_fn_out[i]) for i in range(len(a_fn))]
-

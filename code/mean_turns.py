@@ -59,7 +59,7 @@ def mean_dic_from_a_dic(a_dic, is_remove_nan=True):
 
 
 if __name__ == "__main__":
-    folder = './output/data/'
+    folder = './output/data/rand_loc17/'
     a_fn = glob.glob(folder + 'turn*')
     if len(a_fn) == 0:
         raise ValueError('No Files Found')
