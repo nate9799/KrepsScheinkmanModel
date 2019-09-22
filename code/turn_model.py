@@ -35,6 +35,8 @@ def get_settings_from_dic_ret(dic_ret):
             'scalar_tax' : dic_ret['scalar_tax'],
             'a_cost' : dic_ret['a_cost'],
             'endowment' : dic_ret['endowment'],
+            'randomize_price' : dic_ret['randomize_price'],
+            'random_seed_price' : dic_ret['random_seed_price'],
             'randomize_quant' : dic_ret['randomize_quant'],
             'random_seed_quant' : dic_ret['random_seed_quant'],
             'randomize_loc' : dic_ret['randomize_loc'],
@@ -92,7 +94,7 @@ def process(d_settings, num_loops):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed_price={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_pirce'])
+    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed_price={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_price'])
     print(fn)
     jl.dump(d_turns, fn)
 
