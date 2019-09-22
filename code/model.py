@@ -31,7 +31,7 @@ def get_a_strat_from_center(n, center, jump, shift = 0):
 #################
 
 def make_even_spaced_array_noisy(arr, random_seed=None):
-    dist = ret[1] - ret[0]
+    dist = abs(arr[1] - arr[0])
     clip = dist/2.
     if not random_seed is None:
         np.random.seed(random_seed)
@@ -147,7 +147,7 @@ def find_quantity_sold(a_quantity, m_price_rel, endowment):
 ### FIND PROFIT ###
 ###################
 
-def find_profit_cournot(num_buyers, a_quantity, m_tax, a_cost, endowment):
+def find_profit_cournot(num_buyers, a_quantity, a_cost, m_tax, endowment, **kwargs):
     '''
     Finds profit for each seller based on theoretical cournot model, given
     quantities, cost, endowment, and number of buyers.
@@ -157,7 +157,7 @@ def find_profit_cournot(num_buyers, a_quantity, m_tax, a_cost, endowment):
     a_profit = a_quantity * (price - a_cost)
     return a_profit, price
 
-def find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = True):
+def find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = True, **kwargs):
     '''
     Finds profit and quantity sold for each seller, given strategies, taxation,
     and basic settings.
@@ -336,25 +336,21 @@ def make_game_table_from_a_a_strat(a_a_strat, func_payoff, **kwargs):
             except: set_trace()
     return ret, a_num_strats
 
-def get_a_cost_from_kwargs(m_tax, a_cost, endowment):
-    return a_cost
-
-def make_a_strat_price(num_buyers, a_quantity, num_strats=21,
-        randomized=False, is_shifted = False, random_seed_price=-1, **kwargs):
+def make_a_strat_price(num_buyers, a_quantity, a_cost, num_strats=21,
+        randomize_price=False, is_shifted = False, random_seed_price=-1, **kwargs):
     """
     Makes array of possilbe price strategies.  Don't allow even num_strats.
     """
     #assert num_strats/2. != num_strats/2, "price discretization number num_strats must be odd."
-    _, price = find_profit_cournot(num_buyers, a_quantity, **kwargs)
-    a_cost = get_a_cost_from_kwargs(**kwargs)
+    _, price = find_profit_cournot(num_buyers, a_quantity, a_cost, **kwargs)
     ret = np.linspace(min(a_cost), price, num_strats)
-    if randomized == True:
+    if randomize_price == True:
         ret = make_even_spaced_array_noisy(ret, random_seed_price)
     return ret
 
-def helper_func_price(a_price, a_quantity, m_tax, a_cost, endowment):
+def helper_func_price(a_price, a_quantity, m_tax, a_cost, endowment, randomize_price, **kwargs):
     return find_profit(a_quantity, a_price, m_tax, a_cost, endowment,
-            just_profit = True)
+            just_profit = True, **kwargs)
 
 def helper_func_quant(a_quantity, num_sellers, num_buyers, **kwargs):
     return find_nash_price(num_sellers, num_buyers, a_quantity,
@@ -453,14 +449,14 @@ def find_nash_quant(num_sellers, num_buyers, a_a_strat_quant, is_zoomed=False,
 #####################
 
 def make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity, a_cost,
-        endowment, m_tax):
+        endowment, m_tax, randomize_price=False, random_seed_price=-1):
     '''
     Creates tax matrix, then the  game table for gambit, then finds pure nash
     solution(s), then makes a dictionary for pickle
     '''
 # Setup
     kwargs = {'m_tax' : m_tax, 'a_cost' : a_cost, 'endowment' : endowment,
-            'random_seed_price' : random_seed_price}
+            'randomize_price' : randomize_price, 'random_seed_price' : random_seed_price}
     a_a_strat_quant = [a_strat_quantity] * num_sellers
 # Create and Solve Game.
     ret = find_nash_quant(num_sellers, num_buyers, a_a_strat_quant,
@@ -535,7 +531,7 @@ def main(num_sellers=2, num_buyers=6, gamma=0, scalar_tax=1., a_cost=[100, 100],
            'random_seed_loc'    : random_seed_loc,
            'tax_model'          : tax_model}
     d_write = make_dic_of_pure_nash(num_sellers, num_buyers, a_strat_quantity,
-        a_cost, endowment, m_tax)
+        a_cost, endowment, m_tax, randomize_price, random_seed_price)
     d_write.update(d_settings)
     print(d_write)
     return d_write

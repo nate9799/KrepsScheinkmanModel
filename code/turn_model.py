@@ -92,7 +92,7 @@ def process(d_settings, num_loops):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed_quant={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_quant'])
+    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed_price={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_pirce'])
     print(fn)
     jl.dump(d_turns, fn)
 
