@@ -94,12 +94,15 @@ def process(d_settings, num_loops):
     folder1 = '/home/nate/Documents/abmcournotmodel/code/output/data/'
     folder2 = '/cluster/home/slera//abmcournotmodel/code/output/data/'
     folder  = folder1 if os.path.exists(folder1) else folder2
-    fn = folder + 'turn_fast_gamma={}_endow={}_taxmethod={}_seed_price={}.pickle'.format(round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_price'])
+    fn = folder + 'turn_loc_seed={}_gamma={}_endow={}_taxmethod={}_seed_price={}_seed_quant={}.pickle'.format(d_settings['random_seed_loc'], round(d_settings['gamma'],3), d_settings['endowment'], d_settings['tax_model'], d_settings['random_seed_price'], d_settings['random_seed_quant'])
     print(fn)
     jl.dump(d_turns, fn)
 
 if __name__ == "__main__":
     i = int(sys.argv[1]) - 1
+    seed_price = i % 100
+    a_seed_loc = [11, 13, 23, 26, 28, 32, 36, 37, 39, 43, 44, 59, 65, 68, 69, 70, 76]
+    seed_loc = a_seed_loc[int(i // 100)]
     d_settings = { 'num_sellers' : 2,
             'num_buyers' : 12,
             'gamma' : 1.,
@@ -109,9 +112,9 @@ if __name__ == "__main__":
             'randomize_quant' : False,
             'random_seed_quant' : -1,
             'randomize_price' : True,
-            'random_seed_price' : i,
+            'random_seed_price' : seed_price,
             'randomize_loc' : True,
-            'random_seed_loc' : 17,
+            'random_seed_loc' : seed_loc,
             'tax_model' : 'cardinal'} 
     process(d_settings, 11)
 
