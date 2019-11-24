@@ -90,6 +90,15 @@ def theoretical_Cournots_from_a_cost(num_sellers, num_buyers, a_cost, endowment)
     price = float(endowment - (sum(a_quantities)/num_buyers))
     return a_quantities, price
 
+#################
+### BUY ORDER ###
+#################
+
+def buy_order(m_price_rel):
+    ret = m_price_rel.T[m_price_rel.min(0).argsort()].T
+    return ret
+
+
 ###################
 ### FIND BUNDLE ###
 ###################
@@ -132,8 +141,9 @@ def find_quantity_sold(a_quantity, m_price_rel, endowment):
     num_sellers = np.size(m_price_rel, 0)
     a_quantity_unsold = a_quantity.copy()
     m_quantity_bought = []
+    m_price_rel_tmp = buy_order(m_price_rel)
 # Loop
-    for a_price_rel in m_price_rel.T:
+    for a_price_rel in m_price_rel_tmp.T:
         a_quantity_bought = find_bundle(a_quantity_unsold, a_price_rel, endowment)
         a_quantity_unsold = a_quantity_unsold - a_quantity_bought
         m_quantity_bought.append(a_quantity_bought)
