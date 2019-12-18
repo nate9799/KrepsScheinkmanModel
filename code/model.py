@@ -131,6 +131,8 @@ def find_purchase_distribution(quantity_unsold, a_demand_remaining):
     '''
     Finds how much each buyer purchases at a given price for a particular seller
     '''
+    if quantity_unsold == 0:
+        return np.zeros(len(a_demand_remaining))
     if a_demand_remaining.sum() <= quantity_unsold:
         return a_demand_remaining
 # Double argsort is intentional and for later unsorting.
@@ -138,7 +140,7 @@ def find_purchase_distribution(quantity_unsold, a_demand_remaining):
     a_demand_sorted = np.sort(a_demand_remaining)
 # Finding proper distribution for sorted array:
 # Say a_demand_sorted looks like    [0, 0, 1, 1, 1,  3,  4,  5]
-    a_back_count = np.arange(len(a_demand_sorted), -1., -1)
+    a_back_count = np.arange(len(a_demand_sorted) - 1, -1., -1)
     a_purchase_cutoffs = a_demand_sorted.cumsum() + a_demand_sorted * a_back_count
 # a_purchase cutoffs would be       [0, 0, 6, 6, 6, 12, 14, 15]
     a_mask_cutoff = a_purchase_cutoffs > quantity_unsold
@@ -190,7 +192,7 @@ def find_next_purchase_recursive(a_quantity_unsold, a_endow_remaining, m_price_r
     m_price_rel[ind_seller, a_mask] = np.inf
 # Recurse
     m_quantity_bought = find_next_purchase_recursive(a_quantity_unsold, a_endow_remaining, m_price_rel)
-    m_quantity_bought[seller_ind] += a_quantity_bought
+    m_quantity_bought[ind_seller] += a_quantity_bought
     return m_quantity_bought
 
 
@@ -641,12 +643,12 @@ def parameter_combination(i):
     randomize_loc       = [True]
     tax_model           = ['cardinal']
     combs = product(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
-            endowment, randomize_quant, random_seed_quant, randomize_loc,
-            random_seed_loc, tax_model)
+            endowment, randomize_quant, random_seed_quant, randomize_price,
+            random_seed_price, randomize_loc, random_seed_loc, tax_model)
     comb = list(combs)[i]
     num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize_quant, random_seed_quant, randomize_price, random_seed_price, randomize_loc, random_seed_loc, tax_model = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_quant=%s, random_seed_quant=%s, randomize_price=%s, random_seed_price=%s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
     d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
             endowment, randomize_quant, random_seed_quant, randomize_price,
             random_seed_price, randomize_loc, random_seed_loc, tax_model)
