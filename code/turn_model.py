@@ -111,7 +111,7 @@ if __name__ == "__main__":
             'endowment' : 120.,
             'randomize_quant' : False,
             'random_seed_quant' : -1,
-            'randomize_price' : True,
+            'randomize_price' : False,
             'random_seed_price' : seed_price,
             'randomize_loc' : True,
             'random_seed_loc' : seed_loc,
