@@ -133,6 +133,8 @@ def find_purchase_distribution(quantity_unsold, a_demand_remaining):
     '''
     if quantity_unsold == 0:
         return np.zeros(len(a_demand_remaining))
+    if any (a_demand_remaining < 0):
+        raise ValueError('An element of a_demand_remaining is negative when it should be nonnegative.')
     if a_demand_remaining.sum() <= quantity_unsold:
         return a_demand_remaining
 # Double argsort is intentional and for later unsorting.
@@ -150,7 +152,7 @@ def find_purchase_distribution(quantity_unsold, a_demand_remaining):
         return np.ones_like(a_demand_sorted) * (quantity_unsold/len(a_demand_sorted))
     a_demand_sorted[a_mask_cutoff] = a_demand_sorted[ind_cutoff - 1]
 # We transform a_demand_sorted into [0, 0, 1, 1, 1,  3,  3,  3]
-    quant_remaining_initial = quantity_unsold - a_purchase_cutoff[ind_cutoff - 1]
+    quantity_remaining_initial = quantity_unsold - a_purchase_cutoffs[ind_cutoff - 1]
     a_demand_sorted += a_mask_cutoff * (quantity_remaining_initial/a_mask_cutoff.sum())
 # Finally, we have distribution     [0, 0, 1, 1, 1,  3, 3.5, 3.5]
     a_quantity_bought = a_demand_sorted[a_unsort]
@@ -160,30 +162,35 @@ def find_purchase_distribution(quantity_unsold, a_demand_remaining):
 def find_next_purchase_recursive(a_quantity_unsold, a_endow_remaining, m_price_rel):
     '''
     Calculates who buys what from whom. Effectively it iterates over
-    m_price_rel from least price to highest. At each price it conducts a sale,
-    then records it.
+    m_price_rel from least price to highest. At each entry in m_price_rel it
+    iterates over, the function conducts a sale, then records it.
+    The iteration is recorded by masking elements of m_price_rel with np.inf
+    when they have been iterated over or should be skipped.
     @m_price_rel is a numpy matrix with sellers as rows and buyers as columns
     '''
-# Find min price
-# Clear out sellers without quantity.
-# Make numpy array so that 
+# Check that there are sellers with remaining quantity
     if all (a_quantity_unsold == 0):
         return np.zeros_like(m_price_rel)
-    price = m_price_rel.min()
-    if price == np.inf:
+# Find min price
+    price_min = m_price_rel.min()
+# See if all prices have been done before.
+    if price_min == np.inf:
         return np.zeros_like(m_price_rel)
-    a_buyer_finished = a_endow_remaining <= price
-    m_price_rel[:, a_buyer_finished] = np.inf
-# Check if buyers still exist
-    if price < m_price_rel.min():
+# Mask all buyers that can no longer purchase, because their endowment is less
+# than the lowest price remaining.
+    a_buyer_finished_mask = (a_endow_remaining <= price_min)
+    m_price_rel[:, a_buyer_finished_mask] = np.inf
+# Check if buyers still exist for this price, after masking. If not, then we
+# are done for this price.
+    if price_min < m_price_rel.min():
         return find_next_purchase_recursive(a_quantity_unsold, a_endow_remaining, m_price_rel)
-# For first seller offering price, conduct sale:
+# For first, and only the first, seller offering price, conduct sale:
 # Find first index of seller offering minimum price:
     ind_seller = m_price_rel.min(1).argmin()
 # Find buyers that can purchase from seller at min price
-    a_mask = (m_price_rel[ind_seller] == price)
-# Find demand remaining
-    a_demand_remaining = (a_endow_remaining * a_mask) - price
+    a_mask = (m_price_rel[ind_seller] == price_min)
+# Find demand remaining at price point
+    a_demand_remaining = (a_endow_remaining - price_min) * a_mask
 # Find purchase
     a_quantity_bought = find_purchase_distribution(a_quantity_unsold[ind_seller], a_demand_remaining)
 # Record purchase
@@ -201,6 +208,10 @@ def find_next_purchase_recursive(a_quantity_unsold, a_endow_remaining, m_price_r
 ##########################
 
 def find_quantity_sold_alt(a_quantity, m_price_rel, endowment):
+    '''
+    Finds quantity sold for each seller, given prices, quantity, and endowment.
+    It works by iterating over m_price_rel, from smallest price to greatest.
+    '''
     a_endow_remaining = np.ones_like(m_price_rel[0]) * endowment
     m_price_rel_tmp = m_price_rel.copy()
     a_quantity_unsold = a_quantity.copy()
@@ -265,6 +276,7 @@ def find_profit(a_quantity, a_price, m_tax, a_cost, endowment, just_profit = Tru
            'a_quantity_sold' : a_quantity_sold}
     return ret
 
+# NOT USED RIGHT NOW
 def find_payoff_of_mixed_strategy(game, a_nash):
 # Get a_strat and probability of a_strat
     num_nash = len(a_nash)
@@ -643,12 +655,12 @@ def parameter_combination(i):
     randomize_loc       = [True]
     tax_model           = ['cardinal']
     combs = product(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
-            endowment, randomize_quant, random_seed_quant, randomize_price,
-            random_seed_price, randomize_loc, random_seed_loc, tax_model)
+            endowment, randomize_quant, random_seed_quant, randomize_loc,
+            random_seed_loc, tax_model)
     comb = list(combs)[i]
     num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize_quant, random_seed_quant, randomize_price, random_seed_price, randomize_loc, random_seed_loc, tax_model = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_quant=%s, random_seed_quant=%s, randomize_price=%s, random_seed_price=%s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
     d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
             endowment, randomize_quant, random_seed_quant, randomize_price,
             random_seed_price, randomize_loc, random_seed_loc, tax_model)
