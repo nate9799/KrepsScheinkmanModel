@@ -145,15 +145,15 @@ def find_purchase_distribution(quantity_unsold, a_demand_remaining):
     a_back_count = np.arange(len(a_demand_sorted) - 1, -1., -1)
     a_purchase_cutoffs = a_demand_sorted.cumsum() + a_demand_sorted * a_back_count
 # a_purchase cutoffs would be       [0, 0, 6, 6, 6, 12, 14, 15]
-    a_mask_cutoff = a_purchase_cutoffs > quantity_unsold
+    a_mask_is_cutoff = a_purchase_cutoffs > quantity_unsold
 # if quantity_unsold is 13, this is [0, 0, 0, 0, 0,  0,  1,  1] (actually as trues and falses)
-    ind_cutoff = a_mask_cutoff.argmax()
+    ind_cutoff = a_mask_is_cutoff.argmax()
     if ind_cutoff == 0:
         return np.ones_like(a_demand_sorted) * (quantity_unsold/len(a_demand_sorted))
-    a_demand_sorted[a_mask_cutoff] = a_demand_sorted[ind_cutoff - 1]
+    a_demand_sorted[a_mask_is_cutoff] = a_demand_sorted[ind_cutoff - 1]
 # We transform a_demand_sorted into [0, 0, 1, 1, 1,  3,  3,  3]
-    quantity_remaining_initial = quantity_unsold - a_purchase_cutoffs[ind_cutoff - 1]
-    a_demand_sorted += a_mask_cutoff * (quantity_remaining_initial/a_mask_cutoff.sum())
+    quant_remaining_initial = quantity_unsold - a_purchase_cutoffs[ind_cutoff - 1]
+    a_demand_sorted += a_mask_is_cutoff * (quantity_remaining_initial/a_mask_is_cutoff.sum())
 # Finally, we have distribution     [0, 0, 1, 1, 1,  3, 3.5, 3.5]
     a_quantity_bought = a_demand_sorted[a_unsort]
     return a_quantity_bought
@@ -655,12 +655,12 @@ def parameter_combination(i):
     randomize_loc       = [True]
     tax_model           = ['cardinal']
     combs = product(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
-            endowment, randomize_quant, random_seed_quant, randomize_loc,
-            random_seed_loc, tax_model)
+            endowment, randomize_quant, random_seed_quant, randomize_price,
+            random_seed_price, randomize_loc, random_seed_loc, tax_model)
     comb = list(combs)[i]
     num_sellers, num_buyers, gamma, scalar_tax, a_cost, endowment, randomize_quant, random_seed_quant, randomize_price, random_seed_price, randomize_loc, random_seed_loc, tax_model = comb
 # Run main function
-    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
+    print('executing num_sell=%s, num_buy=%s, gamma=%s, scalar_tax=%s, a_cost=%s, endowment = %s, randomize_quant=%s, random_seed_quant=%s, randomize_price=%s, random_seed_price=%s, randomize_loc=%s, random_seed_loc=%s, tax_model=%s'%comb)
     d_write = main(num_sellers, num_buyers, gamma, scalar_tax, a_cost,
             endowment, randomize_quant, random_seed_quant, randomize_price,
             random_seed_price, randomize_loc, random_seed_loc, tax_model)
