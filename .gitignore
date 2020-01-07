@@ -8,6 +8,9 @@
 *.xml
 *.sw?
 *.pdf
+**/lsf.*
 lsf.*
 *.pickle
 *.zip
+**/tmp.py
+tmp.py
